@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: zen2property
+      POSTGRES_PASSWORD: zen2property
+      POSTGRES_DB: zen2property
+    ports:
+      - "55432:5432"
+    volumes:
+      - zen2property_pg:/var/lib/postgresql/data
+
+volumes:
+  zen2property_pg:
