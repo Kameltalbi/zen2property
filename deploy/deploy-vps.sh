@@ -44,7 +44,15 @@ if [[ -z "${JWT_SECRET:-}" || "$JWT_SECRET" == CHANGE_ME_LONG_RANDOM_SECRET_32CH
 fi
 
 echo "==> Postgres Docker (projet zen2property uniquement)"
-docker compose -f deploy/docker-compose.prod.yml --env-file .env up -d
+if command -v docker-compose >/dev/null 2>&1; then
+  COMPOSE=(docker-compose)
+elif docker compose version >/dev/null 2>&1; then
+  COMPOSE=(docker compose)
+else
+  echo "Docker Compose introuvable"
+  exit 1
+fi
+"${COMPOSE[@]}" -f deploy/docker-compose.prod.yml --env-file .env up -d
 
 echo "==> Install / build"
 npm ci

@@ -43,7 +43,8 @@ sudo certbot --nginx -d zen2property.com -d www.zen2property.com
 ```bash
 cd /var/www/zen2property
 sudo git pull --ff-only origin develop
-sudo docker compose -f deploy/docker-compose.prod.yml --env-file .env up -d
+sudo docker-compose -f deploy/docker-compose.prod.yml --env-file .env up -d
+# (ou: docker compose … si le plugin CLI est installé)
 sudo npm ci && sudo npm run build
 sudo npm ci --prefix web && sudo npm run build:web
 sudo npm run migrate
