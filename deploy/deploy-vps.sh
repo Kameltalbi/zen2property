@@ -55,9 +55,10 @@ fi
 "${COMPOSE[@]}" -f deploy/docker-compose.prod.yml --env-file .env up -d
 
 echo "==> Install / build"
-npm ci
+# Types de build (devDependencies) même si NODE_ENV=production dans .env
+npm ci --include=dev
 npm run build
-npm ci --prefix web
+npm ci --prefix web --include=dev
 npm run build:web
 mkdir -p storage/receipts
 chown -R www-data:www-data "$APP_DIR"
@@ -66,7 +67,13 @@ chmod 640 "$APP_DIR/.env"
 chown root:www-data "$APP_DIR/.env" || chown www-data:www-data "$APP_DIR/.env"
 
 echo "==> Migrations"
-# migrate as root then fix perms; DATABASE_URL from .env
+# Attendre Postgres prêt
+for i in $(seq 1 30); do
+  if docker exec zen2property-postgres pg_isready -U zen2property -d zen2property >/dev/null 2>&1; then
+    break
+  fi
+  sleep 1
+done
 npm run migrate
 chown -R www-data:www-data "$APP_DIR/storage" || true
 
