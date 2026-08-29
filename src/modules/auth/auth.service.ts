@@ -6,12 +6,15 @@ import { env } from '../../config/env';
 import { queryOne } from '../../db/pool';
 import { HttpError } from '../../lib/httpError';
 import type { UserRow } from '../../types/domain';
+import { resolvePricingMarket } from '../billing/pricingMarkets';
 
 export const registerSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
   fullName: z.string().min(1),
   countryCode: z.string().length(2),
+  billingCountryCode: z.string().length(2).optional(),
+  billingRegion: z.string().max(8).optional().nullable(),
   locale: z.string().optional(),
   defaultCurrency: z.string().length(3).optional(),
   address: z.string().optional(),
@@ -30,22 +33,30 @@ export const updateMeSchema = z.object({
   locale: z.string().optional(),
   defaultCurrency: z.string().length(3).optional(),
   countryCode: z.string().length(2).optional(),
+  billingCountryCode: z.string().length(2).optional(),
+  billingRegion: z.string().max(8).optional().nullable(),
 });
 
 function publicUser(user: UserRow) {
+  const billingCountry = (user.billing_country_code ?? user.country_code).trim();
+  const market = resolvePricingMarket(billingCountry);
   return {
     id: user.id,
     email: user.email,
     fullName: user.full_name,
     countryCode: user.country_code.trim(),
+    billingCountryCode: billingCountry,
+    billingRegion: user.billing_region,
+    pricingMarket: user.pricing_market ?? market.id,
+    preferredCurrency: user.preferred_currency ?? market.displayCurrency,
     locale: user.locale,
     defaultCurrency: user.default_currency,
     address: user.address,
     bankDetails: user.bank_details,
     receiptSignature: user.receipt_signature,
-    plan: user.plan,
+    plan: user.plan === 'INVESTOR' ? 'PREMIUM' : user.plan,
     subscriptionStatus: user.subscription_status,
-    isAdmin: user.is_admin,
+    isAdmin: Boolean(user.is_admin),
     isActive: user.is_active,
     createdAt: user.created_at,
   };
@@ -62,18 +73,36 @@ export async function register(input: z.infer<typeof registerSchema>) {
   if (existing) throw new HttpError(409, 'An account already exists for this email');
 
   const passwordHash = await bcrypt.hash(input.password, 12);
+  const countryCode = input.countryCode.toUpperCase();
+  const billingCountry = (input.billingCountryCode ?? countryCode).toUpperCase();
+  const market = resolvePricingMarket(billingCountry);
+  const region = billingCountry === 'CA' ? (input.billingRegion?.toUpperCase() ?? null) : null;
+
+  const country = await queryOne<{ default_currency: string }>(
+    'SELECT default_currency FROM countries WHERE code = $1',
+    [countryCode],
+  );
+  if (!country) throw new HttpError(400, 'Unknown country');
+
   const user = await queryOne<UserRow>(
-    `INSERT INTO users (email, password_hash, full_name, country_code, locale, default_currency, address)
-     VALUES ($1, $2, $3, $4, $5, COALESCE($6, (SELECT default_currency FROM countries WHERE code = $4)), $7)
+    `INSERT INTO users (
+       email, password_hash, full_name, country_code, locale, default_currency, address,
+       billing_country_code, billing_region, pricing_market, preferred_currency, country_updated_at
+     )
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, now())
      RETURNING *`,
     [
       input.email.toLowerCase(),
       passwordHash,
       input.fullName,
-      input.countryCode.toUpperCase(),
+      countryCode,
       input.locale ?? 'en',
-      input.defaultCurrency?.toUpperCase() ?? null,
+      input.defaultCurrency?.toUpperCase() ?? country.default_currency,
       input.address ?? null,
+      billingCountry,
+      region,
+      market.id,
+      market.displayCurrency,
     ],
   );
   if (!user) throw new HttpError(500, 'Unable to create account');
@@ -114,6 +143,15 @@ export async function getMe(userId: string) {
 }
 
 export async function updateMe(userId: string, input: z.infer<typeof updateMeSchema>) {
+  const billingCountry = input.billingCountryCode?.toUpperCase();
+  const market = billingCountry ? resolvePricingMarket(billingCountry) : null;
+  const region =
+    billingCountry === 'CA'
+      ? (input.billingRegion?.toUpperCase() ?? null)
+      : billingCountry
+        ? null
+        : undefined;
+
   const user = await queryOne<UserRow>(
     `UPDATE users SET
        full_name = COALESCE($2, full_name),
@@ -123,6 +161,11 @@ export async function updateMe(userId: string, input: z.infer<typeof updateMeSch
        locale = COALESCE($6, locale),
        default_currency = COALESCE($7, default_currency),
        country_code = COALESCE($8, country_code),
+       billing_country_code = COALESCE($9, billing_country_code),
+       billing_region = CASE WHEN $10::boolean THEN $11 ELSE billing_region END,
+       pricing_market = COALESCE($12, pricing_market),
+       preferred_currency = COALESCE($13, preferred_currency),
+       country_updated_at = CASE WHEN $9 IS NOT NULL THEN now() ELSE country_updated_at END,
        updated_at = now()
      WHERE id = $1
      RETURNING *`,
@@ -135,6 +178,11 @@ export async function updateMe(userId: string, input: z.infer<typeof updateMeSch
       input.locale ?? null,
       input.defaultCurrency?.toUpperCase() ?? null,
       input.countryCode?.toUpperCase() ?? null,
+      billingCountry ?? null,
+      region !== undefined,
+      region ?? null,
+      market?.id ?? null,
+      market?.displayCurrency ?? null,
     ],
   );
   if (!user) throw new HttpError(404, 'User not found');

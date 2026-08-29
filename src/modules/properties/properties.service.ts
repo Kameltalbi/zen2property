@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { query, queryOne } from '../../db/pool';
 import { HttpError, notFound } from '../../lib/httpError';
-import { planOf } from '../billing/plans';
+import { planOf, upgradeHint } from '../billing/plans';
 import type { PropertyRow } from '../../types/domain';
 
 export const createPropertySchema = z.object({
@@ -58,13 +58,11 @@ export async function createProperty(userId: string, input: z.infer<typeof creat
   if (!owner) throw new HttpError(401, 'User not found');
 
   const plan = planOf(owner.plan);
-  if (plan.maxProperties !== null) {
-    const count = await queryOne<{ n: string }>('SELECT COUNT(*)::text AS n FROM properties WHERE user_id = $1', [
-      userId,
-    ]);
-    if (Number(count?.n ?? 0) >= plan.maxProperties) {
-      throw new HttpError(402, `Your ${plan.name} plan allows ${plan.maxProperties} properties. Upgrade to add more.`);
-    }
+  const count = await queryOne<{ n: string }>('SELECT COUNT(*)::text AS n FROM properties WHERE user_id = $1', [
+    userId,
+  ]);
+  if (Number(count?.n ?? 0) >= plan.maxProperties) {
+    throw new HttpError(402, upgradeHint(plan));
   }
 
   const row = await queryOne<PropertyRow>(

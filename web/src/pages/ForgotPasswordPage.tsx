@@ -23,9 +23,9 @@ export function ForgotPasswordPage() {
   }
 
   return (
-    <section className="narrow section">
+    <section className="auth-panel section">
       <h1>{t.auth.resetTitle}</h1>
-      <form className="form" onSubmit={(e) => void onSubmit(e)} style={{ marginTop: 20 }}>
+      <form className="form" onSubmit={(e) => void onSubmit(e)}>
         <label>
           {t.auth.email}
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />

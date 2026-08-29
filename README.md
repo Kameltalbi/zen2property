@@ -52,7 +52,7 @@ Auth header: `Authorization: Bearer <token>`
 | Rent | CRUD `/payments` · `POST /payments/:id/mark-paid` · `POST /payments/:id/receipt` |
 | Receipts | `GET /receipts` · `GET /receipts/:id/pdf` |
 | Legal | `GET /legal/countries` (public) · `GET /legal/countries/:code` |
-| AI | `POST /legal/ai/propose` · `GET /legal/ai/drafts` · `POST /legal/ai/drafts/:id/apply` |
+| AI | `POST /legal/ai/propose` · `GET /legal/ai/mine/:code` · `GET /legal/ai/drafts` · `POST /legal/ai/drafts/:id/confirm` (landlord) · `POST /legal/ai/drafts/:id/apply` (superadmin catalog) |
 | Billing | `GET /billing/plans` · `GET /billing/me` · `POST /billing/checkout` · `POST /billing/mock-subscribe` |
 | Superadmin | `GET /admin/stats` · `GET /admin/users` · `PATCH /admin/users/:id` (admin JWT only) |
 

@@ -21,7 +21,7 @@ async function seedIsoCountries(): Promise<void> {
      SELECT c.code, 1, DATE '2024-01-01', 'default', $1::jsonb
      FROM countries c
      WHERE NOT EXISTS (
-       SELECT 1 FROM legal_profiles lp WHERE lp.country_code = c.code
+       SELECT 1 FROM legal_profiles lp WHERE lp.country_code = c.code AND lp.user_id IS NULL
      )`,
     [JSON.stringify(DEFAULT_LEGAL_RULES)],
   );

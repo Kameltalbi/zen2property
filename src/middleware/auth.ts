@@ -35,7 +35,7 @@ export async function requireAuth(req: Request, _res: Response, next: NextFuncti
       next(new HttpError(401, 'Account disabled or not found'));
       return;
     }
-    req.user = { id: payload.sub, email: row.email, isAdmin: row.is_admin };
+    req.user = { id: payload.sub, email: row.email, isAdmin: Boolean(row.is_admin) };
     next();
   } catch (err) {
     if (err instanceof HttpError) next(err);

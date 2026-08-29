@@ -223,4 +223,17 @@ export const DEFAULT_LEGAL_RULES = {
     legalNotice: 'This receipt confirms payment of rent for the period stated.',
     numbering: { prefix: 'R', reset: 'yearly' as const },
   },
+  tax: {
+    vat_applicable: false,
+    default_tax_rate: 0,
+    tax_id_label: 'Tax ID',
+  },
+  requiredDocuments: [
+    {
+      doc_type: 'Rent receipt',
+      description: 'Written confirmation of rent paid for a given period.',
+      is_mandatory: true,
+    },
+  ],
+  mandatoryMentions: ['This receipt confirms payment of rent for the period stated.'],
 };

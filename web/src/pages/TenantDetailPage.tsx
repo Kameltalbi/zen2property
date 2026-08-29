@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { api, type Payment, type Property, type Tenant } from '../api';
+import { useI18n } from '../i18n';
 
 export function TenantDetailPage() {
   const { id } = useParams();
+  const { t, locale } = useI18n();
   const [tenant, setTenant] = useState<Tenant | null>(null);
   const [property, setProperty] = useState<Property | null>(null);
   const [payments, setPayments] = useState<Payment[]>([]);
@@ -13,13 +15,13 @@ export function TenantDetailPage() {
     if (!id) return;
     void (async () => {
       try {
-        const { tenant: t } = await api<{ tenant: Tenant }>(`/tenants/${id}`);
-        const [{ property: p }, pays] = await Promise.all([
-          api<{ property: Property }>(`/properties/${t.propertyId}`),
-          api<{ payments: Payment[] }>(`/payments?tenantId=${t.id}`),
+        const { tenant: next } = await api<{ tenant: Tenant }>(`/tenants/${id}`);
+        const [{ property: prop }, pays] = await Promise.all([
+          api<{ property: Property }>(`/properties/${next.propertyId}`),
+          api<{ payments: Payment[] }>(`/payments?tenantId=${next.id}`),
         ]);
-        setTenant(t);
-        setProperty(p);
+        setTenant(next);
+        setProperty(prop);
         setPayments(pays.payments);
       } catch (e) {
         setError(e instanceof Error ? e.message : 'Load failed');
@@ -28,7 +30,7 @@ export function TenantDetailPage() {
   }, [id]);
 
   if (error) return <p className="error">{error}</p>;
-  if (!tenant) return <p className="muted">Loading tenant…</p>;
+  if (!tenant) return <p className="muted">{locale === 'fr' ? 'Chargement…' : 'Loading…'}</p>;
 
   return (
     <>
@@ -39,20 +41,20 @@ export function TenantDetailPage() {
             {tenant.firstName} {tenant.lastName}
           </h1>
           <p className="muted">
-            {tenant.email ?? 'No email'} · deposit {tenant.deposit}
+            {tenant.email ?? t.tenants.noEmail} · {t.tenants.deposit} {tenant.deposit}
           </p>
         </div>
         <Link className="btn secondary" to={`/app/tenants/${tenant.id}/edit`}>
-          Edit
+          {t.tenants.editLink}
         </Link>
       </div>
       <div className="card table-scroll" style={{ padding: 0 }}>
         <table>
           <thead>
             <tr>
-              <th>Period</th>
-              <th>Due</th>
-              <th>Amount</th>
+              <th>{locale === 'fr' ? 'Période' : 'Period'}</th>
+              <th>{locale === 'fr' ? 'Échéance' : 'Due'}</th>
+              <th>{locale === 'fr' ? 'Montant' : 'Amount'}</th>
               <th>Status</th>
             </tr>
           </thead>
@@ -73,7 +75,11 @@ export function TenantDetailPage() {
             ))}
           </tbody>
         </table>
-        {payments.length === 0 && <p className="muted" style={{ padding: 16 }}>No payments yet.</p>}
+        {payments.length === 0 && (
+          <p className="muted" style={{ padding: 16 }}>
+            {locale === 'fr' ? 'Aucun paiement pour l’instant.' : 'No payments yet.'}
+          </p>
+        )}
       </div>
     </>
   );

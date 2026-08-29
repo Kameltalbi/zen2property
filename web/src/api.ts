@@ -27,8 +27,12 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
   const res = await fetch(`/api/v1${path}`, { ...init, headers });
   if (res.status === 204) return undefined as T;
 
-  const data = (await res.json().catch(() => ({}))) as { error?: string };
-  if (!res.ok) throw new ApiError(data.error || 'Request failed', res.status);
+  const data = (await res.json().catch(() => ({}))) as { error?: string; details?: Record<string, unknown> };
+  if (!res.ok) {
+    const err = new ApiError(data.error || 'Request failed', res.status);
+    (err as ApiError & { details?: Record<string, unknown> }).details = data.details;
+    throw err;
+  }
   return data as T;
 }
 
@@ -57,11 +61,19 @@ export type User = {
   address: string | null;
   bankDetails: string | null;
   receiptSignature: string | null;
-  plan: 'FREE' | 'INVESTOR' | 'PRO';
+  plan: 'FREE' | 'PREMIUM' | 'PRO' | 'INVESTOR';
   subscriptionStatus?: 'none' | 'trialing' | 'active' | 'past_due' | 'canceled';
   isAdmin?: boolean;
   isActive?: boolean;
+  billingCountryCode?: string;
+  billingRegion?: string | null;
+  pricingMarket?: string;
+  preferredCurrency?: string;
 };
+
+export function homePath(user: Pick<User, 'isAdmin'>): string {
+  return user.isAdmin ? '/superadmin' : '/app';
+}
 
 export type Property = {
   id: string;
@@ -105,13 +117,60 @@ export type Payment = {
   method: string | null;
 };
 
-export type Plan = {
-  id: 'FREE' | 'INVESTOR' | 'PRO';
+export type Lease = {
+  id: string;
+  propertyId: string;
+  tenantId: string;
+  label: string | null;
+  status: 'draft' | 'active' | 'ended' | 'terminated';
+  leaseType: 'furnished' | 'unfurnished' | 'commercial' | 'other';
+  startDate: string;
+  endDate: string | null;
+  durationMonths: number | null;
+  noticePeriodDays: number;
+  monthlyRent: number;
+  monthlyCharges: number;
+  currency: string;
+  deposit: number;
+  paymentDay: number;
+  paymentFrequency: 'monthly' | 'quarterly';
+  rentIncreaseFrequency: 'yearly' | 'every_2_years' | 'every_3_years' | 'other' | 'none';
+  rentIncreaseOtherMonths: number | null;
+  rentIncreaseType: 'percent' | 'fixed' | 'index';
+  rentIncreaseValue: number;
+  rentIncreaseIndex: string | null;
+  nextIncreaseDate: string | null;
+  includesUtilities: boolean;
+  petsAllowed: boolean;
+  notes: string | null;
+};
+
+export type PlanCatalogPlan = {
+  id: 'FREE' | 'PREMIUM' | 'PRO';
+  code: 'free' | 'premium' | 'pro';
   name: string;
   tagline: string;
-  monthlyUsd: number;
-  maxProperties: number | null;
-  receipts: boolean;
-  aiLegal: boolean;
-  customRules: boolean;
+  popular: boolean;
+  maxProperties: number;
+  maxUsers: number;
+  maxTenants: number | null;
+  monthlyMinor: number;
+  yearlyMinor: number;
+  monthlyFormatted: string;
+  yearlyFormatted: string;
+};
+
+export type PlanCatalog = {
+  countryCode: string;
+  market: string;
+  displayCurrency: string;
+  chargeCurrency: string;
+  chargeDiffersFromDisplay: boolean;
+  locale: string;
+  plans: PlanCatalogPlan[];
+  chargeDisclosure?: {
+    displayCurrency: string;
+    chargeCurrency: string;
+    message: string;
+  };
 };

@@ -17,7 +17,7 @@ type AdminUser = {
   email: string;
   fullName: string;
   countryCode: string;
-  plan: 'FREE' | 'INVESTOR' | 'PRO';
+  plan: 'FREE' | 'PREMIUM' | 'PRO' | 'INVESTOR';
   subscriptionStatus: string;
   isActive: boolean;
   isAdmin: boolean;
@@ -64,7 +64,7 @@ export function SuperadminPage() {
     }
   }
 
-  if (loading) return <p className="container">Loading…</p>;
+  if (loading) return <p className="admin-main">Loading…</p>;
   if (!user) return <Navigate to="/login" replace />;
   if (!user.isAdmin) return <Navigate to="/app" replace />;
 
@@ -73,7 +73,7 @@ export function SuperadminPage() {
   return (
     <div className="admin-shell">
       <header className="admin-top">
-        <div className="container admin-top-inner">
+        <div className="admin-top-inner">
           <Link className="admin-brand" to="/app" aria-label="Zen2Property Superadmin">
             <BrandLogo />
             <span>Superadmin</span>
@@ -81,7 +81,7 @@ export function SuperadminPage() {
           <Link to="/app">Back to app</Link>
         </div>
       </header>
-      <main className="container" style={{ paddingTop: 28, paddingBottom: 64 }}>
+      <main className="admin-main">
         {error && <p className="error">{error}</p>}
         {stats && (
           <div className="grid-4" style={{ marginBottom: 24 }}>
@@ -155,7 +155,7 @@ export function SuperadminPage() {
                       disabled={row.id === user.id}
                     >
                       <option value="FREE">FREE</option>
-                      <option value="INVESTOR">INVESTOR</option>
+                      <option value="PREMIUM">PREMIUM</option>
                       <option value="PRO">PRO</option>
                     </select>
                     <button

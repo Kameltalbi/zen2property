@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import { authRouter, meRouter } from './modules/auth/auth.routes';
 import { propertiesRouter } from './modules/properties/properties.routes';
 import { tenantsRouter } from './modules/tenants/tenants.routes';
+import { leasesRouter } from './modules/leases/leases.routes';
 import { paymentsRouter } from './modules/payments/payments.routes';
 import { receiptsRouter } from './modules/receipts/receipts.routes';
 import { legalRouter } from './modules/legal/legal.routes';
@@ -13,11 +14,37 @@ import { dashboardRouter } from './modules/dashboard/dashboard.routes';
 import { adminRouter } from './modules/admin/admin.routes';
 import { env } from './config/env';
 import { errorHandler } from './middleware/errorHandler';
+import { asyncHandler } from './lib/asyncHandler';
+import { handleStripeWebhook } from './modules/billing/stripeWebhook';
+import { HttpError } from './lib/httpError';
 
 export function createApp() {
   const app = express();
   app.use(helmet({ contentSecurityPolicy: false }));
   app.use(cors({ origin: true, credentials: true }));
+
+  // Stripe webhooks require the raw body for signature verification.
+  app.post(
+    '/api/v1/billing/webhook',
+    express.raw({ type: 'application/json' }),
+    asyncHandler(async (req, res) => {
+      try {
+        const signature = req.headers['stripe-signature'];
+        const result = await handleStripeWebhook(
+          req.body as Buffer,
+          typeof signature === 'string' ? signature : undefined,
+        );
+        res.json(result);
+      } catch (err) {
+        const status = (err as { status?: number }).status ?? 400;
+        const message = err instanceof Error ? err.message : 'Webhook error';
+        if (status === 501) throw new HttpError(501, message);
+        if (status >= 500) throw err;
+        res.status(status).json({ error: message });
+      }
+    }),
+  );
+
   app.use(express.json({ limit: '1mb' }));
 
   app.get('/', (_req, res) => {
@@ -33,6 +60,7 @@ export function createApp() {
   app.use('/api/v1/dashboard', dashboardRouter);
   app.use('/api/v1/properties', propertiesRouter);
   app.use('/api/v1/tenants', tenantsRouter);
+  app.use('/api/v1/leases', leasesRouter);
   app.use('/api/v1/payments', paymentsRouter);
   app.use('/api/v1/receipts', receiptsRouter);
   app.use('/api/v1/legal', legalRouter);

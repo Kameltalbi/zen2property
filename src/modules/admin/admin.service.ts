@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { query, queryOne } from '../../db/pool';
 import { HttpError, notFound } from '../../lib/httpError';
-import { PLANS, type PlanId } from '../billing/plans';
+import type { PlanId } from '../billing/plans';
 
 export const listUsersQuery = z.object({
   q: z.string().optional(),
@@ -10,7 +10,7 @@ export const listUsersQuery = z.object({
 });
 
 export const patchUserSchema = z.object({
-  plan: z.enum(['FREE', 'INVESTOR', 'PRO']).optional(),
+  plan: z.enum(['FREE', 'PREMIUM', 'PRO', 'INVESTOR']).optional(),
   isActive: z.boolean().optional(),
   subscriptionStatus: z.enum(['none', 'trialing', 'active', 'past_due', 'canceled']).optional(),
 });
@@ -54,16 +54,16 @@ export async function getAdminStats() {
   }>(
     `SELECT
        (SELECT COUNT(*)::text FROM users) AS users,
-       (SELECT COUNT(*)::text FROM users WHERE is_active AND plan IN ('INVESTOR', 'PRO')) AS paid,
+       (SELECT COUNT(*)::text FROM users WHERE is_active AND plan IN ('PREMIUM', 'INVESTOR', 'PRO')) AS paid,
        (SELECT COUNT(*)::text FROM properties) AS properties,
        (SELECT COUNT(*)::text FROM tenants) AS tenants,
-       (SELECT COUNT(*)::text FROM users WHERE is_active AND plan = 'INVESTOR') AS investor,
+       (SELECT COUNT(*)::text FROM users WHERE is_active AND plan IN ('PREMIUM', 'INVESTOR')) AS investor,
        (SELECT COUNT(*)::text FROM users WHERE is_active AND plan = 'PRO') AS pro`,
   );
 
   const investor = Number(counts?.investor ?? 0);
   const pro = Number(counts?.pro ?? 0);
-  const mrr = investor * PLANS.INVESTOR.monthlyUsd + pro * PLANS.PRO.monthlyUsd;
+  const mrr = investor * 14.99 + pro * 29.99;
 
   return {
     totalUsers: Number(counts?.users ?? 0),
@@ -119,7 +119,7 @@ export async function patchAdminUser(
   );
   if (!current) notFound('User');
 
-  let plan = input.plan ?? current.plan;
+  let plan = input.plan === 'INVESTOR' ? 'PREMIUM' : (input.plan ?? current.plan);
   let subscriptionStatus = input.subscriptionStatus ?? current.subscription_status;
   if (input.plan && !input.subscriptionStatus) {
     subscriptionStatus = input.plan === 'FREE' ? 'none' : 'active';

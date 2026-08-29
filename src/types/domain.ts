@@ -15,8 +15,34 @@ export type ReceiptRules = {
   numbering: { prefix: string; reset: 'yearly' | 'never' };
 };
 
+export type TaxRules = {
+  vat_applicable: boolean;
+  default_tax_rate: number;
+  tax_id_label: string;
+  /** Country-specific B2B withholding (e.g. Tunisia RS 15%). */
+  b2b_withholding?: {
+    enabled: boolean;
+    rate_percent: number;
+    /** Who withholds from the rent payment. */
+    withheld_by: 'tenant' | 'landlord';
+    remitted_to_tax_authority: boolean;
+    attestation_name: string;
+    note: string;
+  };
+};
+
+export type RequiredDocument = {
+  doc_type: string;
+  description: string;
+  is_mandatory: boolean;
+};
+
 export type LegalRules = {
   receipt: ReceiptRules;
+  tax?: TaxRules;
+  requiredDocuments?: RequiredDocument[];
+  mandatoryMentions?: string[];
+  userReviewPromptMessage?: string;
   deposit?: Record<string, unknown>;
   lease?: Record<string, unknown>;
   indexation?: Record<string, unknown>;
@@ -30,6 +56,8 @@ export type LegalProfile = {
   rules: LegalRules;
   receipt_template_key: string;
   created_at: string;
+  user_id?: string | null;
+  status?: 'catalog' | 'pending_review' | 'validated';
 };
 
 export type UserRow = {
@@ -43,11 +71,16 @@ export type UserRow = {
   address: string | null;
   bank_details: string | null;
   receipt_signature: string | null;
-  plan: 'FREE' | 'INVESTOR' | 'PRO';
+  plan: 'FREE' | 'PREMIUM' | 'PRO' | 'INVESTOR';
   stripe_customer_id: string | null;
   is_admin: boolean;
   is_active: boolean;
   subscription_status: 'none' | 'trialing' | 'active' | 'past_due' | 'canceled';
+  billing_country_code?: string | null;
+  billing_region?: string | null;
+  pricing_market?: string | null;
+  preferred_currency?: string | null;
+  country_updated_at?: string | null;
   created_at: string;
   updated_at: string;
 };

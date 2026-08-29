@@ -1,49 +1,59 @@
-export type PlanId = 'FREE' | 'INVESTOR' | 'PRO';
+import {
+  PLAN_LIMITS,
+  planCodeFromId,
+  planIdFromCode,
+  type PlanCode,
+  type PlanId,
+} from './pricingMarkets';
+
+export type { PlanId, PlanCode };
+export { planCodeFromId, planIdFromCode, PLAN_LIMITS };
 
 export type Plan = {
   id: PlanId;
+  code: PlanCode;
   name: string;
   tagline: string;
-  monthlyUsd: number;
-  maxProperties: number | null;
-  receipts: boolean;
-  aiLegal: boolean;
-  customRules: boolean;
+  maxProperties: number;
+  maxUsers: number;
+  maxTenants: number | null;
+  popular: boolean;
 };
 
 export const PLANS: Record<PlanId, Plan> = {
   FREE: {
     id: 'FREE',
-    name: 'Starter',
-    tagline: 'Two units, core tracking, PDF receipts.',
-    monthlyUsd: 0,
-    maxProperties: 2,
-    receipts: true,
-    aiLegal: false,
-    customRules: false,
+    code: 'free',
+    name: 'Zen Free',
+    tagline: 'Manage your first rented property for free.',
+    ...PLAN_LIMITS.free,
+    popular: false,
   },
-  INVESTOR: {
-    id: 'INVESTOR',
-    name: 'Investor',
-    tagline: 'A small portfolio with country-aware compliance.',
-    monthlyUsd: 12,
-    maxProperties: 8,
-    receipts: true,
-    aiLegal: true,
-    customRules: false,
+  PREMIUM: {
+    id: 'PREMIUM',
+    code: 'premium',
+    name: 'Zen Premium',
+    tagline: 'For landlords managing up to 10 properties.',
+    ...PLAN_LIMITS.premium,
+    popular: true,
   },
   PRO: {
     id: 'PRO',
-    name: 'Pro',
-    tagline: 'Unlimited units, AI legal drafts, custom rules.',
-    monthlyUsd: 29,
-    maxProperties: null,
-    receipts: true,
-    aiLegal: true,
-    customRules: true,
+    code: 'pro',
+    name: 'Zen Pro',
+    tagline: 'For investors and larger rental portfolios.',
+    ...PLAN_LIMITS.pro,
+    popular: false,
   },
 };
 
 export function planOf(id: string): Plan {
-  return PLANS[(id as PlanId) in PLANS ? (id as PlanId) : 'FREE'];
+  const code = planCodeFromId(id);
+  return PLANS[planIdFromCode(code)];
+}
+
+export function upgradeHint(plan: Plan): string {
+  if (plan.id === 'FREE') return 'Upgrade to Zen Premium to manage up to 10 properties.';
+  if (plan.id === 'PREMIUM') return 'Upgrade to Zen Pro to manage up to 50 properties.';
+  return 'Contact us to manage more than 50 properties.';
 }

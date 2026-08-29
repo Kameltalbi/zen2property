@@ -13,27 +13,28 @@ export function LandingPage() {
 
   return (
     <>
-      <section className="container hero">
-        <div>
-          <p className="kicker">{t.hero.kicker}</p>
-          <h1>{t.hero.title}</h1>
-          <p className="lede">{t.hero.lede}</p>
-          <p className="hero-actions">
-            <Link className="btn clay" to="/signup">
-              {t.hero.cta}
-            </Link>
-            <Link className="btn secondary" to="/pricing">
-              {t.hero.seePlans}
-            </Link>
-          </p>
+      <section className="home-hero" aria-label={t.hero.imageAlt}>
+        <div className="container">
+          <div className="home-hero-copy">
+            <p className="kicker">{t.hero.kicker}</p>
+            <h1>{t.hero.title}</h1>
+            <p className="lede">{t.hero.lede}</p>
+            <p className="hero-actions">
+              <Link className="btn clay" to="/signup">
+                {t.hero.cta}
+              </Link>
+              <a className="btn secondary hero-download" href="#android">
+                <svg className="hero-download-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden>
+                  <path
+                    fill="currentColor"
+                    d="M17.6 9.48 19.4 6.3a.5.5 0 0 0-.86-.5l-1.75 3.03A11.4 11.4 0 0 0 12 8c-1.7 0-3.3.35-4.79.83L5.46 5.8a.5.5 0 1 0-.86.5l1.8 3.18C3.5 11.05 2 13.6 2 16.5h20c0-2.9-1.5-5.45-4.4-7.02ZM7.25 14.25a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm9.5 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"
+                  />
+                </svg>
+                {t.hero.download}
+              </a>
+            </p>
+          </div>
         </div>
-        <aside className="hero-panel">
-          <p className="kicker" style={{ color: '#9fc5b3' }}>
-            {t.hero.panelKicker}
-          </p>
-          <h2 style={{ color: 'white', fontSize: '2rem' }}>{t.hero.panelTitle}</h2>
-          <p>{t.hero.panelBody}</p>
-        </aside>
       </section>
 
       <section className="container section" id="features">

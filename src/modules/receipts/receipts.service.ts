@@ -2,7 +2,7 @@ import path from 'node:path';
 import { env } from '../../config/env';
 import { query, queryOne } from '../../db/pool';
 import { HttpError, notFound } from '../../lib/httpError';
-import { getActiveLegalProfile, missingReceiptFields } from '../legal/legal.service';
+import { getActiveLegalProfile, getUserLegalProfile, missingReceiptFields } from '../legal/legal.service';
 import { getPaymentRow } from '../payments/payments.service';
 import type { PropertyRow, ReceiptRow, TenantRow, UserRow } from '../../types/domain';
 import { renderReceiptPdf } from './receipt.renderer';
@@ -52,7 +52,9 @@ export async function issueReceipt(userId: string, paymentId: string) {
   ]);
   if (!user || !property) throw new HttpError(404, 'Landlord or property data is missing');
 
-  const profile = await getActiveLegalProfile(property.country_code.trim());
+  const userProfile = await getUserLegalProfile(userId, property.country_code.trim());
+  const catalog = await getActiveLegalProfile(property.country_code.trim());
+  const active = userProfile?.status === 'validated' ? userProfile : catalog;
   const tenantName = tenant ? `${tenant.first_name} ${tenant.last_name}` : '';
   const rentAmount = payment.rent_amount === null ? Number(payment.amount) : Number(payment.rent_amount);
   const chargesAmount = payment.charges_amount === null ? 0 : Number(payment.charges_amount);
@@ -70,7 +72,7 @@ export async function issueReceipt(userId: string, paymentId: string) {
     paymentDate: payment.paid_date,
   };
 
-  const missing = missingReceiptFields(profile.rules, fieldPayload);
+  const missing = missingReceiptFields(active.rules, fieldPayload);
   if (missing.length > 0) {
     throw new HttpError(
       422,
@@ -78,12 +80,12 @@ export async function issueReceipt(userId: string, paymentId: string) {
     );
   }
 
-  const number = await nextReceiptNumber(userId, profile.rules.receipt.numbering.prefix);
+  const number = await nextReceiptNumber(userId, active.rules.receipt.numbering.prefix);
   const receiptId = crypto.randomUUID();
   const pdfPath = path.resolve(env.RECEIPTS_DIR, userId, `${receiptId}.pdf`);
 
   await renderReceiptPdf(pdfPath, {
-    title: profile.rules.receipt.title,
+    title: active.rules.receipt.title,
     number,
     landlordName: user.full_name,
     landlordAddress: user.address ?? '',
@@ -98,17 +100,17 @@ export async function issueReceipt(userId: string, paymentId: string) {
     totalAmount: Number(payment.amount),
     currency: payment.currency,
     method: payment.method,
-    legalNotice: profile.rules.receipt.legalNotice,
-    splitRentAndCharges: profile.rules.receipt.splitRentAndCharges,
+    legalNotice: active.rules.receipt.legalNotice,
+    splitRentAndCharges: active.rules.receipt.splitRentAndCharges,
     signature: user.receipt_signature,
     countryCode: property.country_code.trim(),
-  }, profile.rules);
+  }, active.rules);
 
   const row = await queryOne<ReceiptRow>(
     `INSERT INTO receipts (id, user_id, payment_id, number, legal_profile_id, legal_snapshot, pdf_path)
      VALUES ($1, $2, $3, $4, $5, $6::jsonb, $7)
      RETURNING *`,
-    [receiptId, userId, paymentId, number, profile.id, JSON.stringify(profile.rules), pdfPath],
+    [receiptId, userId, paymentId, number, active.id, JSON.stringify(active.rules), pdfPath],
   );
   if (!row) throw new HttpError(500, 'Unable to save receipt');
   return mapReceipt(row);

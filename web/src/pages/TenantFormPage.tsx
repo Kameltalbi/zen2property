@@ -1,10 +1,12 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { api, type Property, type Tenant } from '../api';
+import { useI18n } from '../i18n';
 
 export function TenantFormPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { t } = useI18n();
   const editing = Boolean(id);
   const [properties, setProperties] = useState<Property[]>([]);
   const [error, setError] = useState('');
@@ -73,19 +75,38 @@ export function TenantFormPage() {
         navigate('/app/tenants');
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Save failed');
+      setError(err instanceof Error ? err.message : t.tenants.saveFailed);
     }
+  }
+
+  if (!editing && properties.length === 0) {
+    return (
+      <>
+        <div className="page-head">
+          <h1>{t.tenants.add}</h1>
+        </div>
+        <p className="muted">{t.tenants.needProperty}</p>
+        <Link className="btn" to="/app/properties/new">
+          {t.app.addProperty}
+        </Link>
+      </>
+    );
   }
 
   return (
     <>
       <div className="page-head">
-        <h1>{editing ? 'Edit tenant' : 'Add tenant'}</h1>
+        <h1>{editing ? t.tenants.edit : t.tenants.add}</h1>
       </div>
       <form className="form card" onSubmit={(e) => void onSubmit(e)}>
         <label>
-          Property
-          <select value={form.propertyId} onChange={(e) => set('propertyId', e.target.value)} disabled={editing} required>
+          {t.tenants.property}
+          <select
+            value={form.propertyId}
+            onChange={(e) => set('propertyId', e.target.value)}
+            disabled={editing}
+            required
+          >
             {properties.map((p) => (
               <option key={p.id} value={p.id}>
                 {p.name}
@@ -95,37 +116,43 @@ export function TenantFormPage() {
         </label>
         <div className="grid-2">
           <label>
-            First name
+            {t.tenants.firstName}
             <input value={form.firstName} onChange={(e) => set('firstName', e.target.value)} required />
           </label>
           <label>
-            Last name
+            {t.tenants.lastName}
             <input value={form.lastName} onChange={(e) => set('lastName', e.target.value)} required />
           </label>
         </div>
         <div className="grid-2">
           <label>
-            Email
+            {t.tenants.email}
             <input type="email" value={form.email} onChange={(e) => set('email', e.target.value)} />
           </label>
           <label>
-            Phone
+            {t.tenants.phone}
             <input value={form.phone} onChange={(e) => set('phone', e.target.value)} />
           </label>
         </div>
         <div className="grid-2">
           <label>
-            Move-in date
+            {t.tenants.moveIn}
             <input type="date" value={form.moveInDate} onChange={(e) => set('moveInDate', e.target.value)} required />
           </label>
           <label>
-            Deposit
-            <input type="number" min="0" step="0.01" value={form.deposit} onChange={(e) => set('deposit', e.target.value)} />
+            {t.tenants.deposit}
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              value={form.deposit}
+              onChange={(e) => set('deposit', e.target.value)}
+            />
           </label>
         </div>
         {error && <p className="error">{error}</p>}
         <button className="btn" type="submit">
-          Save tenant
+          {t.tenants.save}
         </button>
       </form>
     </>

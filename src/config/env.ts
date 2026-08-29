@@ -15,9 +15,33 @@ const schema = z.object({
   RECEIPTS_DIR: z.string().default('./storage/receipts'),
   APP_ORIGIN: z.string().default('http://localhost:5173'),
   STRIPE_SECRET_KEY: z.string().optional().default(''),
+  STRIPE_WEBHOOK_SECRET: z.string().optional().default(''),
+  STRIPE_TAX_ENABLED: z
+    .string()
+    .optional()
+    .default('false')
+    .transform((v) => v === 'true' || v === '1'),
+  // Legacy single-price env (ignored when multi-currency keys are set)
   STRIPE_PRICE_INVESTOR: z.string().optional().default(''),
   STRIPE_PRICE_PRO: z.string().optional().default(''),
+  STRIPE_PRICE_PREMIUM_MONTHLY_CAD: z.string().optional().default(''),
+  STRIPE_PRICE_PREMIUM_YEARLY_CAD: z.string().optional().default(''),
+  STRIPE_PRICE_PRO_MONTHLY_CAD: z.string().optional().default(''),
+  STRIPE_PRICE_PRO_YEARLY_CAD: z.string().optional().default(''),
+  STRIPE_PRICE_PREMIUM_MONTHLY_USD: z.string().optional().default(''),
+  STRIPE_PRICE_PREMIUM_YEARLY_USD: z.string().optional().default(''),
+  STRIPE_PRICE_PRO_MONTHLY_USD: z.string().optional().default(''),
+  STRIPE_PRICE_PRO_YEARLY_USD: z.string().optional().default(''),
+  STRIPE_PRICE_PREMIUM_MONTHLY_EUR: z.string().optional().default(''),
+  STRIPE_PRICE_PREMIUM_YEARLY_EUR: z.string().optional().default(''),
+  STRIPE_PRICE_PRO_MONTHLY_EUR: z.string().optional().default(''),
+  STRIPE_PRICE_PRO_YEARLY_EUR: z.string().optional().default(''),
   BOOTSTRAP_ADMIN_EMAIL: z.union([z.literal(''), z.string().email()]).default(''),
 });
 
 export const env = schema.parse(process.env);
+
+export function stripePriceIdFromEnv(envKey: string): string {
+  const value = (process.env[envKey] ?? '').trim();
+  return value;
+}

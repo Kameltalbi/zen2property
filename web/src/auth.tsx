@@ -4,8 +4,15 @@ import { api, getToken, setToken, type User } from './api';
 type AuthState = {
   user: User | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (payload: { email: string; password: string; fullName: string; countryCode: string }) => Promise<void>;
+  login: (email: string, password: string) => Promise<User>;
+  register: (payload: {
+    email: string;
+    password: string;
+    fullName: string;
+    countryCode: string;
+    billingCountryCode?: string;
+    billingRegion?: string | null;
+  }) => Promise<User>;
   logout: () => void;
   refresh: () => Promise<void>;
 };
@@ -48,6 +55,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         });
         setToken(data.token);
         setUser(data.user);
+        return data.user;
       },
       async register(payload) {
         const data = await api<{ user: User; token: string }>('/auth/register', {
@@ -56,6 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         });
         setToken(data.token);
         setUser(data.user);
+        return data.user;
       },
       logout() {
         setToken(null);

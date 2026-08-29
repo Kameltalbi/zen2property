@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { PasswordField } from '../PasswordField';
 import { api } from '../api';
 import { useI18n } from '../i18n';
 
@@ -7,6 +8,7 @@ export function ResetPasswordPage() {
   const { t } = useI18n();
   const [params] = useSearchParams();
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [notice, setNotice] = useState('');
   const [error, setError] = useState('');
   const token = params.get('token') ?? '';
@@ -23,13 +25,19 @@ export function ResetPasswordPage() {
   }
 
   return (
-    <section className="narrow section">
+    <section className="auth-panel section">
       <h1>{t.auth.newPasswordTitle}</h1>
-      <form className="form" onSubmit={(e) => void onSubmit(e)} style={{ marginTop: 20 }}>
-        <label>
-          {t.auth.newPassword}
-          <input type="password" minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} required />
-        </label>
+      <form className="form" onSubmit={(e) => void onSubmit(e)}>
+        <PasswordField
+          label={t.auth.newPassword}
+          value={password}
+          onChange={setPassword}
+          show={showPassword}
+          onToggleShow={() => setShowPassword((v) => !v)}
+          showLabel={t.auth.showPassword}
+          hideLabel={t.auth.hidePassword}
+          autoComplete="new-password"
+        />
         {error && <p className="error">{error}</p>}
         {notice && (
           <p className="ok">
