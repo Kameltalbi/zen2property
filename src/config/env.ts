@@ -14,6 +14,7 @@ const schema = z.object({
   OPENAI_BASE_URL: z.string().default('https://api.openai.com/v1'),
   RECEIPTS_DIR: z.string().default('./storage/receipts'),
   APP_ORIGIN: z.string().default('http://localhost:5173'),
+  HOST: z.string().default('0.0.0.0'),
   STRIPE_SECRET_KEY: z.string().optional().default(''),
   STRIPE_WEBHOOK_SECRET: z.string().optional().default(''),
   STRIPE_TAX_ENABLED: z

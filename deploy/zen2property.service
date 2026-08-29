@@ -1,0 +1,19 @@
+[Unit]
+Description=Zen2Property SaaS
+After=network.target docker.service
+Wants=docker.service
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/zen2property
+EnvironmentFile=/var/www/zen2property/.env
+ExecStart=/usr/bin/node /var/www/zen2property/dist/index.js
+Restart=on-failure
+RestartSec=5
+# Isolation: ne touche pas aux autres apps
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

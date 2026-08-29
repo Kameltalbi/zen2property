@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import path from 'node:path';
 import { authRouter, meRouter } from './modules/auth/auth.routes';
 import { propertiesRouter } from './modules/properties/properties.routes';
 import { tenantsRouter } from './modules/tenants/tenants.routes';
@@ -47,10 +48,6 @@ export function createApp() {
 
   app.use(express.json({ limit: '1mb' }));
 
-  app.get('/', (_req, res) => {
-    res.redirect(env.APP_ORIGIN);
-  });
-
   app.get('/health', (_req, res) => {
     res.json({ ok: true, service: 'zen2property-api' });
   });
@@ -67,6 +64,21 @@ export function createApp() {
   app.use('/api/v1/legal/ai', aiRouter);
   app.use('/api/v1/billing', billingRouter);
   app.use('/api/v1/admin', adminRouter);
+
+  if (env.NODE_ENV === 'production') {
+    const webDist = path.resolve(__dirname, '../web/dist');
+    app.use(express.static(webDist, { index: false, maxAge: '1h' }));
+    app.get('*', (req, res, next) => {
+      if (req.path.startsWith('/api/') || req.path === '/health') return next();
+      res.sendFile(path.join(webDist, 'index.html'), (err) => {
+        if (err) next(err);
+      });
+    });
+  } else {
+    app.get('/', (_req, res) => {
+      res.redirect(env.APP_ORIGIN);
+    });
+  }
 
   app.use(errorHandler);
   return app;
