@@ -11,7 +11,7 @@ Tout vit dans **`/var/www/zen2property`**. Aucun autre dossier d’app n’est m
 | Conteneur | `zen2property-postgres` |
 | Volume | `zen2property_pg_data` |
 | Port Postgres hôte | `127.0.0.1:55433` |
-| Port app | `127.0.0.1:3100` |
+| Port app | `127.0.0.1:3120` |
 | Systemd | `zen2property.service` |
 | Nginx | `/etc/nginx/sites-available/zen2property.com` |
 

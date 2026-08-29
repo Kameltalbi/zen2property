@@ -77,4 +77,4 @@ systemctl reload nginx
 echo ""
 echo "OK. Ensuite DNS A/AAAA vers ce VPS, puis:"
 echo "  sudo certbot --nginx -d zen2property.com -d www.zen2property.com"
-echo "Health: curl -s http://127.0.0.1:3100/health"
+echo "Health: curl -s http://127.0.0.1:3120/health"
