@@ -1039,7 +1039,7 @@ th { color: var(--muted); font-weight: 600; font-size: 0.8rem; text-transform: u
 
 @media (max-width: 960px) {
   .home-hero {
-    background-position: 70% center;
+    background-position: right 42%;
   }
   .home-hero > .container {
     padding-top: 104px;
@@ -2481,6 +2481,9 @@ th { color: var(--muted); font-weight: 600; font-size: 0.8rem; text-transform: u
 
 @media (max-width: 390px) {
   :root { --page-gutter: 0.7cm; }
+  .home-hero {
+    background-position: right 40%;
+  }
   .home-hero-copy { max-width: 100%; }
   .brand-logo { height: 30px; max-width: 150px; }
 }
