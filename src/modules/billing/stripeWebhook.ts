@@ -93,8 +93,8 @@ async function activateFromSubscription(sub: Stripe.Subscription, fallbackUserId
     return;
   }
 
-  const planCode = (metaString(sub.metadata, 'planCode') ?? 'premium') as PaidPlanCode;
-  if (planCode !== 'premium' && planCode !== 'pro') {
+  const planCode = (metaString(sub.metadata, 'planCode') ?? 'smart') as PaidPlanCode;
+  if (planCode !== 'smart' && planCode !== 'premium') {
     console.warn('Invalid planCode on subscription', sub.id, planCode);
     return;
   }

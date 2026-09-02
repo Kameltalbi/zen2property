@@ -3,6 +3,7 @@ import { Link, Navigate } from 'react-router-dom';
 import { api } from '../api';
 import { useAuth } from '../auth';
 import { BrandLogo } from '../BrandLogo';
+import { useI18n } from '../i18n';
 
 type Stats = {
   totalUsers: number;
@@ -17,14 +18,15 @@ type AdminUser = {
   email: string;
   fullName: string;
   countryCode: string;
-  plan: 'FREE' | 'PREMIUM' | 'PRO' | 'INVESTOR';
+  plan: 'FREE' | 'SMART' | 'PREMIUM' | 'AGENCY' | 'PRO' | 'INVESTOR';
   subscriptionStatus: string;
   isActive: boolean;
   isAdmin: boolean;
 };
 
 export function SuperadminPage() {
-  const { user, loading } = useAuth();
+  const { user, loading, logout } = useAuth();
+  const { t } = useI18n();
   const [stats, setStats] = useState<Stats | null>(null);
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [total, setTotal] = useState(0);
@@ -78,7 +80,12 @@ export function SuperadminPage() {
             <BrandLogo onDark />
             <span>Superadmin</span>
           </Link>
-          <Link to="/app">Back to app</Link>
+          <div className="admin-top-actions">
+            <Link to="/app">{t.nav.openApp}</Link>
+            <button className="btn secondary admin-logout" type="button" onClick={logout}>
+              {t.app.logout}
+            </button>
+          </div>
         </div>
       </header>
       <main className="admin-main">
@@ -155,8 +162,9 @@ export function SuperadminPage() {
                       disabled={row.id === user.id}
                     >
                       <option value="FREE">FREE</option>
+                      <option value="SMART">SMART</option>
                       <option value="PREMIUM">PREMIUM</option>
-                      <option value="PRO">PRO</option>
+                      <option value="AGENCY">AGENCY</option>
                     </select>
                     <button
                       className="btn secondary"

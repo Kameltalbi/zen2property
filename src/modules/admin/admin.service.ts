@@ -10,7 +10,7 @@ export const listUsersQuery = z.object({
 });
 
 export const patchUserSchema = z.object({
-  plan: z.enum(['FREE', 'PREMIUM', 'PRO', 'INVESTOR']).optional(),
+  plan: z.enum(['FREE', 'SMART', 'PREMIUM', 'AGENCY', 'PRO', 'INVESTOR']).optional(),
   isActive: z.boolean().optional(),
   subscriptionStatus: z.enum(['none', 'trialing', 'active', 'past_due', 'canceled']).optional(),
 });
@@ -54,16 +54,16 @@ export async function getAdminStats() {
   }>(
     `SELECT
        (SELECT COUNT(*)::text FROM users) AS users,
-       (SELECT COUNT(*)::text FROM users WHERE is_active AND plan IN ('PREMIUM', 'INVESTOR', 'PRO')) AS paid,
+       (SELECT COUNT(*)::text FROM users WHERE is_active AND plan IN ('SMART', 'PREMIUM', 'AGENCY')) AS paid,
        (SELECT COUNT(*)::text FROM properties) AS properties,
        (SELECT COUNT(*)::text FROM tenants) AS tenants,
-       (SELECT COUNT(*)::text FROM users WHERE is_active AND plan IN ('PREMIUM', 'INVESTOR')) AS investor,
-       (SELECT COUNT(*)::text FROM users WHERE is_active AND plan = 'PRO') AS pro`,
+       (SELECT COUNT(*)::text FROM users WHERE is_active AND plan = 'SMART') AS investor,
+       (SELECT COUNT(*)::text FROM users WHERE is_active AND plan = 'PREMIUM') AS pro`,
   );
 
-  const investor = Number(counts?.investor ?? 0);
-  const pro = Number(counts?.pro ?? 0);
-  const mrr = investor * 14.99 + pro * 29.99;
+  const smart = Number(counts?.investor ?? 0);
+  const premium = Number(counts?.pro ?? 0);
+  const mrr = smart * 9.99 + premium * 19.99;
 
   return {
     totalUsers: Number(counts?.users ?? 0),
@@ -119,7 +119,8 @@ export async function patchAdminUser(
   );
   if (!current) notFound('User');
 
-  let plan = input.plan === 'INVESTOR' ? 'PREMIUM' : (input.plan ?? current.plan);
+  let plan =
+    input.plan === 'INVESTOR' ? 'PREMIUM' : input.plan === 'PRO' ? 'AGENCY' : (input.plan ?? current.plan);
   let subscriptionStatus = input.subscriptionStatus ?? current.subscription_status;
   if (input.plan && !input.subscriptionStatus) {
     subscriptionStatus = input.plan === 'FREE' ? 'none' : 'active';

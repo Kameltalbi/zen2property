@@ -64,19 +64,19 @@ export function PublicLayout() {
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
   const isHome = pathname === '/';
+  const isAuthPage = pathname === '/login' || pathname === '/signup';
 
   function close() {
     setOpen(false);
   }
 
   return (
-    <div className={`public-shell${isHome ? ' is-home' : ''}`}>
+    <div className={`public-shell${isHome ? ' is-home' : ''}${isAuthPage ? ' is-auth' : ''}`}>
       <header className="container topnav">
         <Link className="brand" to="/" onClick={close} aria-label="Rentelyo">
           <BrandLogo onDark={isHome} />
         </Link>
         <div className="nav-toolbar">
-          <LangToggle />
           <button
             type="button"
             className="nav-toggle"
@@ -84,19 +84,34 @@ export function PublicLayout() {
             aria-controls="public-nav"
             onClick={() => setOpen((v) => !v)}
           >
-            {open ? t.nav.close : t.nav.menu}
+            <span className="nav-toggle-icon" aria-hidden>
+              {open ? (
+                <svg viewBox="0 0 24 24" width="20" height="20">
+                  <path fill="currentColor" d="M6.4 5 5 6.4 10.6 12 5 17.6 6.4 19 12 13.4 17.6 19 19 17.6 13.4 12 19 6.4 17.6 5 12 10.6z" />
+                </svg>
+              ) : (
+                <svg viewBox="0 0 24 24" width="20" height="20">
+                  <path fill="currentColor" d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z" />
+                </svg>
+              )}
+            </span>
+            <span className="nav-toggle-label">{open ? t.nav.close : t.nav.menu}</span>
           </button>
+          <LangToggle />
         </div>
         <nav id="public-nav" className={`nav-panel ${open ? 'is-open' : ''}`}>
           <div className="nav-links">
-            <Link to="/#features" onClick={close}>
+            <Link to="/features" onClick={close}>
               {t.nav.features}
+            </Link>
+            <Link to="/#how" onClick={close}>
+              {t.nav.how}
             </Link>
             <Link to="/pricing" onClick={close}>
               {t.nav.pricing}
             </Link>
-            <Link to="/#faq" onClick={close}>
-              {t.nav.faq}
+            <Link to="/help" onClick={close}>
+              {t.nav.help}
             </Link>
           </div>
           <div className="nav-links nav-actions">
@@ -120,38 +135,20 @@ export function PublicLayout() {
       </header>
       <Outlet />
       <footer className="site-footer">
-        <div className="container footer-grid footer-grid-4">
-          <div>
-            <Link className="brand" to="/" aria-label="Rentelyo">
-              <BrandLogo />
-            </Link>
-            <p className="muted">{t.footer.blurb}</p>
-            <div className="footer-lang">
-              <LangToggle />
-            </div>
-          </div>
-          <div>
-            <h3>{t.footer.product}</h3>
+        <div className="container footer-simple">
+          <Link className="brand" to="/" aria-label="Rentelyo">
+            <BrandLogo />
+          </Link>
+          <nav className="footer-simple-links" aria-label="Rentelyo">
             <Link to="/features">{t.footer.features}</Link>
-            <Link to="/security">{t.footer.security}</Link>
-            <Link to="/login">{t.footer.login}</Link>
-            <Link to="/signup">{t.footer.signup}</Link>
-          </div>
-          <div>
-            <h3>{t.footer.resources}</h3>
-            <Link to="/help">{t.footer.help}</Link>
-            <Link to="/help#faq">{t.footer.faq}</Link>
-            <Link to="/help#guides">{t.footer.guides}</Link>
-          </div>
-          <div>
-            <h3>{t.footer.company}</h3>
-            <Link to="/about">{t.footer.about}</Link>
+            <Link to="/#how">{t.nav.how}</Link>
+            <Link to="/pricing">{t.nav.pricing}</Link>
+            <Link to="/help">{t.nav.help}</Link>
             <Link to="/contact">{t.footer.contact}</Link>
-            <h3 style={{ marginTop: 18 }}>{t.footer.legal}</h3>
             <Link to="/privacy">{t.footer.privacy}</Link>
             <Link to="/terms">{t.footer.terms}</Link>
-            <Link to="/cookies">{t.footer.cookies}</Link>
-          </div>
+          </nav>
+          <LangToggle />
         </div>
         <p className="container footer-copy muted">© {new Date().getFullYear()} Rentelyo</p>
       </footer>

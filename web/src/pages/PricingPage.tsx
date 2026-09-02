@@ -4,6 +4,7 @@ import { api, type PlanCatalog, type PlanCatalogPlan } from '../api';
 import { useAuth } from '../auth';
 import { useI18n } from '../i18n';
 import { detectSuggestedCountry, readStoredBillingCountry, storeBillingCountry } from '../lib/billingCountry';
+import { checkoutPath } from '../lib/paths';
 
 type BillingCycle = 'monthly' | 'yearly';
 
@@ -35,18 +36,15 @@ export function PricingPage() {
   useEffect(() => {
     const checkout = searchParams.get('checkout');
     if (!checkout) return;
-    if (checkout === 'success') {
-      setNotice(
-        locale === 'fr'
-          ? 'Paiement reçu. Votre abonnement sera activé dès confirmation Stripe (webhook).'
-          : 'Payment received. Your plan activates once Stripe confirms (webhook).',
-      );
-      void refresh();
-    } else if (checkout === 'cancel') {
-      setNotice(locale === 'fr' ? 'Checkout annulé.' : 'Checkout canceled.');
-    }
     setSearchParams({}, { replace: true });
-  }, [searchParams, setSearchParams, locale, refresh]);
+    if (checkout === 'success') {
+      window.location.replace('/checkout/success');
+      return;
+    }
+    if (checkout === 'cancel') {
+      setNotice(t.checkout.canceled);
+    }
+  }, [searchParams, setSearchParams, t.checkout.canceled]);
 
   useEffect(() => {
     const profileCountry = user?.billingCountryCode ?? user?.countryCode;
@@ -101,50 +99,14 @@ export function PricingPage() {
     }
   }
 
-  async function subscribe(plan: PlanCatalogPlan) {
+  async function activateFree() {
     setError('');
     setNotice('');
     if (!user) return;
     try {
-      if (plan.code === 'free') {
-        await api('/billing/mock-subscribe', { method: 'POST', body: JSON.stringify({ plan: 'FREE' }) });
-        await refresh();
-        setNotice(locale === 'fr' ? 'Offre Rentelyo Free activée.' : 'Rentelyo Free activated.');
-        return;
-      }
-      const checkout = await api<{
-        mock?: boolean;
-        checkoutUrl?: string | null;
-        chargeDiffersFromDisplay?: boolean;
-        chargeCurrency?: string;
-        displayCurrency?: string;
-      }>('/billing/checkout', {
-        method: 'POST',
-        body: JSON.stringify({ plan: plan.code, billingPeriod: cycle }),
-      });
-      if (checkout.checkoutUrl) {
-        window.location.assign(checkout.checkoutUrl);
-        return;
-      }
-      if (checkout.chargeDiffersFromDisplay) {
-        setNotice(
-          locale === 'fr'
-            ? `Affiché en ${checkout.displayCurrency}. Le paiement Stripe sera en ${checkout.chargeCurrency}.`
-            : `Shown in ${checkout.displayCurrency}. Stripe will charge ${checkout.chargeCurrency}.`,
-        );
-      }
-      if (checkout.mock) {
-        await api('/billing/mock-subscribe', {
-          method: 'POST',
-          body: JSON.stringify({ plan: plan.id }),
-        });
-        await refresh();
-        setNotice(
-          locale === 'fr'
-            ? `Mode développement : ${plan.name} activé (sans paiement réel).`
-            : `Development mode: ${plan.name} activated (no real charge).`,
-        );
-      }
+      await api('/billing/mock-subscribe', { method: 'POST', body: JSON.stringify({ plan: 'FREE' }) });
+      await refresh();
+      setNotice(locale === 'fr' ? 'Offre Rentelyo Free activée.' : 'Rentelyo Free activated.');
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Billing failed');
     }
@@ -152,20 +114,29 @@ export function PricingPage() {
 
   function ctaFor(plan: PlanCatalogPlan): string {
     if (plan.code === 'free') return t.pricing.startFree;
+    if (plan.code === 'smart') return t.pricing.chooseSmart;
     if (plan.code === 'premium') return t.pricing.choosePremium;
-    return t.pricing.choosePro;
+    return t.pricing.contactUs;
   }
 
   function featuresFor(code: PlanCatalogPlan['code']): readonly string[] {
     if (code === 'free') return t.pricing.featuresFree;
+    if (code === 'smart') return t.pricing.featuresSmart;
     if (code === 'premium') return t.pricing.featuresPremium;
     return t.pricing.featuresPro;
   }
 
   function taglineFor(code: PlanCatalogPlan['code']): string {
     if (code === 'free') return t.pricing.taglineFree;
+    if (code === 'smart') return t.pricing.taglineSmart;
     if (code === 'premium') return t.pricing.taglineInvestor;
     return t.pricing.taglinePro;
+  }
+
+  function limitLine(count: number | null, unit: string): string {
+    if (count == null) return t.pricing.customLimits;
+    if (count === 1) return `1 ${unit}`;
+    return `${t.pricing.upTo} ${count} ${unit}`;
   }
 
   const countryLabel =
@@ -231,10 +202,12 @@ export function PricingPage() {
       {error && <p className="error">{error}</p>}
       {notice && <p className="ok">{notice}</p>}
 
-      <div className="grid-3 pricing-grid">
+      <div className="grid-4 pricing-grid">
         {(catalog?.plans ?? []).map((plan) => {
-          const price =
-            cycle === 'yearly'
+          const custom = plan.custom || plan.code === 'agency';
+          const price = custom
+            ? { main: t.pricing.customPrice, hint: '' }
+            : cycle === 'yearly'
               ? { main: plan.yearlyFormatted, hint: t.pricing.perYear }
               : { main: plan.monthlyFormatted, hint: t.pricing.perMonth };
           return (
@@ -243,31 +216,40 @@ export function PricingPage() {
               <h3>{plan.name}</h3>
               <p className="price">
                 {price.main}
-                <span> {price.hint}</span>
+                {price.hint ? <span> {price.hint}</span> : null}
               </p>
               <p className="muted">{taglineFor(plan.code)}</p>
-              <p className="pricing-limit">
-                {plan.maxProperties === 1
-                  ? `1 ${t.pricing.units}`
-                  : `${t.pricing.upTo} ${plan.maxProperties} ${t.pricing.units}`}
-              </p>
+              <p className="pricing-limit">{limitLine(plan.maxProperties, t.pricing.units)}</p>
+              <p className="pricing-limit">{limitLine(plan.maxUsers, t.pricing.users)}</p>
               <ul className="muted pricing-features">
                 {featuresFor(plan.code).map((line) => (
                   <li key={line}>{line}</li>
                 ))}
               </ul>
-              {user ? (
-                <button
-                  className={`btn${plan.popular ? ' clay' : ''}`}
-                  onClick={() => void subscribe(plan)}
-                  disabled={user.plan === plan.id || (user.plan === 'INVESTOR' && plan.id === 'PREMIUM')}
-                >
-                  {user.plan === plan.id || (user.plan === 'INVESTOR' && plan.id === 'PREMIUM')
-                    ? t.pricing.current
-                    : ctaFor(plan)}
+              {plan.code === 'free' ? (
+                user ? (
+                  <button
+                    className="btn"
+                    onClick={() => void activateFree()}
+                    disabled={user.plan === plan.id}
+                  >
+                    {user.plan === plan.id ? t.pricing.current : ctaFor(plan)}
+                  </button>
+                ) : (
+                  <Link className="btn" to="/signup">
+                    {ctaFor(plan)}
+                  </Link>
+                )
+              ) : plan.code === 'agency' ? (
+                <Link className="btn secondary" to="/contact">
+                  {t.pricing.contactUs}
+                </Link>
+              ) : user && user.plan === plan.id ? (
+                <button className={`btn${plan.popular ? ' clay' : ''}`} disabled>
+                  {t.pricing.current}
                 </button>
               ) : (
-                <Link className={`btn${plan.popular ? ' clay' : ''}`} to="/signup">
+                <Link className={`btn${plan.popular ? ' clay' : ''}`} to={checkoutPath(plan.code, cycle)}>
                   {ctaFor(plan)}
                 </Link>
               )}

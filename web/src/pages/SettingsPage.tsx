@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
+import { Link } from 'react-router-dom';
 import { api } from '../api';
 import { useAuth } from '../auth';
 import { useI18n } from '../i18n';
@@ -344,7 +345,10 @@ export function SettingsPage() {
             />
           </label>
         </div>
-        <p className="muted">Plan: {user?.plan}. Change it on the pricing page.</p>
+        <p className="muted">
+          {locale === 'fr' ? 'Plan actuel' : 'Current plan'}: {user?.plan}.{' '}
+          <Link to="/pricing">{locale === 'fr' ? 'Changer d’offre' : 'Change plan'}</Link>
+        </p>
         <button className="btn" type="submit">
           Save
         </button>
@@ -613,6 +617,9 @@ export function SettingsPage() {
           <h3>{locale === 'fr' ? 'Abonnement' : 'Billing'}</h3>
           <p className="muted">
             {locale === 'fr' ? 'Plan actuel' : 'Current plan'}: {user?.plan}
+          </p>
+          <p>
+            <Link to="/pricing">{locale === 'fr' ? 'Gérer l’abonnement (Stripe)' : 'Manage billing (Stripe)'}</Link>
           </p>
         </div>
         <div className="ws-card">

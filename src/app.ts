@@ -69,7 +69,21 @@ export function createApp() {
 
   if (env.NODE_ENV === 'production') {
     const webDist = path.resolve(__dirname, '../web/dist');
-    app.use(express.static(webDist, { index: false, maxAge: '1h' }));
+    app.use(
+      express.static(webDist, {
+        index: false,
+        maxAge: '1h',
+        setHeaders(res, filePath) {
+          if (filePath.endsWith('sw.js')) {
+            res.setHeader('Cache-Control', 'no-cache');
+            res.setHeader('Service-Worker-Allowed', '/');
+          }
+          if (filePath.endsWith('manifest.json')) {
+            res.setHeader('Content-Type', 'application/manifest+json; charset=utf-8');
+          }
+        },
+      }),
+    );
     app.get('*', (req, res, next) => {
       if (req.path.startsWith('/api/') || req.path === '/health') return next();
       res.sendFile(path.join(webDist, 'index.html'), (err) => {

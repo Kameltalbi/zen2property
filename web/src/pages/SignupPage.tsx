@@ -1,11 +1,14 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { BrandLogo } from '../BrandLogo';
 import { PasswordField } from '../PasswordField';
 import { homePath } from '../api';
 import { useAuth } from '../auth';
 import { useI18n } from '../i18n';
+import { LangToggle } from '../layouts';
 import { storeBillingCountry } from '../lib/billingCountry';
 import { countryLabel, useCountries } from '../lib/countries';
+import { safeNextPath } from '../lib/paths';
 
 const CA_PROVINCES = [
   { code: 'AB', en: 'Alberta', fr: 'Alberta' },
@@ -27,6 +30,7 @@ export function SignupPage() {
   const { register } = useAuth();
   const { t, locale } = useI18n();
   const navigate = useNavigate();
+  const [params] = useSearchParams();
   const countries = useCountries();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -65,20 +69,29 @@ export function SignupPage() {
         billingRegion: countryCode === 'CA' ? province : null,
       });
       storeBillingCountry(countryCode);
-      navigate(homePath(user));
+      navigate(safeNextPath(params.get('next')) ?? homePath(user));
     } catch (err) {
       setError(err instanceof Error ? err.message : t.auth.signupFailed);
     }
   }
 
   return (
-    <section className="auth-split">
+    <section className="auth-split auth-split-page is-image-left">
       <div className="auth-split-visual">
-        <img src="/signup.jpg" alt={t.auth.signupImageAlt} width={1024} height={576} />
+        <img src="/signup.jpg" alt={t.auth.signupImageAlt} width={576} height={1024} />
       </div>
       <div className="auth-split-form">
+        <div className="auth-page-top">
+          <Link className="auth-home-link" to="/">
+            {t.auth.backHome}
+          </Link>
+          <LangToggle />
+        </div>
+        <Link className="auth-page-brand" to="/" aria-label="Rentelyo">
+          <BrandLogo />
+        </Link>
         <h1>{t.auth.signupTitle}</h1>
-        <p className="muted">{t.auth.signupLede}</p>
+        <p className="muted auth-lede">{t.auth.signupLede}</p>
         <form className="form" onSubmit={(e) => void onSubmit(e)}>
           <label>
             {t.auth.fullName}
@@ -142,7 +155,7 @@ export function SignupPage() {
             {t.auth.startFree}
           </button>
         </form>
-        <p className="muted">
+        <p className="muted auth-panel-links">
           {t.auth.already} <Link to="/login">{t.nav.login}</Link>
         </p>
       </div>

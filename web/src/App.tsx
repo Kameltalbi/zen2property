@@ -27,6 +27,7 @@ import { SettingsPage } from './pages/SettingsPage';
 import { PrivacyPage } from './pages/PrivacyPage';
 import { TermsPage } from './pages/TermsPage';
 import { FeaturesPage } from './pages/FeaturesPage';
+import { CheckoutPage, CheckoutSuccessPage } from './pages/CheckoutPage';
 import { SecurityPage } from './pages/SecurityPage';
 import { HelpPage } from './pages/HelpPage';
 import { AboutPage } from './pages/AboutPage';
@@ -41,6 +42,8 @@ export function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="/tarifs" element={<PricingPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/checkout/success" element={<CheckoutSuccessPage />} />
         <Route path="/features" element={<FeaturesPage />} />
         <Route path="/security" element={<SecurityPage />} />
         <Route path="/help" element={<HelpPage />} />

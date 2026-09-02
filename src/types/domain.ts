@@ -71,7 +71,7 @@ export type UserRow = {
   address: string | null;
   bank_details: string | null;
   receipt_signature: string | null;
-  plan: 'FREE' | 'PREMIUM' | 'PRO' | 'INVESTOR';
+  plan: 'FREE' | 'SMART' | 'PREMIUM' | 'AGENCY' | 'PRO' | 'INVESTOR';
   stripe_customer_id: string | null;
   is_admin: boolean;
   is_active: boolean;

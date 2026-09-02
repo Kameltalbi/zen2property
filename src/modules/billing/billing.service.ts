@@ -13,12 +13,12 @@ import {
 } from './pricingMarkets';
 
 export const checkoutSchema = z.object({
-  plan: z.enum(['premium', 'pro']),
+  plan: z.enum(['smart', 'premium']),
   billingPeriod: z.enum(['monthly', 'yearly']),
 });
 
 export const mockSubscribeSchema = z.object({
-  plan: z.enum(['FREE', 'PREMIUM', 'PRO', 'INVESTOR']),
+  plan: z.enum(['FREE', 'SMART', 'PREMIUM', 'AGENCY', 'PRO', 'INVESTOR']),
 });
 
 export const pricingQuoteSchema = z.object({
@@ -27,15 +27,18 @@ export const pricingQuoteSchema = z.object({
 
 function catalogForMarket(countryCode: string) {
   const market = resolvePricingMarket(countryCode);
-  const plans = (['free', 'premium', 'pro'] as const).map((code) => {
+  const plans = (['free', 'smart', 'premium', 'agency'] as const).map((code) => {
     const amounts = market.plans[code];
-    const base = planOf(code === 'free' ? 'FREE' : code === 'premium' ? 'PREMIUM' : 'PRO');
+    const base = planOf(
+      code === 'free' ? 'FREE' : code === 'smart' ? 'SMART' : code === 'premium' ? 'PREMIUM' : 'AGENCY',
+    );
     return {
       id: base.id,
       code,
       name: base.name,
       tagline: base.tagline,
       popular: base.popular,
+      custom: base.custom,
       maxProperties: base.maxProperties,
       maxUsers: base.maxUsers,
       maxTenants: base.maxTenants,
@@ -179,8 +182,8 @@ export async function createCheckout(
     customer: customerId,
     client_reference_id: userId,
     line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${env.APP_ORIGIN}/pricing?checkout=success`,
-    cancel_url: `${env.APP_ORIGIN}/pricing?checkout=cancel`,
+    success_url: `${env.APP_ORIGIN}/checkout/success?plan=${planCode}&period=${billingPeriod}`,
+    cancel_url: `${env.APP_ORIGIN}/checkout?plan=${planCode}&period=${billingPeriod}&status=cancel`,
     billing_address_collection: 'required',
     customer_update: { address: 'auto', name: 'auto' },
     metadata,
@@ -218,8 +221,10 @@ export async function mockSubscribe(userId: string, planRaw: string) {
   if (env.NODE_ENV === 'production') {
     throw new HttpError(403, 'Mock billing is disabled in production');
   }
-  const planId = (planRaw === 'INVESTOR' ? 'PREMIUM' : planRaw) as PlanId;
-  if (!['FREE', 'PREMIUM', 'PRO'].includes(planId)) {
+  const planId = (
+    planRaw === 'INVESTOR' ? 'PREMIUM' : planRaw === 'PRO' ? 'AGENCY' : planRaw
+  ) as PlanId;
+  if (!['FREE', 'SMART', 'PREMIUM', 'AGENCY'].includes(planId)) {
     throw new HttpError(400, 'Invalid plan');
   }
   const status = planId === 'FREE' ? 'none' : 'active';

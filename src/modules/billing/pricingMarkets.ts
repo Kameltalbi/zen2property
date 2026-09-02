@@ -1,34 +1,37 @@
 /** Centralized SaaS pricing markets. Amounts are always in the currency's minor unit. */
 
 export type PricingMarketId = 'CA' | 'US' | 'EU' | 'TN' | 'OTHER';
-export type PaidPlanCode = 'premium' | 'pro';
+export type PaidPlanCode = 'smart' | 'premium';
+export type PlanCode = 'free' | PaidPlanCode | 'agency';
 export type BillingPeriod = 'monthly' | 'yearly';
-export type PlanCode = 'free' | PaidPlanCode;
 
 export type PlanLimits = {
-  maxProperties: number;
-  maxUsers: number;
+  maxProperties: number | null;
+  maxUsers: number | null;
   maxTenants: number | null;
 };
 
 export const PLAN_LIMITS: Record<PlanCode, PlanLimits> = {
   free: { maxProperties: 1, maxUsers: 1, maxTenants: 1 },
-  premium: { maxProperties: 10, maxUsers: 3, maxTenants: null },
-  pro: { maxProperties: 50, maxUsers: 10, maxTenants: null },
+  smart: { maxProperties: 5, maxUsers: 3, maxTenants: null },
+  premium: { maxProperties: 15, maxUsers: 5, maxTenants: null },
+  agency: { maxProperties: null, maxUsers: null, maxTenants: null },
 };
 
-/** DB / API plan enum (FREE | PREMIUM | PRO). */
-export type PlanId = 'FREE' | 'PREMIUM' | 'PRO';
+/** DB / API plan enum. */
+export type PlanId = 'FREE' | 'SMART' | 'PREMIUM' | 'AGENCY';
 
 export function planCodeFromId(id: string): PlanCode {
+  if (id === 'SMART') return 'smart';
   if (id === 'PREMIUM' || id === 'INVESTOR') return 'premium';
-  if (id === 'PRO') return 'pro';
+  if (id === 'AGENCY' || id === 'PRO') return 'agency';
   return 'free';
 }
 
 export function planIdFromCode(code: PlanCode): PlanId {
+  if (code === 'smart') return 'SMART';
   if (code === 'premium') return 'PREMIUM';
-  if (code === 'pro') return 'PRO';
+  if (code === 'agency') return 'AGENCY';
   return 'FREE';
 }
 
@@ -39,18 +42,15 @@ type PaidAmounts = {
 
 type MarketConfig = {
   id: PricingMarketId;
-  /** Currency shown on the pricing page. */
   displayCurrency: string;
-  /** Currency actually charged by Stripe (may differ for TN). */
   chargeCurrency: string;
-  /** Intl locale for NumberFormat. */
   locale: string;
-  /** Whether charge currency differs from display — must be disclosed before Checkout. */
   chargeDiffersFromDisplay: boolean;
   plans: {
     free: { monthly: 0; yearly: 0 };
+    smart: PaidAmounts;
     premium: PaidAmounts;
-    pro: PaidAmounts;
+    agency: { monthly: 0; yearly: 0 };
   };
 };
 
@@ -68,8 +68,9 @@ export const PRICING_MARKETS: Record<PricingMarketId, MarketConfig> = {
     chargeDiffersFromDisplay: false,
     plans: {
       free: { monthly: 0, yearly: 0 },
-      premium: { monthly: 1499, yearly: 14900 },
-      pro: { monthly: 2999, yearly: 29900 },
+      smart: { monthly: 1499, yearly: 14900 },
+      premium: { monthly: 2999, yearly: 29900 },
+      agency: { monthly: 0, yearly: 0 },
     },
   },
   US: {
@@ -80,8 +81,9 @@ export const PRICING_MARKETS: Record<PricingMarketId, MarketConfig> = {
     chargeDiffersFromDisplay: false,
     plans: {
       free: { monthly: 0, yearly: 0 },
-      premium: { monthly: 999, yearly: 9900 },
-      pro: { monthly: 1999, yearly: 19900 },
+      smart: { monthly: 999, yearly: 9900 },
+      premium: { monthly: 1999, yearly: 19900 },
+      agency: { monthly: 0, yearly: 0 },
     },
   },
   EU: {
@@ -92,13 +94,11 @@ export const PRICING_MARKETS: Record<PricingMarketId, MarketConfig> = {
     chargeDiffersFromDisplay: false,
     plans: {
       free: { monthly: 0, yearly: 0 },
-      premium: { monthly: 990, yearly: 9900 },
-      pro: { monthly: 1990, yearly: 19900 },
+      smart: { monthly: 990, yearly: 9900 },
+      premium: { monthly: 1990, yearly: 19900 },
+      agency: { monthly: 0, yearly: 0 },
     },
   },
-  /**
-   * Tunisia: Stripe does not support TND. Show and charge USD (same list as US).
-   */
   TN: {
     id: 'TN',
     displayCurrency: 'USD',
@@ -107,8 +107,9 @@ export const PRICING_MARKETS: Record<PricingMarketId, MarketConfig> = {
     chargeDiffersFromDisplay: false,
     plans: {
       free: { monthly: 0, yearly: 0 },
-      premium: { monthly: 999, yearly: 9900 },
-      pro: { monthly: 1999, yearly: 19900 },
+      smart: { monthly: 999, yearly: 9900 },
+      premium: { monthly: 1999, yearly: 19900 },
+      agency: { monthly: 0, yearly: 0 },
     },
   },
   OTHER: {
@@ -119,8 +120,9 @@ export const PRICING_MARKETS: Record<PricingMarketId, MarketConfig> = {
     chargeDiffersFromDisplay: false,
     plans: {
       free: { monthly: 0, yearly: 0 },
-      premium: { monthly: 999, yearly: 9900 },
-      pro: { monthly: 1999, yearly: 19900 },
+      smart: { monthly: 999, yearly: 9900 },
+      premium: { monthly: 1999, yearly: 19900 },
+      agency: { monthly: 0, yearly: 0 },
     },
   },
 };
@@ -157,7 +159,6 @@ export type ResolvedStripePrice = {
   billingPeriod: BillingPeriod;
   displayAmountMinor: number;
   chargeAmountMinor: number;
-  /** Env key used to look up the Stripe Price id. */
   envKey: string;
 };
 
@@ -193,7 +194,6 @@ export function resolveCheckoutPrice(
   };
 }
 
-/** Countries offered in the billing country selector (pricing page / signup). */
 export const BILLING_COUNTRY_OPTIONS: Array<{ code: string; market: PricingMarketId }> = [
   { code: 'CA', market: 'CA' },
   { code: 'US', market: 'US' },

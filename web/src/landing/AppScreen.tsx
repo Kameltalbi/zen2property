@@ -8,41 +8,55 @@ export function AppScreen({ screen }: { screen: ScreenId }) {
   const fr = locale === 'fr';
 
   if (screen === 'dashboard') {
+    const kpis = fr
+      ? [
+          ['Total des biens', '4'],
+          ['Biens loués', '3'],
+          ['Biens disponibles', '1'],
+          ['Loyers attendus', '4 280 €'],
+          ['Loyers encaissés', '3 130 €'],
+          ['Dépenses du mois', '920 €'],
+          ['Revenu net', '2 210 €'],
+          ['Loyers en retard', '1'],
+        ]
+      : [
+          ['Total properties', '4'],
+          ['Rented properties', '3'],
+          ['Available properties', '1'],
+          ['Rent expected', '€4,280'],
+          ['Rent collected', '€3,130'],
+          ['Monthly expenses', '€920'],
+          ['Net income', '€2,210'],
+          ['Overdue rent', '1'],
+        ];
     return (
-      <div className="lp-screen">
+      <div className="lp-dash-capture">
         <p className="lp-screen-kicker">{fr ? 'Tableau de bord' : 'Dashboard'}</p>
-        <div className="lp-screen-kpis">
-          <div>
-            <small>{fr ? 'Revenus' : 'Income'}</small>
-            <strong>4 280 €</strong>
-          </div>
-          <div>
-            <small>{fr ? 'À recevoir' : 'Due'}</small>
-            <strong>1 150 €</strong>
-          </div>
-          <div>
-            <small>{fr ? 'Dépenses' : 'Expenses'}</small>
-            <strong>920 €</strong>
-          </div>
-          <div>
-            <small>{fr ? 'Occupation' : 'Occupancy'}</small>
-            <strong>92 %</strong>
-          </div>
+        <p className="lp-dash-hello">{fr ? 'Bonjour, Camille' : 'Hello, Camille'}</p>
+        <div className="lp-dash-kpis">
+          {kpis.map(([label, value]) => (
+            <div key={label}>
+              <small>{label}</small>
+              <strong>{value}</strong>
+            </div>
+          ))}
         </div>
-        <div className="lp-screen-panels">
-          <div className="lp-screen-chart" aria-hidden>
-            <i style={{ height: '42%' }} />
-            <i style={{ height: '68%' }} />
-            <i style={{ height: '55%' }} />
-            <i style={{ height: '78%' }} />
-            <i style={{ height: '62%' }} />
-            <i style={{ height: '88%' }} />
+        <div className="lp-dash-two">
+          <div>
+            <h3>{fr ? 'À faire' : 'To do'}</h3>
+            <ul>
+              <li>{fr ? 'Loyer Dupont — en retard' : 'Dupont rent — overdue'}</li>
+              <li>{fr ? 'Bail Terreaux — échéance 30 sept.' : 'Terreaux lease — due 30 Sep'}</li>
+              <li>{fr ? 'Entretien toiture — devis à valider' : 'Roof work — quote to approve'}</li>
+            </ul>
           </div>
-          <ul className="lp-screen-list">
-            <li>{fr ? 'Loyer Dupont — échéance 5' : 'Dupont rent — due on 5th'}</li>
-            <li>{fr ? 'Toiture — devis reçu' : 'Roof — quote received'}</li>
-            <li>{fr ? 'DPE à renouveler' : 'EPC to renew'}</li>
-          </ul>
+          <div>
+            <h3>{fr ? 'Résumé' : 'Summary'}</h3>
+            <ul>
+              <li>{fr ? 'Paiements à venir : 2' : 'Upcoming payments: 2'}</li>
+              <li>{fr ? 'Paiements en retard : 1' : 'Overdue payments: 1'}</li>
+            </ul>
+          </div>
         </div>
       </div>
     );

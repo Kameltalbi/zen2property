@@ -54,7 +54,7 @@ function publicUser(user: UserRow) {
     address: user.address,
     bankDetails: user.bank_details,
     receiptSignature: user.receipt_signature,
-    plan: user.plan === 'INVESTOR' ? 'PREMIUM' : user.plan,
+    plan: user.plan === 'INVESTOR' ? 'PREMIUM' : user.plan === 'PRO' ? 'AGENCY' : user.plan,
     subscriptionStatus: user.subscription_status,
     isAdmin: Boolean(user.is_admin),
     isActive: user.is_active,

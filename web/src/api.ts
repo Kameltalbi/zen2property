@@ -61,7 +61,7 @@ export type User = {
   address: string | null;
   bankDetails: string | null;
   receiptSignature: string | null;
-  plan: 'FREE' | 'PREMIUM' | 'PRO' | 'INVESTOR';
+  plan: 'FREE' | 'SMART' | 'PREMIUM' | 'AGENCY' | 'PRO' | 'INVESTOR';
   subscriptionStatus?: 'none' | 'trialing' | 'active' | 'past_due' | 'canceled';
   isAdmin?: boolean;
   isActive?: boolean;
@@ -146,13 +146,14 @@ export type Lease = {
 };
 
 export type PlanCatalogPlan = {
-  id: 'FREE' | 'PREMIUM' | 'PRO';
-  code: 'free' | 'premium' | 'pro';
+  id: 'FREE' | 'SMART' | 'PREMIUM' | 'AGENCY';
+  code: 'free' | 'smart' | 'premium' | 'agency';
   name: string;
   tagline: string;
   popular: boolean;
-  maxProperties: number;
-  maxUsers: number;
+  custom: boolean;
+  maxProperties: number | null;
+  maxUsers: number | null;
   maxTenants: number | null;
   monthlyMinor: number;
   yearlyMinor: number;

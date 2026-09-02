@@ -61,7 +61,7 @@ export async function createProperty(userId: string, input: z.infer<typeof creat
   const count = await queryOne<{ n: string }>('SELECT COUNT(*)::text AS n FROM properties WHERE user_id = $1', [
     userId,
   ]);
-  if (Number(count?.n ?? 0) >= plan.maxProperties) {
+  if (plan.maxProperties != null && Number(count?.n ?? 0) >= plan.maxProperties) {
     throw new HttpError(402, upgradeHint(plan));
   }
 
