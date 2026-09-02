@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { api, getToken, setToken, type User } from './api';
+import { api, setToken, type User } from './api';
 
 type AuthState = {
   user: User | null;
@@ -24,14 +24,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   async function refresh() {
-    if (!getToken()) {
-      setUser(null);
-      setLoading(false);
-      return;
-    }
     try {
       const data = await api<{ user: User }>('/me');
       setUser(data.user);
+      setToken(null);
     } catch {
       setToken(null);
       setUser(null);
@@ -49,24 +45,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user,
       loading,
       async login(email, password) {
-        const data = await api<{ user: User; token: string }>('/auth/login', {
+        const data = await api<{ user: User }>('/auth/login', {
           method: 'POST',
           body: JSON.stringify({ email, password }),
         });
-        setToken(data.token);
+        setToken(null);
         setUser(data.user);
         return data.user;
       },
       async register(payload) {
-        const data = await api<{ user: User; token: string }>('/auth/register', {
+        const data = await api<{ user: User }>('/auth/register', {
           method: 'POST',
           body: JSON.stringify(payload),
         });
-        setToken(data.token);
+        setToken(null);
         setUser(data.user);
         return data.user;
       },
       logout() {
+        void api('/auth/logout', { method: 'POST' }).catch(() => undefined);
         setToken(null);
         setUser(null);
       },

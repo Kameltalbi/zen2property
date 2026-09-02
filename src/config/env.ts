@@ -44,6 +44,16 @@ const schema = z.object({
   STRIPE_PRICE_PRO_MONTHLY_EUR: z.string().optional().default(''),
   STRIPE_PRICE_PRO_YEARLY_EUR: z.string().optional().default(''),
   BOOTSTRAP_ADMIN_EMAIL: z.union([z.literal(''), z.string().email()]).default(''),
+  RESEND_API_KEY: z.string().optional().default(''),
+  EMAIL_FROM: z.union([z.literal(''), z.string().email()]).default(''),
+}).superRefine((value, ctx) => {
+  if (value.NODE_ENV === 'production' && (!value.RESEND_API_KEY || !value.EMAIL_FROM)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'RESEND_API_KEY and EMAIL_FROM are required in production',
+      path: ['RESEND_API_KEY'],
+    });
+  }
 });
 
 export const env = schema.parse(process.env);

@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { api, downloadPdf, type Payment, type Property, type Tenant } from '../api';
+import { useI18n } from '../i18n';
 
 function monthRange(isoDay = new Date().toISOString().slice(0, 10)) {
   const [y, m] = isoDay.split('-').map(Number);
@@ -10,6 +11,8 @@ function monthRange(isoDay = new Date().toISOString().slice(0, 10)) {
 }
 
 export function RentPage() {
+  const { locale } = useI18n();
+  const fr = locale === 'fr';
   const { start, end } = monthRange();
   const [properties, setProperties] = useState<Property[]>([]);
   const [tenants, setTenants] = useState<Tenant[]>([]);
@@ -74,6 +77,27 @@ export function RentPage() {
     setError('');
     await api(`/payments/${id}/mark-paid`, { method: 'POST', body: JSON.stringify({}) });
     await reload();
+  }
+
+  async function emailReceipt(id: string) {
+    setError('');
+    setNotice('');
+    try {
+      const { receipt } = await api<{ receipt: { id: string; number: string } }>(`/payments/${id}/receipt`, {
+        method: 'POST',
+      });
+      const sent = await api<{ to: string; number: string }>(`/receipts/${receipt.id}/email`, {
+        method: 'POST',
+        body: JSON.stringify({}),
+      });
+      setNotice(
+        fr
+          ? `Quittance ${sent.number} envoyée à ${sent.to}.`
+          : `Receipt ${sent.number} sent to ${sent.to}.`,
+      );
+    } catch (err) {
+      setError(err instanceof Error ? err.message : fr ? 'Envoi impossible' : 'Could not send receipt');
+    }
   }
 
   async function issueReceipt(id: string) {
@@ -184,9 +208,14 @@ export function RentPage() {
                     </button>
                   )}
                   {p.status === 'PAID' && (
-                    <button className="btn" type="button" onClick={() => void issueReceipt(p.id)}>
-                      PDF receipt
-                    </button>
+                    <>
+                      <button className="btn" type="button" onClick={() => void issueReceipt(p.id)}>
+                        PDF receipt
+                      </button>
+                      <button className="btn secondary" type="button" onClick={() => void emailReceipt(p.id)}>
+                        {fr ? 'Envoyer' : 'Email'}
+                      </button>
+                    </>
                   )}
                 </td>
               </tr>

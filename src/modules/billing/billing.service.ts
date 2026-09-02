@@ -302,15 +302,40 @@ export async function updateBillingCountry(
   };
 }
 
-export async function recordWebhookEvent(eventId: string, type: string, payload: unknown) {
-  const existing = await queryOne<{ id: string }>(
-    'SELECT id FROM stripe_webhook_events WHERE id = $1',
-    [eventId],
-  );
-  if (existing) return { duplicate: true as const };
-  await query(
-    'INSERT INTO stripe_webhook_events (id, type, payload) VALUES ($1, $2, $3::jsonb)',
+export async function claimWebhookEvent(eventId: string, type: string, payload: unknown) {
+  const claimed = await queryOne<{ id: string }>(
+    `INSERT INTO stripe_webhook_events (id, type, payload, status, attempts)
+     VALUES ($1, $2, $3::jsonb, 'processing', 1)
+     ON CONFLICT (id) DO UPDATE SET
+       status = 'processing', attempts = stripe_webhook_events.attempts + 1,
+       last_error = NULL, updated_at = now()
+     WHERE stripe_webhook_events.status = 'failed'
+     RETURNING id`,
     [eventId, type, JSON.stringify(payload)],
   );
-  return { duplicate: false as const };
+  if (claimed) return { claimed: true as const };
+  const existing = await queryOne<{ status: 'processing' | 'processed' | 'failed' }>(
+    'SELECT status FROM stripe_webhook_events WHERE id = $1',
+    [eventId],
+  );
+  return { claimed: false as const, status: existing?.status ?? 'processing' };
+}
+
+export async function completeWebhookEvent(eventId: string): Promise<void> {
+  await query(
+    `UPDATE stripe_webhook_events
+     SET status = 'processed', processed_at = now(), last_error = NULL, updated_at = now()
+     WHERE id = $1`,
+    [eventId],
+  );
+}
+
+export async function failWebhookEvent(eventId: string, error: unknown): Promise<void> {
+  const message = error instanceof Error ? error.message : 'Unknown webhook processing error';
+  await query(
+    `UPDATE stripe_webhook_events
+     SET status = 'failed', last_error = $2, updated_at = now()
+     WHERE id = $1`,
+    [eventId, message.slice(0, 1000)],
+  );
 }

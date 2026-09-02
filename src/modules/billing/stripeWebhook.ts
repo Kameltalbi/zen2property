@@ -3,7 +3,7 @@ import { query, queryOne } from '../../db/pool';
 import { planIdFromCode, type BillingPeriod, type PaidPlanCode } from './pricingMarkets';
 import type { PlanId } from './plans';
 import { getStripe, isWhitelistedPriceId } from './stripeClient';
-import { recordWebhookEvent } from './billing.service';
+import { claimWebhookEvent, completeWebhookEvent, failWebhookEvent } from './billing.service';
 
 function mapStripeStatus(status: Stripe.Subscription.Status): string {
   switch (status) {
@@ -183,12 +183,16 @@ export async function handleStripeWebhook(rawBody: Buffer, signature: string | u
     });
   }
 
-  const recorded = await recordWebhookEvent(event.id, event.type, event);
-  if (recorded.duplicate) {
+  const claim = await claimWebhookEvent(event.id, event.type, event);
+  if (!claim.claimed && claim.status === 'processed') {
     return { received: true, duplicate: true };
   }
+  if (!claim.claimed) {
+    throw Object.assign(new Error('Webhook event is already being processed'), { status: 409 });
+  }
 
-  switch (event.type) {
+  try {
+    switch (event.type) {
     case 'checkout.session.completed':
       await handleCheckoutCompleted(event.data.object as Stripe.Checkout.Session);
       break;
@@ -215,8 +219,13 @@ export async function handleStripeWebhook(rawBody: Buffer, signature: string | u
       }
       break;
     }
-    default:
-      break;
+      default:
+        break;
+    }
+    await completeWebhookEvent(event.id);
+  } catch (err) {
+    await failWebhookEvent(event.id, err);
+    throw err;
   }
 
   return { received: true, duplicate: false, type: event.type };

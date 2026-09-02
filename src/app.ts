@@ -19,11 +19,36 @@ import { errorHandler } from './middleware/errorHandler';
 import { asyncHandler } from './lib/asyncHandler';
 import { handleStripeWebhook } from './modules/billing/stripeWebhook';
 import { HttpError } from './lib/httpError';
+import { rateLimit } from './middleware/rateLimit';
 
 export function createApp() {
   const app = express();
-  app.use(helmet({ contentSecurityPolicy: false }));
-  app.use(cors({ origin: true, credentials: true }));
+  app.set('trust proxy', 1);
+  app.disable('x-powered-by');
+  app.use(helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+        imgSrc: ["'self'", 'data:', 'blob:'],
+        fontSrc: ["'self'", 'data:', 'https://fonts.gstatic.com'],
+        connectSrc: ["'self'"],
+        objectSrc: ["'none'"],
+        baseUri: ["'self'"],
+        frameAncestors: ["'none'"],
+        formAction: ["'self'"],
+        upgradeInsecureRequests: env.NODE_ENV === 'production' ? [] : null,
+      },
+    },
+  }));
+  app.use(cors({
+    origin(origin, callback) {
+      if (!origin || origin === env.APP_ORIGIN) return callback(null, true);
+      callback(new HttpError(403, 'Origin not allowed'));
+    },
+    credentials: true,
+  }));
 
   // Stripe webhooks require the raw body for signature verification.
   app.post(
@@ -48,6 +73,11 @@ export function createApp() {
   );
 
   app.use(express.json({ limit: '1mb' }));
+
+  app.use('/api/v1/auth/login', rateLimit({ windowMs: 15 * 60_000, max: 10, prefix: 'login' }));
+  app.use('/api/v1/auth/register', rateLimit({ windowMs: 60 * 60_000, max: 5, prefix: 'register' }));
+  app.use('/api/v1/auth/forgot-password', rateLimit({ windowMs: 60 * 60_000, max: 5, prefix: 'forgot' }));
+  app.use('/api/v1/auth/reset-password', rateLimit({ windowMs: 60 * 60_000, max: 10, prefix: 'reset' }));
 
   app.get('/health', (_req, res) => {
     res.json({ ok: true, service: 'rentelyo-api' });

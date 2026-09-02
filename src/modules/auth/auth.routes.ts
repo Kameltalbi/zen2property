@@ -6,12 +6,23 @@ import { getMe, login, loginSchema, register, registerSchema, updateMe, updateMe
 
 export const authRouter = Router();
 
+function setSessionCookie(res: import('express').Response, token: string): void {
+  res.cookie('rentelyo_session', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    path: '/',
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+}
+
 authRouter.post(
   '/register',
   validate(registerSchema),
   asyncHandler(async (req, res) => {
     const result = await register(req.body);
-    res.status(201).json(result);
+    setSessionCookie(res, result.token);
+    res.status(201).json({ user: result.user });
   }),
 );
 
@@ -19,9 +30,21 @@ authRouter.post(
   '/login',
   validate(loginSchema),
   asyncHandler(async (req, res) => {
-    res.json(await login(req.body));
+    const result = await login(req.body);
+    setSessionCookie(res, result.token);
+    res.json({ user: result.user });
   }),
 );
+
+authRouter.post('/logout', (_req, res) => {
+  res.clearCookie('rentelyo_session', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    path: '/',
+  });
+  res.status(204).end();
+});
 
 authRouter.post(
   '/forgot-password',

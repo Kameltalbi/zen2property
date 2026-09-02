@@ -24,7 +24,7 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
   const token = getToken();
   if (token) headers.set('Authorization', `Bearer ${token}`);
 
-  const res = await fetch(`/api/v1${path}`, { ...init, headers });
+  const res = await fetch(`/api/v1${path}`, { ...init, headers, credentials: 'same-origin' });
   if (res.status === 204) return undefined as T;
 
   const data = (await res.json().catch(() => ({}))) as { error?: string; details?: Record<string, unknown> };
@@ -40,6 +40,7 @@ export async function downloadPdf(path: string, filename: string): Promise<void>
   const token = getToken();
   const res = await fetch(`/api/v1${path}`, {
     headers: token ? { Authorization: `Bearer ${token}` } : {},
+    credentials: 'same-origin',
   });
   if (!res.ok) throw new ApiError('Unable to download PDF', res.status);
   const blob = await res.blob();

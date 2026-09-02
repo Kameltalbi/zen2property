@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { env } from '../../config/env';
 import { queryOne } from '../../db/pool';
 import { HttpError } from '../../lib/httpError';
+import { mailConfigured, sendEmail } from '../../lib/mail';
 import type { UserRow } from '../../types/domain';
 import { resolvePricingMarket } from '../billing/pricingMarkets';
 
@@ -206,6 +207,12 @@ export async function forgotPassword(email: string) {
   const token = crypto.randomBytes(32).toString('hex');
   const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
   await queryOne(
+    `UPDATE password_reset_tokens SET used_at = now()
+     WHERE user_id = $1 AND used_at IS NULL
+     RETURNING id`,
+    [user.id],
+  );
+  await queryOne(
     `INSERT INTO password_reset_tokens (user_id, token_hash, expires_at)
      VALUES ($1, $2, now() + interval '1 hour')
      RETURNING id`,
@@ -216,14 +223,38 @@ export async function forgotPassword(email: string) {
     payload.resetToken = token;
     payload.resetUrl = `${env.APP_ORIGIN}/reset-password?token=${token}`;
   }
+  if (mailConfigured()) {
+    try {
+      await sendPasswordResetEmail(user.email, token);
+    } catch (err) {
+      // Keep the public response indistinguishable from an unknown address.
+      console.error('Password reset email delivery failed', err);
+    }
+  } else if (env.NODE_ENV === 'production') {
+    console.error('Password reset skipped: Resend is not configured');
+  }
   return payload;
+}
+
+async function sendPasswordResetEmail(email: string, token: string): Promise<void> {
+  const resetUrl = `${env.APP_ORIGIN}/reset-password?token=${encodeURIComponent(token)}`;
+  await sendEmail({
+    to: email,
+    subject: 'Réinitialiser votre mot de passe Rentelyo',
+    html:
+      `<p>Vous avez demandé à réinitialiser votre mot de passe Rentelyo.</p>` +
+      `<p><a href="${resetUrl}">Choisir un nouveau mot de passe</a></p>` +
+      `<p>Ce lien expire dans une heure. Si vous n’êtes pas à l’origine de cette demande, ignorez cet e-mail.</p>`,
+    text: `Réinitialiser votre mot de passe Rentelyo : ${resetUrl}\n\nCe lien expire dans une heure.`,
+  });
 }
 
 export async function resetPassword(token: string, password: string) {
   const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
   const row = await queryOne<{ id: string; user_id: string }>(
-    `SELECT id, user_id FROM password_reset_tokens
-     WHERE token_hash = $1 AND used_at IS NULL AND expires_at > now()`,
+    `UPDATE password_reset_tokens SET used_at = now()
+     WHERE token_hash = $1 AND used_at IS NULL AND expires_at > now()
+     RETURNING id, user_id`,
     [tokenHash],
   );
   if (!row) throw new HttpError(400, 'This reset link is invalid or has expired');
@@ -233,6 +264,11 @@ export async function resetPassword(token: string, password: string) {
     row.user_id,
     passwordHash,
   ]);
-  await queryOne('UPDATE password_reset_tokens SET used_at = now() WHERE id = $1 RETURNING id', [row.id]);
+  await queryOne(
+    `UPDATE password_reset_tokens SET used_at = now()
+     WHERE user_id = $1 AND used_at IS NULL
+     RETURNING id`,
+    [row.user_id],
+  );
   return { ok: true };
 }
