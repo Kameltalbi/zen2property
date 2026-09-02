@@ -150,7 +150,7 @@ export const homeEn = {
     ],
     cta: 'Learn more about security',
   },
-} as const;
+};
 
 export const homeFr = {
   organize: {
@@ -303,7 +303,7 @@ export const homeFr = {
     ],
     cta: 'En savoir plus sur la sécurité',
   },
-} as const;
+};
 
 export type HomeCopy = {
   organize: { title: string; body: string; imageAlt: string };

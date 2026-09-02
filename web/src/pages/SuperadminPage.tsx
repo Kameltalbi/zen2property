@@ -542,7 +542,7 @@ function PlanDialog({
         <p className="muted">{user.email}</p>
         <label>
           Offre
-          <select value={plan} onChange={(e) => setPlan(e.target.value)}>
+          <select value={plan} onChange={(e) => setPlan(e.target.value as (typeof PLANS)[number])}>
             {PLANS.map((p) => (
               <option key={p} value={p}>
                 {p}
@@ -592,7 +592,7 @@ function ExtendDialog({
         <p className="muted">{user.email}</p>
         <label>
           Offre
-          <select value={plan} onChange={(e) => setPlan(e.target.value)}>
+          <select value={plan} onChange={(e) => setPlan(e.target.value as 'SMART' | 'PREMIUM' | 'AGENCY')}>
             <option value="SMART">SMART</option>
             <option value="PREMIUM">PREMIUM</option>
             <option value="AGENCY">AGENCY</option>
