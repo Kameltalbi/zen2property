@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useI18n } from '../i18n';
+import { LandingSections } from '../landing/LandingSections';
 
 export function LandingPage() {
   const { t } = useI18n();
@@ -37,47 +38,7 @@ export function LandingPage() {
         </div>
       </section>
 
-      <section className="container section" id="features">
-        <p className="kicker">{t.features.kicker}</p>
-        <h2>{t.features.title}</h2>
-        <div className="grid-3" style={{ marginTop: 22 }}>
-          <article className="card">
-            <h3>{t.features.manageTitle}</h3>
-            <p className="muted">{t.features.manageBody}</p>
-          </article>
-          <article className="card">
-            <h3>{t.features.receiptTitle}</h3>
-            <p className="muted">{t.features.receiptBody}</p>
-          </article>
-          <article className="card">
-            <h3>{t.features.countryTitle}</h3>
-            <p className="muted">{t.features.countryBody}</p>
-          </article>
-        </div>
-      </section>
-
-      <section className="container section" id="faq">
-        <p className="kicker">{t.faq.kicker}</p>
-        <h2>{t.faq.title}</h2>
-        <div className="faq-list">
-          <article className="card">
-            <h3>{t.faq.q1}</h3>
-            <p className="muted">{t.faq.a1}</p>
-          </article>
-          <article className="card">
-            <h3>{t.faq.q2}</h3>
-            <p className="muted">{t.faq.a2}</p>
-          </article>
-          <article className="card">
-            <h3>{t.faq.q3}</h3>
-            <p className="muted">{t.faq.a3}</p>
-          </article>
-          <article className="card">
-            <h3>{t.faq.q4}</h3>
-            <p className="muted">{t.faq.a4}</p>
-          </article>
-        </div>
-      </section>
+      <LandingSections />
     </>
   );
 }

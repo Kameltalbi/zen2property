@@ -1,8 +1,8 @@
 {
-  "name": "zen2property-saas",
+  "name": "rentelyo-saas",
   "version": "0.1.0",
   "private": true,
-  "description": "Zen2Property SaaS — lean property management (Express API + React web)",
+  "description": "Rentelyo SaaS — simple rental management (Express API + React web)",
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "dev:web": "npm run dev --prefix web",

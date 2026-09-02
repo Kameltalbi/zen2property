@@ -3,8 +3,8 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../auth';
 import { useI18n } from '../i18n';
 
-const STORAGE_KEY = 'zen2property.coach';
-const RESET_EVENT = 'zen-coach-reset';
+const STORAGE_KEY = 'rentelyo.coach';
+const RESET_EVENT = 'rentelyo-coach-reset';
 
 type CoachState = {
   step: number;
@@ -130,7 +130,7 @@ export function CoachChat() {
       <div className="coach-thread">
         <div className="coach-row">
           <span className="coach-avatar" aria-hidden>
-            Z
+            R
           </span>
           <div className="coach-bubble">
             <p className="coach-label">{t.coach.from}</p>

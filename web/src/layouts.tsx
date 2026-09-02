@@ -56,6 +56,8 @@ function LangToggle() {
   );
 }
 
+export { LangToggle };
+
 export function PublicLayout() {
   const { user } = useAuth();
   const { t } = useI18n();
@@ -70,8 +72,8 @@ export function PublicLayout() {
   return (
     <div className={`public-shell${isHome ? ' is-home' : ''}`}>
       <header className="container topnav">
-        <Link className="brand" to="/" onClick={close} aria-label="Zen2Property">
-          <BrandLogo />
+        <Link className="brand" to="/" onClick={close} aria-label="Rentelyo">
+          <BrandLogo onDark={isHome} />
         </Link>
         <div className="nav-toolbar">
           <LangToggle />
@@ -118,31 +120,40 @@ export function PublicLayout() {
       </header>
       <Outlet />
       <footer className="site-footer">
-        <div className="container footer-grid">
+        <div className="container footer-grid footer-grid-4">
           <div>
-            <Link className="brand" to="/" aria-label="Zen2Property">
+            <Link className="brand" to="/" aria-label="Rentelyo">
               <BrandLogo />
             </Link>
             <p className="muted">{t.footer.blurb}</p>
+            <div className="footer-lang">
+              <LangToggle />
+            </div>
           </div>
           <div>
             <h3>{t.footer.product}</h3>
-            <Link to="/#features">{t.nav.features}</Link>
-            <Link to="/pricing">{t.nav.pricing}</Link>
-            <Link to="/#faq">{t.nav.faq}</Link>
+            <Link to="/features">{t.footer.features}</Link>
+            <Link to="/security">{t.footer.security}</Link>
+            <Link to="/login">{t.footer.login}</Link>
+            <Link to="/signup">{t.footer.signup}</Link>
           </div>
           <div>
-            <h3>{t.footer.account}</h3>
-            <Link to="/login">{t.nav.login}</Link>
-            <Link to="/forgot-password">{t.footer.reset}</Link>
+            <h3>{t.footer.resources}</h3>
+            <Link to="/help">{t.footer.help}</Link>
+            <Link to="/help#faq">{t.footer.faq}</Link>
+            <Link to="/help#guides">{t.footer.guides}</Link>
           </div>
           <div>
-            <h3>{t.footer.legal}</h3>
+            <h3>{t.footer.company}</h3>
+            <Link to="/about">{t.footer.about}</Link>
+            <Link to="/contact">{t.footer.contact}</Link>
+            <h3 style={{ marginTop: 18 }}>{t.footer.legal}</h3>
             <Link to="/privacy">{t.footer.privacy}</Link>
             <Link to="/terms">{t.footer.terms}</Link>
+            <Link to="/cookies">{t.footer.cookies}</Link>
           </div>
         </div>
-        <p className="container footer-copy muted">© {new Date().getFullYear()} Zen2Property</p>
+        <p className="container footer-copy muted">© {new Date().getFullYear()} Rentelyo</p>
       </footer>
     </div>
   );
@@ -159,8 +170,8 @@ export function AppLayout() {
     <div className="app-shell">
       <aside className={`sidenav ${open ? 'is-open' : ''}`}>
         <div className="sidenav-head">
-          <Link className="brand" to="/app" onClick={() => setOpen(false)} aria-label="Zen2Property">
-            <BrandLogo />
+          <Link className="brand" to="/app" onClick={() => setOpen(false)} aria-label="Rentelyo">
+            <BrandLogo onDark />
           </Link>
           <button
             type="button"

@@ -5,6 +5,7 @@ type DashboardRow = {
   occupied_units: string;
   collected_this_month: string;
   expected_this_month: string;
+  expenses_this_month: string;
   late_count: string;
   pending_count: string;
 };
@@ -27,6 +28,10 @@ export async function getDashboard(userId: string) {
          WHERE user_id = $1
            AND date_trunc('month', due_date) = date_trunc('month', CURRENT_DATE)
        ) AS expected_this_month,
+       (SELECT COALESCE(SUM(amount), 0)::text FROM expenses
+         WHERE user_id = $1
+           AND date_trunc('month', expense_date) = date_trunc('month', CURRENT_DATE)
+       ) AS expenses_this_month,
        (SELECT COUNT(*)::text FROM payments WHERE user_id = $1 AND status = 'LATE') AS late_count,
        (SELECT COUNT(*)::text FROM payments WHERE user_id = $1 AND status = 'PENDING') AS pending_count`,
     [userId],
@@ -63,6 +68,8 @@ export async function getDashboard(userId: string) {
     vacantUnits: Math.max(0, total - occupied),
     collectedThisMonth: Number(row?.collected_this_month ?? 0),
     expectedThisMonth: Number(row?.expected_this_month ?? 0),
+    expensesThisMonth: Number(row?.expenses_this_month ?? 0),
+    netThisMonth: Number(row?.collected_this_month ?? 0) - Number(row?.expenses_this_month ?? 0),
     lateCount: Number(row?.late_count ?? 0),
     pendingCount: Number(row?.pending_count ?? 0),
     alerts,

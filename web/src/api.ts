@@ -1,4 +1,4 @@
-const TOKEN_KEY = 'zen2property.token';
+const TOKEN_KEY = 'rentelyo.token';
 
 export class ApiError extends Error {
   constructor(

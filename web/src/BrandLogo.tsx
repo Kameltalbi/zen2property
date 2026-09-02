@@ -1,15 +1,16 @@
 type BrandLogoProps = {
   className?: string;
+  onDark?: boolean;
 };
 
-export function BrandLogo({ className = '' }: BrandLogoProps) {
+export function BrandLogo({ className = '', onDark = false }: BrandLogoProps) {
   return (
     <img
       className={`brand-logo ${className}`.trim()}
-      src="/logo.png"
-      alt="Zen2Property"
-      width={196}
-      height={32}
+      src={onDark ? '/logo-on-dark.png' : '/logo.png'}
+      alt="Rentelyo"
+      width={185}
+      height={57}
     />
   );
 }

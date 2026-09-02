@@ -5,7 +5,7 @@ import { pool } from './db/pool';
 const app = createApp();
 
 const server = app.listen(env.PORT, env.HOST, () => {
-  console.log(`Zen2Property listening on http://${env.HOST}:${env.PORT}`);
+  console.log(`Rentelyo listening on http://${env.HOST}:${env.PORT}`);
 });
 
 async function shutdown(): Promise<void> {

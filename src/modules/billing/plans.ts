@@ -24,7 +24,7 @@ export const PLANS: Record<PlanId, Plan> = {
   FREE: {
     id: 'FREE',
     code: 'free',
-    name: 'Zen Free',
+    name: 'Rentelyo Free',
     tagline: 'Manage your first rented property for free.',
     ...PLAN_LIMITS.free,
     popular: false,
@@ -32,7 +32,7 @@ export const PLANS: Record<PlanId, Plan> = {
   PREMIUM: {
     id: 'PREMIUM',
     code: 'premium',
-    name: 'Zen Premium',
+    name: 'Rentelyo Premium',
     tagline: 'For landlords managing up to 10 properties.',
     ...PLAN_LIMITS.premium,
     popular: true,
@@ -40,7 +40,7 @@ export const PLANS: Record<PlanId, Plan> = {
   PRO: {
     id: 'PRO',
     code: 'pro',
-    name: 'Zen Pro',
+    name: 'Rentelyo Pro',
     tagline: 'For investors and larger rental portfolios.',
     ...PLAN_LIMITS.pro,
     popular: false,
@@ -53,7 +53,7 @@ export function planOf(id: string): Plan {
 }
 
 export function upgradeHint(plan: Plan): string {
-  if (plan.id === 'FREE') return 'Upgrade to Zen Premium to manage up to 10 properties.';
-  if (plan.id === 'PREMIUM') return 'Upgrade to Zen Pro to manage up to 50 properties.';
+  if (plan.id === 'FREE') return 'Upgrade to Rentelyo Premium to manage up to 10 properties.';
+  if (plan.id === 'PREMIUM') return 'Upgrade to Rentelyo Pro to manage up to 50 properties.';
   return 'Contact us to manage more than 50 properties.';
 }

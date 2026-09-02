@@ -20,7 +20,7 @@ export function FinancesPage() {
   const byCat = useMemo(() => {
     const map = new Map<string, number>();
     operations.filter((o) => o.kind === 'expense').forEach((o) => map.set(o.category, (map.get(o.category) ?? 0) + o.amount));
-    const colors = ['#12372A', '#B45A33', '#5B6B7C', '#3d5c4e', '#8a6a4a'];
+    const colors = ['#345346', '#ac533e', '#68716d', '#263e34', '#904331'];
     return [...map.entries()].map(([label, val], i) => ({ label, value: val, color: colors[i % colors.length] }));
   }, []);
 

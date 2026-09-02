@@ -1,8 +1,9 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { homeEn, homeFr } from './landing/homeCopy';
 
 export type Locale = 'en' | 'fr';
 
-const KEY = 'zen2property.locale';
+const KEY = 'rentelyo.locale';
 
 const messages = {
   en: {
@@ -20,12 +21,25 @@ const messages = {
     footer: {
       blurb: 'For landlords only: manage rented properties, tenants and rent. Not a listing site, not an agency tool.',
       product: 'Product',
+      resources: 'Resources',
+      company: 'Company',
       account: 'Account',
       legal: 'Legal',
-      privacy: 'Privacy',
-      terms: 'Terms',
+      privacy: 'Privacy policy',
+      terms: 'Terms of use',
+      cookies: 'Cookie policy',
       reset: 'Reset password',
+      features: 'Features',
+      security: 'Security',
+      login: 'Log in',
+      signup: 'Create an account',
+      help: 'Help centre',
+      faq: 'FAQ',
+      guides: 'Guides for landlords',
+      about: 'About',
+      contact: 'Contact',
     },
+    home: homeEn,
     hero: {
       kicker: 'For landlords',
       title: 'Simplify managing your rented properties',
@@ -49,8 +63,8 @@ const messages = {
       kicker: 'FAQ',
       title: 'For landlords, in plain terms.',
       q1: 'Is this an agency or listing site?',
-      a1: 'No. Zen2Property is only for owners who rent out their own properties: track tenants, rent and receipts. No ads, no bookings, no tenant search.',
-      q2: 'Does Zen2Property replace a lawyer?',
+      a1: 'No. Rentelyo is only for owners who rent out their own properties: track tenants, rent and receipts. No ads, no bookings, no tenant search.',
+      q2: 'Does Rentelyo replace a lawyer?',
       a2: 'No. Country profiles encode known receipt and deposit rules so the product can block an incomplete document. You remain responsible for the lease and local advice.',
       q3: 'How do receipts stay legally consistent?',
       a3: 'Generation reads the active legal profile for the property’s country. The PDF stores a snapshot of those rules. A later law change does not rewrite receipts already issued.',
@@ -60,7 +74,7 @@ const messages = {
     pricing: {
       kicker: 'For landlords',
       title: 'Simple plans for your rented properties.',
-      lede: 'Zen Free for your first property. Zen Premium for up to 10. Zen Pro for larger portfolios.',
+      lede: 'Rentelyo Free for your first property. Rentelyo Premium for up to 10. Rentelyo Pro for larger portfolios.',
       perMonth: '/ month',
       perYear: '/ year',
       monthly: 'Monthly',
@@ -87,7 +101,7 @@ const messages = {
       choosePremium: 'Choose Premium',
       choosePro: 'Choose Pro',
       contactUs: 'Contact us',
-      overPremium: 'Need more than 10 properties? Upgrade to Zen Pro.',
+      overPremium: 'Need more than 10 properties? Upgrade to Rentelyo Pro.',
       overPro: 'Need more than 50 properties? Contact us.',
       taglineFree: 'Manage your first rented property for free.',
       taglineInvestor: 'For landlords managing up to 10 properties.',
@@ -164,11 +178,11 @@ const messages = {
     legal: {
       kicker: 'Legal',
       privacyTitle: 'Privacy',
-      privacy1: 'Zen2Property stores the account you create (name, email, password hash) and the property, tenant, and payment data you enter. Receipt PDFs are generated on the server and kept for your workspace.',
+      privacy1: 'Rentelyo stores the account you create (name, email, password hash) and the property, tenant, and payment data you enter. Receipt PDFs are generated on the server and kept for your workspace.',
       privacy2: 'Legal-country rules are product configuration, not personal data. We do not sell owner or tenant records. Stripe, when connected, processes card details off our servers.',
       privacyNote: 'This page will be expanded before public launch to match the live processors and hosting region.',
       termsTitle: 'Terms',
-      terms1: 'Zen2Property is a workspace for property owners. You are responsible for the accuracy of rents, tenant details, and documents you generate. Country legal profiles are helpers: they do not replace a lawyer.',
+      terms1: 'Rentelyo is a workspace for property owners. You are responsible for the accuracy of rents, tenant details, and documents you generate. Country legal profiles are helpers: they do not replace a lawyer.',
       terms2: 'The Starter plan is limited to two properties. Paid plans are defined on the pricing page. We may suspend an account that abuses the API or stores unlawful content.',
       termsNote: 'Full commercial terms will be published before paid checkout goes live.',
     },
@@ -331,7 +345,7 @@ const messages = {
     },
     coach: {
       title: 'Tips',
-      from: 'Zen',
+      from: 'Rentelyo',
       welcome:
         'Hi! This space is only for managing your rented properties — tenants, rent and receipts.',
       property: 'Start by adding your first property. The + button is always available.',
@@ -362,12 +376,25 @@ const messages = {
     footer: {
       blurb: 'Réservé aux propriétaires bailleurs : biens loués, locataires et loyers. Pas d’annonces, pas d’outil d’agence.',
       product: 'Produit',
+      resources: 'Ressources',
+      company: 'Entreprise',
       account: 'Compte',
-      legal: 'Mentions',
-      privacy: 'Confidentialité',
-      terms: 'CGU',
+      legal: 'Légal',
+      privacy: 'Politique de confidentialité',
+      terms: 'Conditions d’utilisation',
+      cookies: 'Politique relative aux cookies',
       reset: 'Mot de passe oublié',
+      features: 'Fonctionnalités',
+      security: 'Sécurité',
+      login: 'Connexion',
+      signup: 'Créer un compte',
+      help: 'Centre d’aide',
+      faq: 'FAQ',
+      guides: 'Guides pour propriétaires',
+      about: 'À propos',
+      contact: 'Contact',
     },
+    home: homeFr,
     hero: {
       kicker: 'Pour propriétaires bailleurs',
       title: 'Simplifier la gestion de vos biens loués',
@@ -391,8 +418,8 @@ const messages = {
       kicker: 'FAQ',
       title: 'Pour les bailleurs, sans jargon.',
       q1: 'Est-ce une agence ou un site d’annonces ?',
-      a1: 'Non. Zen2Property sert uniquement aux propriétaires qui louent leurs biens : locataires, loyers et quittances. Pas d’annonces, pas de réservation, pas de recherche de locataires.',
-      q2: 'Zen2Property remplace-t-il un avocat ?',
+      a1: 'Non. Rentelyo sert uniquement aux propriétaires qui louent leurs biens : locataires, loyers et quittances. Pas d’annonces, pas de réservation, pas de recherche de locataires.',
+      q2: 'Rentelyo remplace-t-il un avocat ?',
       a2: 'Non. Les profils pays encodent des règles de quittance et de dépôt pour bloquer un document incomplet. Le bail et le conseil local restent de votre responsabilité.',
       q3: 'Comment les quittances restent-elles cohérentes ?',
       a3: 'La génération lit le profil légal actif du pays du bien. Le PDF stocke un instantané de ces règles. Un changement de loi ultérieur ne réécrit pas les quittances déjà émises.',
@@ -402,7 +429,7 @@ const messages = {
     pricing: {
       kicker: 'Pour bailleurs',
       title: 'Des offres simples pour vos biens loués.',
-      lede: 'Zen Free pour votre premier bien. Zen Premium jusqu’à 10. Zen Pro pour les plus gros portefeuilles.',
+      lede: 'Rentelyo Free pour votre premier bien. Rentelyo Premium jusqu’à 10. Rentelyo Pro pour les plus gros portefeuilles.',
       perMonth: '/ mois',
       perYear: '/ an',
       monthly: 'Mensuel',
@@ -429,7 +456,7 @@ const messages = {
       choosePremium: 'Choisir Premium',
       choosePro: 'Choisir Pro',
       contactUs: 'Nous contacter',
-      overPremium: 'Plus de 10 biens ? Passez à Zen Pro.',
+      overPremium: 'Plus de 10 biens ? Passez à Rentelyo Pro.',
       overPro: 'Plus de 50 biens ? Contactez-nous.',
       taglineFree: 'Pour gérer gratuitement votre premier bien.',
       taglineInvestor: 'Pour les propriétaires qui gèrent jusqu’à 10 biens.',
@@ -506,11 +533,11 @@ const messages = {
     legal: {
       kicker: 'Mentions',
       privacyTitle: 'Confidentialité',
-      privacy1: 'Zen2Property conserve le compte que vous créez (nom, e-mail, hash du mot de passe) et les données de biens, locataires et paiements que vous saisissez. Les PDF de quittance sont générés côté serveur et restent dans votre espace.',
+      privacy1: 'Rentelyo conserve le compte que vous créez (nom, e-mail, hash du mot de passe) et les données de biens, locataires et paiements que vous saisissez. Les PDF de quittance sont générés côté serveur et restent dans votre espace.',
       privacy2: 'Les règles par pays sont de la configuration produit, pas des données personnelles. Nous ne vendons pas les fiches propriétaires ou locataires. Stripe, une fois branché, traite les cartes hors de nos serveurs.',
       privacyNote: 'Cette page sera complétée avant le lancement public (hébergeur et sous-traitants).',
       termsTitle: 'Conditions',
-      terms1: 'Zen2Property est un espace pour propriétaires. Vous êtes responsable de l’exactitude des loyers, des locataires et des documents générés. Les profils légaux aident : ils ne remplacent pas un avocat.',
+      terms1: 'Rentelyo est un espace pour propriétaires. Vous êtes responsable de l’exactitude des loyers, des locataires et des documents générés. Les profils légaux aident : ils ne remplacent pas un avocat.',
       terms2: 'L’offre Starter est limitée à deux biens. Les offres payantes sont décrites sur la page tarifs. Un compte qui abuse de l’API ou stocke un contenu illicite peut être suspendu.',
       termsNote: 'Les conditions commerciales complètes seront publiées avant l’ouverture du paiement Stripe.',
     },
@@ -673,7 +700,7 @@ const messages = {
     },
     coach: {
       title: 'Astuces',
-      from: 'Zen',
+      from: 'Rentelyo',
       welcome:
         'Salut ! Cet espace sert uniquement à gérer vos biens loués — locataires, loyers et quittances.',
       property: 'Commencez par ajouter votre premier bien. Le bouton + est toujours là.',

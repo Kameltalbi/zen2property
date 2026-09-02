@@ -26,6 +26,12 @@ import { ReportsPage } from './pages/ReportsPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { PrivacyPage } from './pages/PrivacyPage';
 import { TermsPage } from './pages/TermsPage';
+import { FeaturesPage } from './pages/FeaturesPage';
+import { SecurityPage } from './pages/SecurityPage';
+import { HelpPage } from './pages/HelpPage';
+import { AboutPage } from './pages/AboutPage';
+import { ContactPage } from './pages/ContactPage';
+import { CookiesPage } from './pages/CookiesPage';
 import { SuperadminPage } from './pages/SuperadminPage';
 
 export function App() {
@@ -34,6 +40,13 @@ export function App() {
       <Route element={<PublicLayout />}>
         <Route path="/" element={<LandingPage />} />
         <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/tarifs" element={<PricingPage />} />
+        <Route path="/features" element={<FeaturesPage />} />
+        <Route path="/security" element={<SecurityPage />} />
+        <Route path="/help" element={<HelpPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/cookies" element={<CookiesPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />

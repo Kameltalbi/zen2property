@@ -74,8 +74,8 @@ export function SuperadminPage() {
     <div className="admin-shell">
       <header className="admin-top">
         <div className="admin-top-inner">
-          <Link className="admin-brand" to="/app" aria-label="Zen2Property Superadmin">
-            <BrandLogo />
+          <Link className="admin-brand" to="/app" aria-label="Rentelyo Superadmin">
+            <BrandLogo onDark />
             <span>Superadmin</span>
           </Link>
           <Link to="/app">Back to app</Link>

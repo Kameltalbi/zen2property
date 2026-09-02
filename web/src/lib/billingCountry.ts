@@ -1,4 +1,4 @@
-const KEY = 'zen2property.billingCountry';
+const KEY = 'rentelyo.billingCountry';
 
 export function readStoredBillingCountry(): string | null {
   try {

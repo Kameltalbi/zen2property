@@ -1,27 +1,27 @@
-# Postgres isolé pour Zen2Property uniquement.
-# Projet Docker: zen2property (ne touche pas aux autres compose).
+# Postgres isolé pour Rentelyo uniquement.
+# Projet Docker: rentelyo (ne touche pas aux autres compose).
 # Port hôte 55433 pour éviter 5432 / 55432 déjà utilisés.
-name: zen2property
+name: rentelyo
 
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: zen2property-postgres
+    container_name: rentelyo-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: zen2property
+      POSTGRES_USER: rentelyo
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me-strong}
-      POSTGRES_DB: zen2property
+      POSTGRES_DB: rentelyo
     ports:
       - "127.0.0.1:55433:5432"
     volumes:
-      - zen2property_pg_data:/var/lib/postgresql/data
+      - rentelyo_pg_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U zen2property -d zen2property"]
+      test: ["CMD-SHELL", "pg_isready -U rentelyo -d rentelyo"]
       interval: 10s
       timeout: 5s
       retries: 5
 
 volumes:
-  zen2property_pg_data:
-    name: zen2property_pg_data
+  rentelyo_pg_data:
+    name: rentelyo_pg_data

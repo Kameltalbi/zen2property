@@ -109,7 +109,7 @@ export function PricingPage() {
       if (plan.code === 'free') {
         await api('/billing/mock-subscribe', { method: 'POST', body: JSON.stringify({ plan: 'FREE' }) });
         await refresh();
-        setNotice(locale === 'fr' ? 'Offre Zen Free activée.' : 'Zen Free activated.');
+        setNotice(locale === 'fr' ? 'Offre Rentelyo Free activée.' : 'Rentelyo Free activated.');
         return;
       }
       const checkout = await api<{

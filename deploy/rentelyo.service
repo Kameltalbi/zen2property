@@ -1,5 +1,5 @@
 [Unit]
-Description=Zen2Property SaaS
+Description=Rentelyo SaaS
 After=network.target docker.service
 Wants=docker.service
 
@@ -7,9 +7,9 @@ Wants=docker.service
 Type=simple
 User=www-data
 Group=www-data
-WorkingDirectory=/var/www/zen2property
-EnvironmentFile=/var/www/zen2property/.env
-ExecStart=/usr/bin/node /var/www/zen2property/dist/index.js
+WorkingDirectory=/var/www/rentelyo
+EnvironmentFile=/var/www/rentelyo/.env
+ExecStart=/usr/bin/node /var/www/rentelyo/dist/index.js
 Restart=on-failure
 RestartSec=5
 # Isolation: ne touche pas aux autres apps

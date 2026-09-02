@@ -43,7 +43,7 @@ export function PropertyWizardPage() {
   }
 
   function saveDraft() {
-    localStorage.setItem('zen2property.propertyDraft', JSON.stringify(form));
+    localStorage.setItem('rentelyo.propertyDraft', JSON.stringify(form));
     setNotice(fr ? 'Brouillon enregistré sur cet appareil.' : 'Draft saved on this device.');
   }
 

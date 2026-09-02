@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Déploie Zen2Property dans /var/www/zen2property UNIQUEMENT.
+# Déploie Rentelyo dans /var/www/rentelyo UNIQUEMENT.
 # Ne modifie aucun autre dossier d'application.
 set -euo pipefail
 
-APP_DIR="${APP_DIR:-/var/www/zen2property}"
-REPO_URL="${REPO_URL:-https://github.com/Kameltalbi/zen2property.git}"
+APP_DIR="${APP_DIR:-/var/www/rentelyo}"
+REPO_URL="${REPO_URL:-https://github.com/Kameltalbi/rentelyo.git}"
 BRANCH="${BRANCH:-develop}"
 
 echo "==> Cible isolée: $APP_DIR (autres apps non touchées)"
@@ -43,7 +43,7 @@ if [[ -z "${JWT_SECRET:-}" || "$JWT_SECRET" == CHANGE_ME_LONG_RANDOM_SECRET_32CH
   exit 2
 fi
 
-echo "==> Postgres Docker (projet zen2property uniquement)"
+echo "==> Postgres Docker (projet rentelyo uniquement)"
 if command -v docker-compose >/dev/null 2>&1; then
   COMPOSE=(docker-compose)
 elif docker compose version >/dev/null 2>&1; then
@@ -69,7 +69,7 @@ chown root:www-data "$APP_DIR/.env" || chown www-data:www-data "$APP_DIR/.env"
 echo "==> Migrations"
 # Attendre Postgres prêt
 for i in $(seq 1 30); do
-  if docker exec zen2property-postgres pg_isready -U zen2property -d zen2property >/dev/null 2>&1; then
+  if docker exec rentelyo-postgres pg_isready -U rentelyo -d rentelyo >/dev/null 2>&1; then
     break
   fi
   sleep 1
@@ -77,19 +77,19 @@ done
 npm run migrate
 chown -R www-data:www-data "$APP_DIR/storage" || true
 
-echo "==> Systemd (unité zen2property uniquement)"
-cp deploy/zen2property.service /etc/systemd/system/zen2property.service
+echo "==> Systemd (unité rentelyo uniquement)"
+cp deploy/rentelyo.service /etc/systemd/system/rentelyo.service
 systemctl daemon-reload
-systemctl enable zen2property
-systemctl restart zen2property
+systemctl enable rentelyo
+systemctl restart rentelyo
 
-echo "==> Nginx site zen2property.com (fichier dédié)"
-cp deploy/nginx/zen2property.com.conf /etc/nginx/sites-available/zen2property.com
-ln -sfn /etc/nginx/sites-available/zen2property.com /etc/nginx/sites-enabled/zen2property.com
+echo "==> Nginx site www.rentelyo.com (fichier dédié)"
+cp deploy/nginx/rentelyo.com.conf /etc/nginx/sites-available/rentelyo.com
+ln -sfn /etc/nginx/sites-available/rentelyo.com /etc/nginx/sites-enabled/rentelyo.com
 nginx -t
 systemctl reload nginx
 
 echo ""
-echo "OK. Ensuite DNS A/AAAA vers ce VPS, puis:"
-echo "  sudo certbot --nginx -d zen2property.com -d www.zen2property.com"
+echo "OK. Ensuite DNS A/AAAA (rentelyo.com + www) vers ce VPS, puis:"
+echo "  sudo certbot --nginx -d www.rentelyo.com -d rentelyo.com"
 echo "Health: curl -s http://127.0.0.1:3120/health"

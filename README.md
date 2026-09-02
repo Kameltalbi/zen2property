@@ -1,4 +1,4 @@
-# Zen2Property SaaS
+# Rentelyo SaaS
 
 Lightweight, English-first web product for property owners: units, tenants, rent tracking, and country-aware PDF receipts. Local legal obligations live in versioned JSON — an AI module may propose updates, never apply them silently.
 
