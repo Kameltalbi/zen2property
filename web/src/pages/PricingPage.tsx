@@ -12,7 +12,7 @@ type BillingCountryOption = { code: string; label: string };
 
 export function PricingPage() {
   const { user, refresh } = useAuth();
-  const { t, locale } = useI18n();
+  const { t } = useI18n();
   const [searchParams, setSearchParams] = useSearchParams();
   const [catalog, setCatalog] = useState<PlanCatalog | null>(null);
   const [countries, setCountries] = useState<BillingCountryOption[]>([]);
@@ -106,7 +106,7 @@ export function PricingPage() {
     try {
       await api('/billing/mock-subscribe', { method: 'POST', body: JSON.stringify({ plan: 'FREE' }) });
       await refresh();
-      setNotice(locale === 'fr' ? 'Offre Rentelyo Free activée.' : 'Rentelyo Free activated.');
+      setNotice(t.pages.freeActivated);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Billing failed');
     }

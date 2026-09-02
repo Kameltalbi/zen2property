@@ -3,55 +3,25 @@ import { NavLink, Navigate, Outlet, Link, useLocation } from 'react-router-dom';
 import { BrandLogo } from './BrandLogo';
 import { homePath } from './api';
 import { useAuth } from './auth';
-import { useI18n } from './i18n';
+import { LOCALES, LOCALE_META, useI18n, type Locale } from './i18n';
 import { CoachChat } from './onboarding/CoachChat';
-
-function FlagFr() {
-  return (
-    <svg className="lang-flag" viewBox="0 0 24 16" width="22" height="15" aria-hidden>
-      <rect width="8" height="16" fill="#002395" />
-      <rect x="8" width="8" height="16" fill="#fff" />
-      <rect x="16" width="8" height="16" fill="#ed2939" />
-    </svg>
-  );
-}
-
-function FlagEn() {
-  return (
-    <svg className="lang-flag" viewBox="0 0 24 16" width="22" height="15" aria-hidden>
-      <rect width="24" height="16" fill="#012169" />
-      <path d="M0 0 L24 16 M24 0 L0 16" stroke="#fff" strokeWidth="3.2" />
-      <path d="M0 0 L24 16 M24 0 L0 16" stroke="#C8102E" strokeWidth="1.6" />
-      <path d="M12 0 V16 M0 8 H24" stroke="#fff" strokeWidth="5" />
-      <path d="M12 0 V16 M0 8 H24" stroke="#C8102E" strokeWidth="2.6" />
-    </svg>
-  );
-}
 
 function LangToggle() {
   const { locale, setLocale, t } = useI18n();
   return (
-    <div className="lang-switch" role="group" aria-label={t.nav.language}>
-      <button
-        type="button"
-        className={locale === 'fr' ? 'on' : ''}
-        aria-pressed={locale === 'fr'}
-        aria-label="Français"
-        title="Français"
-        onClick={() => setLocale('fr')}
+    <div className="lang-switch">
+      <select
+        className="lang-select"
+        value={locale}
+        aria-label={t.nav.language}
+        onChange={(e) => setLocale(e.target.value as Locale)}
       >
-        <FlagFr />
-      </button>
-      <button
-        type="button"
-        className={locale === 'en' ? 'on' : ''}
-        aria-pressed={locale === 'en'}
-        aria-label="English"
-        title="English"
-        onClick={() => setLocale('en')}
-      >
-        <FlagEn />
-      </button>
+        {LOCALES.map((code) => (
+          <option key={code} value={code}>
+            {LOCALE_META[code].nativeName}
+          </option>
+        ))}
+      </select>
     </div>
   );
 }
@@ -160,7 +130,7 @@ export function AppLayout() {
   const { user, loading, logout } = useAuth();
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
-  if (loading) return <p className="app-main">Loading…</p>;
+  if (loading) return <p className="app-main">{t.pages.loading}</p>;
   if (!user) return <Navigate to="/login" replace />;
 
   return (

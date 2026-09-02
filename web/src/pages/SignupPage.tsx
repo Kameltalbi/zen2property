@@ -4,7 +4,7 @@ import { BrandLogo } from '../BrandLogo';
 import { PasswordField } from '../PasswordField';
 import { homePath } from '../api';
 import { useAuth } from '../auth';
-import { useI18n } from '../i18n';
+import { DEFAULT_COUNTRY, useI18n } from '../i18n';
 import { LangToggle } from '../layouts';
 import { storeBillingCountry } from '../lib/billingCountry';
 import { countryLabel, useCountries } from '../lib/countries';
@@ -38,7 +38,7 @@ export function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [countryCode, setCountryCode] = useState(locale === 'fr' ? 'FR' : 'CA');
+  const [countryCode, setCountryCode] = useState(DEFAULT_COUNTRY[locale]);
   const [province, setProvince] = useState('');
   const [error, setError] = useState('');
 

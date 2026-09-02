@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { api } from '../api';
 import { ISO_COUNTRIES } from '../../../src/data/isoCountries';
-import type { Locale } from '../i18n';
+import { LOCALE_META, type Locale } from '../i18n/locale';
 
 export type CountryOption = { code: string; name: string };
 
@@ -9,7 +9,7 @@ export const FALLBACK_COUNTRIES: CountryOption[] = ISO_COUNTRIES.map(({ code, na
 
 export function countryLabel(code: string, locale: Locale): string {
   try {
-    return new Intl.DisplayNames([locale === 'fr' ? 'fr' : 'en'], { type: 'region' }).of(code) ?? code;
+    return new Intl.DisplayNames([LOCALE_META[locale].bcp47], { type: 'region' }).of(code) ?? code;
   } catch {
     return code;
   }

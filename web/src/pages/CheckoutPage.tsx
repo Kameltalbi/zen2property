@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { api, homePath, type PlanCatalog } from '../api';
 import { useAuth } from '../auth';
-import { useI18n } from '../i18n';
+import { DEFAULT_COUNTRY, useI18n } from '../i18n';
 import { authNextQuery, checkoutPath, parsePaidPlan, parsePeriod } from '../lib/paths';
 
 function StripeMark() {
@@ -21,7 +21,7 @@ export function CheckoutPage() {
   const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
 
-  const country = user?.billingCountryCode ?? user?.countryCode ?? (locale === 'fr' ? 'FR' : 'CA');
+  const country = user?.billingCountryCode ?? user?.countryCode ?? DEFAULT_COUNTRY[locale];
 
   useEffect(() => {
     if (canceled) {
@@ -195,6 +195,15 @@ export function CheckoutSuccessPage() {
   const { user } = useAuth();
   const { t } = useI18n();
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+
+  const planCode = parsePaidPlan(params.get('plan')) ?? parsePaidPlan(user?.plan ?? null);
+  const periodParam = params.get('period');
+  const period = periodParam === 'yearly' || periodParam === 'monthly' ? periodParam : 'monthly';
+  const planName = planCode === 'premium' ? t.checkout.planPremium : planCode === 'smart' ? t.checkout.planSmart : null;
+  const title = planName
+    ? t.checkout.successWelcome.replace('{plan}', planName)
+    : t.checkout.successWelcomeGeneric;
 
   useEffect(() => {
     void (async () => {
@@ -208,21 +217,50 @@ export function CheckoutSuccessPage() {
 
   return (
     <section className="container section checkout-success">
-      <p className="kicker">{t.checkout.kicker}</p>
-      <h1>{t.checkout.successTitle}</h1>
-      <p className="lede">{t.checkout.successBody}</p>
-      <p className="checkout-secure muted">
-        <StripeMark />
-        {t.checkout.secure}
-      </p>
-      <p className="hero-actions">
-        <button className="btn clay" type="button" onClick={() => navigate(user ? homePath(user) : '/login')}>
-          {user ? t.checkout.openApp : t.nav.login}
-        </button>
-        <Link className="btn secondary" to="/pricing">
-          {t.nav.pricing}
-        </Link>
-      </p>
+      <article className="card checkout-success-card">
+        <span className="checkout-success-icon" aria-hidden>
+          <svg viewBox="0 0 24 24" width="22" height="22">
+            <path
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M5 12.5 9.5 17 19 7.5"
+            />
+          </svg>
+        </span>
+        <p className="checkout-success-confirmed">{t.checkout.successTitle}</p>
+        <h1>{title}</h1>
+        <p className="checkout-success-lede">
+          {t.checkout.successBody}
+          <br />
+          {t.checkout.successHint}
+        </p>
+        <dl className="checkout-success-summary">
+          <div>
+            <dt>{t.checkout.successPlan}</dt>
+            <dd>{planName ?? '—'}</dd>
+          </div>
+          <div>
+            <dt>{t.checkout.successBilling}</dt>
+            <dd>{period === 'yearly' ? t.checkout.periodYearly : t.checkout.periodMonthly}</dd>
+          </div>
+          <div>
+            <dt>{t.checkout.successStatus}</dt>
+            <dd>{t.checkout.successActive}</dd>
+          </div>
+        </dl>
+        <div className="checkout-success-actions">
+          <button className="btn clay" type="button" onClick={() => navigate(user ? homePath(user) : '/login')}>
+            {user ? t.checkout.openApp : t.nav.login}
+          </button>
+          <Link className="checkout-success-manage" to={user ? '/pricing' : '/login'}>
+            {t.checkout.manageSubscription}
+          </Link>
+        </div>
+        <p className="checkout-success-stripe">{t.checkout.paidByStripe}</p>
+      </article>
     </section>
   );
 }

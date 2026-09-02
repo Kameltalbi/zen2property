@@ -2,18 +2,13 @@ import { Link } from 'react-router-dom';
 import { useI18n } from '../i18n';
 
 export function HelpPage() {
-  const { t, locale } = useI18n();
+  const { t } = useI18n();
   const faq = t.home.faqHome;
-  const fr = locale === 'fr';
   return (
     <article className="container legal-page lp-page">
-      <p className="kicker">{fr ? 'Ressources' : 'Resources'}</p>
-      <h1>{fr ? 'Centre d’aide' : 'Help centre'}</h1>
-      <p className="lede">
-        {fr
-          ? 'Réponses rapides pour propriétaires et investisseurs utilisant Rentelyo.'
-          : 'Quick answers for landlords and investors using Rentelyo.'}
-      </p>
+      <p className="kicker">{t.pages.resources}</p>
+      <h1>{t.pages.helpTitle}</h1>
+      <p className="lede">{t.pages.helpLede}</p>
       <section id="faq">
         <h2>{faq.title}</h2>
         <div className="lp-accordion">
@@ -26,12 +21,8 @@ export function HelpPage() {
         </div>
       </section>
       <section id="guides" style={{ marginTop: 32 }}>
-        <h2>{fr ? 'Guides pour propriétaires' : 'Guides for landlords'}</h2>
-        <p className="muted">
-          {fr
-            ? 'Parcours recommandé : créer un bien, ajouter un locataire, puis ouvrir une location et suivre les loyers.'
-            : 'Recommended path: create a property, add a tenant, then open a lease and track rent.'}
-        </p>
+        <h2>{t.pages.guidesTitle}</h2>
+        <p className="muted">{t.pages.guidesBody}</p>
         <ul className="lp-bullets">
           <li>
             <Link to="/features">{t.footer.features}</Link>

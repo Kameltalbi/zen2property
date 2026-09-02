@@ -5,7 +5,7 @@ import { useI18n } from '../i18n';
 
 export function TenantDetailPage() {
   const { id } = useParams();
-  const { t, locale } = useI18n();
+  const { t } = useI18n();
   const [tenant, setTenant] = useState<Tenant | null>(null);
   const [property, setProperty] = useState<Property | null>(null);
   const [payments, setPayments] = useState<Payment[]>([]);
@@ -30,7 +30,7 @@ export function TenantDetailPage() {
   }, [id]);
 
   if (error) return <p className="error">{error}</p>;
-  if (!tenant) return <p className="muted">{locale === 'fr' ? 'Chargement…' : 'Loading…'}</p>;
+  if (!tenant) return <p className="muted">{t.pages.loading}</p>;
 
   return (
     <>
@@ -52,10 +52,10 @@ export function TenantDetailPage() {
         <table>
           <thead>
             <tr>
-              <th>{locale === 'fr' ? 'Période' : 'Period'}</th>
-              <th>{locale === 'fr' ? 'Échéance' : 'Due'}</th>
-              <th>{locale === 'fr' ? 'Montant' : 'Amount'}</th>
-              <th>Status</th>
+              <th>{t.pages.period}</th>
+              <th>{t.pages.due}</th>
+              <th>{t.pages.amount}</th>
+              <th>{t.pages.status}</th>
             </tr>
           </thead>
           <tbody>
@@ -77,7 +77,7 @@ export function TenantDetailPage() {
         </table>
         {payments.length === 0 && (
           <p className="muted" style={{ padding: 16 }}>
-            {locale === 'fr' ? 'Aucun paiement pour l’instant.' : 'No payments yet.'}
+            {t.pages.noPayments}
           </p>
         )}
       </div>

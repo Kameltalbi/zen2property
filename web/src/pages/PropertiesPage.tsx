@@ -8,7 +8,7 @@ import { ConfirmDialog, EmptyState, PageHeader } from '../workspace/ui';
 
 export function PropertiesPage() {
   const { t, locale } = useI18n();
-  const loc = locale === 'fr' ? 'fr' : 'en';
+  const loc = locale;
   const [view, setView] = useState<'cards' | 'table'>('cards');
   const [q, setQ] = useState('');
   const [type, setType] = useState<'' | PropertyType>('');
@@ -46,8 +46,8 @@ export function PropertiesPage() {
   if (!items.length) {
     return (
       <EmptyState
-        title={locale === 'fr' ? 'Aucun bien' : 'No properties'}
-        body={locale === 'fr' ? 'Ajoutez votre premier bien pour suivre patrimoine, loyers et documents.' : 'Add your first property to track value, rent and documents.'}
+        title={t.pages.noProperties}
+        body={t.pages.noPropertiesBody}
         action={{ to: '/app/properties/new', label: t.app.addProperty }}
       />
     );

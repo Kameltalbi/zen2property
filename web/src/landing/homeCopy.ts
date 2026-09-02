@@ -304,3 +304,614 @@ export const homeFr = {
     cta: 'En savoir plus sur la sécurité',
   },
 } as const;
+
+export type HomeCopy = {
+  organize: { title: string; body: string; imageAlt: string };
+  product: {
+    kicker: string;
+    title: string;
+    body: string;
+    cta: string;
+    imageAlt: string;
+    chips: { title: string; value: string }[];
+  };
+  how: { kicker: string; title: string; steps: { title: string; body: string }[] };
+  features: { kicker: string; title: string; body: string; items: { title: string; body: string }[] };
+  bento: {
+    properties: { title: string; body: string; imageAlt: string };
+    tenants: { title: string; body: string };
+    rent: { title: string; body: string; late: string };
+    documents: { title: string; body: string };
+    expenses: { title: string; body: string };
+    maintenance: { title: string; body: string };
+  };
+  documents: {
+    kicker: string;
+    title: string;
+    body: string;
+    cta: string;
+    imageAlt: string;
+    checks: string[];
+  };
+  control: { title: string; body: string };
+  trust: { title: string; body: string; items: string[] };
+  finalCta: { title: string; body: string; primary: string; secondary: string; note: string };
+  faqHome: { title: string; items: { q: string; a: string }[]; cta: string };
+  security: { title: string; lede: string; items: string[]; cta: string };
+};
+
+export const homeEs: HomeCopy = {
+  organize: {
+    title: 'La gestión de tus alquileres, por fin organizada',
+    body: 'Inmuebles libres o alquilados, contratos, pagos, gastos y mantenimiento: toda la información importante en un panel claro.',
+    imageAlt: 'Panel de Rentelyo con inmuebles, rentas cobradas y tareas pendientes',
+  },
+  product: {
+    kicker: 'Toda tu gestión en un solo lugar',
+    title: 'Gestiona tus alquileres con facilidad',
+    body: 'Inmuebles libres o alquilados, contratos, pagos, gastos y mantenimiento: toda la información importante en un panel claro.',
+    cta: 'Descubrir Rentelyo',
+    imageAlt: 'Panel de Rentelyo con inmuebles, rentas cobradas y tareas',
+    chips: [
+      { title: 'Rentas cobradas', value: '3.130 €' },
+      { title: 'Pagos atrasados', value: '1' },
+      { title: 'Mantenimiento pendiente', value: '3' },
+    ],
+  },
+  how: {
+    kicker: 'Empieza enseguida',
+    title: 'Tu gestión de alquileres en tres pasos',
+    steps: [
+      { title: 'Añade tu inmueble', body: 'Indica la dirección, el estado, la renta, los gastos y la disponibilidad.' },
+      { title: 'Añade el inquilino y el contrato', body: 'Crea la ficha del inquilino y guarda el contrato con sus anexos.' },
+      { title: 'Sigue todo el alquiler', body: 'Gestiona pagos, gastos, mantenimiento y próximas vencimientos.' },
+    ],
+  },
+  features: {
+    kicker: 'Lo esencial, sin complicaciones',
+    title: 'Todo lo que necesitas para gestionar tus inmuebles',
+    body: 'Rentelyo reúne cada etapa de la gestión de alquileres en una interfaz sencilla y ordenada.',
+    items: [
+      { title: 'Inmuebles', body: 'Gestiona viviendas libres o alquiladas.' },
+      { title: 'Inquilinos', body: 'Guarda sus datos y contratos en un solo lugar.' },
+      { title: 'Rentas', body: 'Sigue los pagos y los retrasos.' },
+      { title: 'Gastos', body: 'Registra cargos y reparaciones.' },
+      { title: 'Mantenimiento', body: 'Planifica y sigue las intervenciones.' },
+      { title: 'Documentos', body: 'Conserva todos tus archivos juntos.' },
+    ],
+  },
+  bento: {
+    properties: {
+      title: 'Todos tus inmuebles en un solo lugar',
+      body: 'Añade pisos, casas, oficinas o locales y sigue su estado: libre, alquilado, en preaviso o en obras.',
+      imageAlt: 'Lista de inmuebles en Rentelyo',
+    },
+    tenants: {
+      title: 'Inquilinos y contratos',
+      body: 'Reúne datos de contacto, fechas del contrato, importes y documentos asociados.',
+    },
+    rent: {
+      title: 'Seguimiento de rentas',
+      body: 'Consulta vencimientos, pagos recibidos, pagos parciales y atrasos.',
+      late: 'Atrasado',
+    },
+    documents: {
+      title: 'Documentos listos en unos clics',
+      body: 'Genera recibos, justificantes, recordatorios y avisos de subida con los datos ya guardados.',
+    },
+    expenses: {
+      title: 'Ingresos y gastos',
+      body: 'Sigue ingresos, cargos y el resultado real de cada inmueble.',
+    },
+    maintenance: {
+      title: 'Mantenimiento y reparaciones',
+      body: 'Planifica trabajos y guarda presupuestos, facturas y fotos.',
+    },
+  },
+  documents: {
+    kicker: 'Tus documentos de alquiler',
+    title: 'Genera justificantes sin volver a escribir los datos',
+    body: 'Los datos de inmuebles, inquilinos y pagos se reutilizan para crear documentos claros y fáciles de encontrar.',
+    cta: 'Ver los documentos',
+    imageAlt: 'Un propietario trabajando en Rentelyo en un portátil',
+    checks: [
+      'Recibos de pago',
+      'Justificantes de renta',
+      'Recordatorios de pago',
+      'Avisos de subida',
+      'Extractos de rentas',
+      'Resúmenes de gastos',
+    ],
+  },
+  control: {
+    title: 'No vuelvas a perder un vencimiento',
+    body: 'Rentelyo te ayuda a detectar rentas atrasadas, contratos que vencen, mantenimientos pendientes y subidas de renta programadas.',
+  },
+  trust: {
+    title: 'Tus alquileres siguen organizados y confidenciales',
+    body: 'Rentelyo te ayuda a encontrar la información rápido y protege los datos de tus inmuebles, contratos e inquilinos.',
+    items: [
+      'Inicio de sesión seguro',
+      'Documentos protegidos',
+      'Datos separados entre cuentas',
+      'Accesible en todos los dispositivos',
+    ],
+  },
+  finalCta: {
+    title: '¿Listo para simplificar tus alquileres?',
+    body: 'Añade tu primer inmueble, centraliza tus contratos y empieza a seguir las rentas desde un solo espacio.',
+    primary: 'Crear mi cuenta',
+    secondary: 'Ver funciones',
+    note: '1 inmueble gratis · Sin tarjeta bancaria',
+  },
+  faqHome: {
+    title: 'Preguntas frecuentes',
+    items: [
+      {
+        q: '¿Puedo usar Rentelyo con un solo inmueble?',
+        a: 'Sí. Rentelyo sirve tanto a propietarios de una vivienda como a inversores con varios inmuebles.',
+      },
+      {
+        q: '¿Puedo gestionar varios inmuebles?',
+        a: 'Sí. Puedes centralizar tus inmuebles y seguir ingresos, gastos, documentos y operaciones de cada uno.',
+      },
+      {
+        q: '¿Puedo guardar documentos en la aplicación?',
+        a: 'Sí. Puedes reunir contratos, facturas, inventarios y otros justificantes en una biblioteca.',
+      },
+      {
+        q: '¿Mis datos están protegidos?',
+        a: 'Rentelyo aplica medidas de seguridad pensadas para proteger tu información personal, contractual y financiera.',
+      },
+      {
+        q: '¿Puedo usar Rentelyo en el móvil?',
+        a: 'Sí. La interfaz funciona en ordenador, tableta o teléfono.',
+      },
+    ],
+    cta: 'Ver todas las preguntas',
+  },
+  security: {
+    title: 'Los datos de tus inmuebles siguen siendo confidenciales',
+    lede: 'Tu información financiera, contractual y personal está protegida con medidas de seguridad adecuadas.',
+    items: [
+      'Inicio de sesión seguro',
+      'Tráfico cifrado (HTTPS)',
+      'Datos aislados entre cuentas',
+      'Control de accesos',
+      'Sin cesión comercial de tus datos',
+    ],
+    cta: 'Más información sobre seguridad',
+  },
+};
+
+export const homeDe: HomeCopy = {
+  organize: {
+    title: 'Ihre Mietverwaltung, endlich geordnet',
+    body: 'Freie oder vermietete Objekte, Verträge, Zahlungen, Ausgaben und Instandhaltung: alle wichtigen Infos auf einem klaren Dashboard.',
+    imageAlt: 'Rentelyo-Dashboard mit Objekten, eingenommenen Mieten und offenen Aufgaben',
+  },
+  product: {
+    kicker: 'Ihre gesamte Verwaltung an einem Ort',
+    title: 'Vermietungen einfach steuern',
+    body: 'Freie oder vermietete Objekte, Verträge, Zahlungen, Ausgaben und Instandhaltung: alle wichtigen Infos auf einem klaren Dashboard.',
+    cta: 'Rentelyo entdecken',
+    imageAlt: 'Rentelyo-Dashboard mit Objekten, eingenommenen Mieten und Aufgaben',
+    chips: [
+      { title: 'Mieten eingegangen', value: '3.130 €' },
+      { title: 'Überfällige Zahlungen', value: '1' },
+      { title: 'Instandhaltung offen', value: '3' },
+    ],
+  },
+  how: {
+    kicker: 'Schnell starten',
+    title: 'Ihre Mietverwaltung in drei Schritten',
+    steps: [
+      { title: 'Objekt hinzufügen', body: 'Adresse, Status, Miete, Nebenkosten und Verfügbarkeit erfassen.' },
+      { title: 'Mieter und Vertrag hinzufügen', body: 'Mieterakte anlegen und den Vertrag mit Anlagen hinterlegen.' },
+      { title: 'Die gesamte Vermietung verfolgen', body: 'Zahlungen, Ausgaben, Instandhaltung und nächste Fälligkeiten verwalten.' },
+    ],
+  },
+  features: {
+    kicker: 'Das Wesentliche, ohne Ballast',
+    title: 'Alles, was Sie zur Verwaltung Ihrer Objekte brauchen',
+    body: 'Rentelyo bündelt jeden Schritt der Mietverwaltung in einer einfachen, übersichtlichen Oberfläche.',
+    items: [
+      { title: 'Objekte', body: 'Verwalten Sie freie oder vermietete Wohnungen.' },
+      { title: 'Mieter', body: 'Daten und Verträge an einem Ort.' },
+      { title: 'Mieten', body: 'Zahlungen und Rückstände im Blick.' },
+      { title: 'Ausgaben', body: 'Nebenkosten und Reparaturen erfassen.' },
+      { title: 'Instandhaltung', body: 'Arbeiten planen und nachverfolgen.' },
+      { title: 'Dokumente', body: 'Alle Dateien zusammen aufbewahren.' },
+    ],
+  },
+  bento: {
+    properties: {
+      title: 'Alle Objekte an einem Ort',
+      body: 'Wohnungen, Häuser, Büros oder Gewerbeflächen anlegen und den Status verfolgen: frei, vermietet, in Kündigungsfrist oder in Arbeit.',
+      imageAlt: 'Objektliste in Rentelyo',
+    },
+    tenants: {
+      title: 'Mieter und Verträge',
+      body: 'Kontaktdaten, Vertragsdaten, Beträge und zugehörige Dokumente zusammenhalten.',
+    },
+    rent: {
+      title: 'Mietüberwachung',
+      body: 'Fälligkeiten, eingegangene Zahlungen, Teilzahlungen und Rückstände sehen.',
+      late: 'Überfällig',
+    },
+    documents: {
+      title: 'Dokumente in wenigen Klicks',
+      body: 'Quittungen, Nachweise, Erinnerungen und Erhöhungsschreiben aus gespeicherten Daten erzeugen.',
+    },
+    expenses: {
+      title: 'Einnahmen und Ausgaben',
+      body: 'Einnahmen, Kosten und das tatsächliche Ergebnis jedes Objekts verfolgen.',
+    },
+    maintenance: {
+      title: 'Instandhaltung und Reparaturen',
+      body: 'Arbeiten planen und Angebote, Rechnungen und Fotos aufbewahren.',
+    },
+  },
+  documents: {
+    kicker: 'Ihre Mietdokumente',
+    title: 'Nachweise erzeugen, ohne Daten neu einzugeben',
+    body: 'Objekt-, Mieter- und Zahlungsdaten werden wiederverwendet, um klare, wiederauffindbare Dokumente zu erstellen.',
+    cta: 'Dokumente entdecken',
+    imageAlt: 'Ein Vermieter arbeitet in Rentelyo am Laptop',
+    checks: [
+      'Zahlungsquittungen',
+      'Mietbescheinigungen',
+      'Zahlungserinnerungen',
+      'Erhöhungsschreiben',
+      'Mietaufstellungen',
+      'Ausgabenzusammenfassungen',
+    ],
+  },
+  control: {
+    title: 'Keine Fälligkeit mehr verpassen',
+    body: 'Rentelyo hilft, überfällige Mieten, auslaufende Verträge, anstehende Arbeiten und geplante Mieterhöhungen zu erkennen.',
+  },
+  trust: {
+    title: 'Ihre Vermietungen bleiben organisiert und vertraulich',
+    body: 'Rentelyo hilft, Informationen schnell zu finden und die Daten Ihrer Objekte, Verträge und Mieter zu schützen.',
+    items: [
+      'Sichere Anmeldung',
+      'Geschützte Dokumente',
+      'Getrennte Daten je Konto',
+      'Auf jedem Gerät nutzbar',
+    ],
+  },
+  finalCta: {
+    title: 'Bereit, Ihre Vermietungen zu vereinfachen?',
+    body: 'Legen Sie Ihr erstes Objekt an, bündeln Sie Verträge und verfolgen Sie Mieten an einem Ort.',
+    primary: 'Konto erstellen',
+    secondary: 'Funktionen ansehen',
+    note: '1 Objekt kostenlos · Keine Kreditkarte nötig',
+  },
+  faqHome: {
+    title: 'Häufige Fragen',
+    items: [
+      {
+        q: 'Kann ich Rentelyo mit einem einzelnen Objekt nutzen?',
+        a: 'Ja. Rentelyo eignet sich für Vermieter einer Wohnung ebenso wie für Investoren mit mehreren Objekten.',
+      },
+      {
+        q: 'Kann ich mehrere Objekte verwalten?',
+        a: 'Ja. Sie können Objekte bündeln und Einnahmen, Ausgaben, Dokumente und Vorgänge je Objekt verfolgen.',
+      },
+      {
+        q: 'Kann ich Dokumente in der App speichern?',
+        a: 'Ja. Mietverträge, Rechnungen, Protokolle und andere Nachweise gehören in eine gemeinsame Ablage.',
+      },
+      {
+        q: 'Sind meine Daten sicher?',
+        a: 'Rentelyo setzt Sicherheitsmaßnahmen ein, um persönliche, vertragliche und finanzielle Informationen zu schützen.',
+      },
+      {
+        q: 'Kann ich Rentelyo mobil nutzen?',
+        a: 'Ja. Die Oberfläche funktioniert auf Computer, Tablet und Smartphone.',
+      },
+    ],
+    cta: 'Alle Fragen ansehen',
+  },
+  security: {
+    title: 'Ihre Immobiliendaten bleiben vertraulich',
+    lede: 'Finanzielle, vertragliche und persönliche Informationen sind mit angemessenen Sicherheitsmaßnahmen geschützt.',
+    items: [
+      'Sichere Anmeldung',
+      'Verschlüsselter Verkehr (HTTPS)',
+      'Getrennte Daten je Konto',
+      'Zugriffskontrolle',
+      'Keine kommerzielle Weitergabe Ihrer Daten',
+    ],
+    cta: 'Mehr zur Sicherheit',
+  },
+};
+
+export const homePt: HomeCopy = {
+  organize: {
+    title: 'A gestão dos seus arrendamentos, finalmente organizada',
+    body: 'Imóveis livres ou arrendados, contratos, pagamentos, despesas e manutenção: toda a informação importante num painel claro.',
+    imageAlt: 'Painel Rentelyo com imóveis, rendas cobradas e ações pendentes',
+  },
+  product: {
+    kicker: 'Toda a gestão num só sítio',
+    title: 'Gira os seus arrendamentos com simplicidade',
+    body: 'Imóveis livres ou arrendados, contratos, pagamentos, despesas e manutenção: toda a informação importante num painel claro.',
+    cta: 'Descobrir a Rentelyo',
+    imageAlt: 'Painel Rentelyo com imóveis, rendas cobradas e tarefas',
+    chips: [
+      { title: 'Rendas cobradas', value: '3 130 €' },
+      { title: 'Pagamentos em atraso', value: '1' },
+      { title: 'Manutenção pendente', value: '3' },
+    ],
+  },
+  how: {
+    kicker: 'Comece depressa',
+    title: 'A sua gestão de arrendamentos em três passos',
+    steps: [
+      { title: 'Adicione o imóvel', body: 'Indique a morada, o estado, a renda, os encargos e a disponibilidade.' },
+      { title: 'Adicione o inquilino e o contrato', body: 'Crie a ficha do inquilino e guarde o contrato com os anexos.' },
+      { title: 'Acompanhe todo o arrendamento', body: 'Gira pagamentos, despesas, manutenção e próximas prestações.' },
+    ],
+  },
+  features: {
+    kicker: 'O essencial, sem complexidade',
+    title: 'Tudo o que precisa para gerir os seus imóveis',
+    body: 'A Rentelyo reúne cada etapa da gestão de arrendamentos numa interface simples e organizada.',
+    items: [
+      { title: 'Imóveis', body: 'Gira habitações livres ou arrendadas.' },
+      { title: 'Inquilinos', body: 'Centralize dados e contratos.' },
+      { title: 'Rendas', body: 'Acompanhe pagamentos e atrasos.' },
+      { title: 'Despesas', body: 'Registe encargos e reparações.' },
+      { title: 'Manutenção', body: 'Planeie e acompanhe as intervenções.' },
+      { title: 'Documentos', body: 'Guarde todos os ficheiros no mesmo sítio.' },
+    ],
+  },
+  bento: {
+    properties: {
+      title: 'Todos os imóveis no mesmo sítio',
+      body: 'Adicione apartamentos, casas, escritórios ou lojas e acompanhe o estado: livre, arrendado, em pré-aviso ou em obras.',
+      imageAlt: 'Lista de imóveis na Rentelyo',
+    },
+    tenants: {
+      title: 'Inquilinos e contratos',
+      body: 'Reúna contactos, datas do contrato, valores e documentos associados.',
+    },
+    rent: {
+      title: 'Acompanhamento das rendas',
+      body: 'Veja vencimentos, pagamentos recebidos, pagamentos parciais e atrasos.',
+      late: 'Em atraso',
+    },
+    documents: {
+      title: 'Documentos prontos em poucos cliques',
+      body: 'Gere recibos, comprovativos, lembretes e avisos de aumento a partir dos dados já guardados.',
+    },
+    expenses: {
+      title: 'Receitas e despesas',
+      body: 'Acompanhe receitas, encargos e o resultado real de cada imóvel.',
+    },
+    maintenance: {
+      title: 'Manutenção e reparações',
+      body: 'Planeie trabalhos e guarde orçamentos, faturas e fotografias.',
+    },
+  },
+  documents: {
+    kicker: 'Os seus documentos de arrendamento',
+    title: 'Gere comprovativos sem voltar a inserir os dados',
+    body: 'Os dados de imóveis, inquilinos e pagamentos são reutilizados para criar documentos claros e fáceis de encontrar.',
+    cta: 'Ver os documentos',
+    imageAlt: 'Um senhorio a trabalhar na Rentelyo no computador',
+    checks: [
+      'Recibos de pagamento',
+      'Comprovativos de renda',
+      'Lembretes de pagamento',
+      'Avisos de aumento',
+      'Extratos de rendas',
+      'Resumos de despesas',
+    ],
+  },
+  control: {
+    title: 'Não volte a falhar um vencimento',
+    body: 'A Rentelyo ajuda a identificar rendas em atraso, contratos a terminar, manutenções a realizar e aumentos de renda programados.',
+  },
+  trust: {
+    title: 'Os seus arrendamentos ficam organizados e confidenciais',
+    body: 'A Rentelyo ajuda a encontrar informação depressa e protege os dados dos seus imóveis, contratos e inquilinos.',
+    items: [
+      'Início de sessão seguro',
+      'Documentos protegidos',
+      'Dados separados entre contas',
+      'Acessível em todos os dispositivos',
+    ],
+  },
+  finalCta: {
+    title: 'Pronto para simplificar os arrendamentos?',
+    body: 'Adicione o primeiro imóvel, centralize os contratos e comece a acompanhar as rendas num único espaço.',
+    primary: 'Criar a minha conta',
+    secondary: 'Ver funcionalidades',
+    note: '1 imóvel grátis · Sem cartão bancário',
+  },
+  faqHome: {
+    title: 'Perguntas frequentes',
+    items: [
+      {
+        q: 'Posso usar a Rentelyo com um só imóvel?',
+        a: 'Sim. A Rentelyo serve tanto senhorios de um fogo como investidores com vários imóveis.',
+      },
+      {
+        q: 'Posso gerir vários imóveis?',
+        a: 'Sim. Pode centralizar os imóveis e acompanhar receitas, despesas, documentos e operações de cada um.',
+      },
+      {
+        q: 'Posso guardar documentos na aplicação?',
+        a: 'Sim. Pode reunir contratos, faturas, autos de vistoria e outros comprovativos numa biblioteca.',
+      },
+      {
+        q: 'Os meus dados estão seguros?',
+        a: 'A Rentelyo aplica medidas de segurança para proteger a sua informação pessoal, contratual e financeira.',
+      },
+      {
+        q: 'Posso usar a Rentelyo no telemóvel?',
+        a: 'Sim. A interface funciona num computador, tablet ou telemóvel.',
+      },
+    ],
+    cta: 'Ver todas as perguntas',
+  },
+  security: {
+    title: 'Os dados dos seus imóveis permanecem confidenciais',
+    lede: 'A informação financeira, contratual e pessoal está protegida com medidas de segurança adequadas.',
+    items: [
+      'Início de sessão seguro',
+      'Tráfego cifrado (HTTPS)',
+      'Dados isolados entre contas',
+      'Controlo de acessos',
+      'Sem partilha comercial dos seus dados',
+    ],
+    cta: 'Saber mais sobre segurança',
+  },
+};
+
+export const homeAr: HomeCopy = {
+  organize: {
+    title: 'إدارة إيجاراتك، منظمة أخيرًا',
+    body: 'عقارات شاغرة أو مؤجرة، عقود، مدفوعات، مصاريف وصيانة: كل المعلومات المهمة في لوحة واضحة.',
+    imageAlt: 'لوحة Rentelyo مع العقارات والإيجارات المحصّلة والمهام',
+  },
+  product: {
+    kicker: 'كل إدارتك في مكان واحد',
+    title: 'أدِر إيجاراتك بسهولة',
+    body: 'عقارات شاغرة أو مؤجرة، عقود، مدفوعات، مصاريف وصيانة: كل المعلومات المهمة في لوحة واضحة.',
+    cta: 'اكتشف Rentelyo',
+    imageAlt: 'لوحة Rentelyo تعرض العقارات والإيجارات المحصّلة',
+    chips: [
+      { title: 'إيجار مُحصَّل', value: '٣٬١٣٠ €' },
+      { title: 'مدفوعات متأخرة', value: '1' },
+      { title: 'صيانة معلّقة', value: '3' },
+    ],
+  },
+  how: {
+    kicker: 'ابدأ بسرعة',
+    title: 'إدارة الإيجار في ثلاث خطوات',
+    steps: [
+      { title: 'أضف عقارك', body: 'أدخل العنوان والحالة والإيجار والأعباء وتاريخ التوفر.' },
+      { title: 'أضف المستأجر والعقد', body: 'أنشئ ملف المستأجر واحفظ العقد ومرفقاته.' },
+      { title: 'تابع الإيجار بالكامل', body: 'أدِر المدفوعات والمصاريف والصيانة والاستحقاقات القادمة.' },
+    ],
+  },
+  features: {
+    kicker: 'الأساسيات دون تعقيد',
+    title: 'كل ما تحتاجه لإدارة عقاراتك',
+    body: 'تجمع Rentelyo كل مرحلة من إدارة الإيجار في واجهة بسيطة ومنظمة.',
+    items: [
+      { title: 'العقارات', body: 'أدِر المساكن الشاغرة أو المؤجرة.' },
+      { title: 'المستأجرون', body: 'اجمع بياناتهم وعقودهم في مكان واحد.' },
+      { title: 'الإيجارات', body: 'تابع المدفوعات والمتأخرات.' },
+      { title: 'المصاريف', body: 'سجّل الأعباء والإصلاحات.' },
+      { title: 'الصيانة', body: 'خطّط للتدخلات وتابعها.' },
+      { title: 'المستندات', body: 'احتفظ بملفاتك معًا.' },
+    ],
+  },
+  bento: {
+    properties: {
+      title: 'كل عقاراتك في مكان واحد',
+      body: 'أضف شققًا أو منازل أو مكاتب أو محلات وتابع حالتها: شاغر، مؤجر، في فترة إشعار أو قيد الأشغال.',
+      imageAlt: 'قائمة العقارات في Rentelyo',
+    },
+    tenants: {
+      title: 'المستأجرون والعقود',
+      body: 'اجمع بيانات الاتصال وتواريخ العقد والمبالغ والمستندات المرتبطة.',
+    },
+    rent: {
+      title: 'متابعة الإيجارات',
+      body: 'اطلع على الاستحقاقات والمدفوعات المستلمة والتسديدات الجزئية والمتأخرات.',
+      late: 'متأخر',
+    },
+    documents: {
+      title: 'مستندات جاهزة ببضع نقرات',
+      body: 'أنشئ وصولات وإثباتات وتذكيرات وإشعارات زيادة من البيانات المحفوظة.',
+    },
+    expenses: {
+      title: 'الإيرادات والمصاريف',
+      body: 'تابع الإيرادات والأعباء والنتيجة الفعلية لكل عقار.',
+    },
+    maintenance: {
+      title: 'الصيانة والإصلاحات',
+      body: 'خطّط للأعمال واحتفظ بعروض الأسعار والفواتير والصور.',
+    },
+  },
+  documents: {
+    kicker: 'مستندات الإيجار',
+    title: 'أنشئ الإثباتات دون إعادة إدخال البيانات',
+    body: 'تُعاد استخدام بيانات العقارات والمستأجرين والمدفوعات لإنشاء مستندات واضحة وسهلة الاسترجاع.',
+    cta: 'اكتشف المستندات',
+    imageAlt: 'مالك يعمل في Rentelyo على حاسوبه',
+    checks: [
+      'وصولات الدفع',
+      'إثباتات الإيجار',
+      'تذكيرات الدفع',
+      'إشعارات الزيادة',
+      'كشوف الإيجارات',
+      'ملخصات المصاريف',
+    ],
+  },
+  control: {
+    title: 'لا تفوّت أي استحقاق',
+    body: 'تساعدك Rentelyo على رصد الإيجارات المتأخرة والعقود المنتهية والصيانة المعلقة وزيادات الإيجار المبرمجة.',
+  },
+  trust: {
+    title: 'تبقى إيجاراتك منظمة وسرية',
+    body: 'تساعدك Rentelyo على إيجاد المعلومات بسرعة مع حماية بيانات عقاراتك وعقودك ومستأجريك.',
+    items: [
+      'تسجيل دخول آمن',
+      'مستندات محمية',
+      'بيانات منفصلة بين الحسابات',
+      'متاح على كل الأجهزة',
+    ],
+  },
+  finalCta: {
+    title: 'مستعد لتبسيط إيجاراتك؟',
+    body: 'أضف عقارك الأول واجمع عقودك وابدأ متابعة الإيجارات من مساحة واحدة.',
+    primary: 'إنشاء حسابي',
+    secondary: 'عرض الميزات',
+    note: 'عقار واحد مجانًا · لا حاجة لبطاقة بنكية',
+  },
+  faqHome: {
+    title: 'أسئلة شائعة',
+    items: [
+      {
+        q: 'هل يمكنني استخدام Rentelyo بعقار واحد؟',
+        a: 'نعم. تناسب Rentelyo مالكي مسكن واحد كما تناسب المستثمرين الذين يديرون عدة عقارات.',
+      },
+      {
+        q: 'هل يمكنني إدارة عدة عقارات؟',
+        a: 'نعم. يمكنك تجميع عقاراتك ومتابعة الإيرادات والمصاريف والمستندات والعمليات لكل عقار.',
+      },
+      {
+        q: 'هل يمكنني حفظ المستندات في التطبيق؟',
+        a: 'نعم. يمكنك جمع العقود والفواتير ومحاضر الجرد وغيرها من الإثباتات في مكتبة واحدة.',
+      },
+      {
+        q: 'هل بياناتي آمنة؟',
+        a: 'تطبّق Rentelyo إجراءات أمنية لحماية معلوماتك الشخصية والتعاقدية والمالية.',
+      },
+      {
+        q: 'هل يمكنني استخدام Rentelyo على الهاتف؟',
+        a: 'نعم. تعمل الواجهة على الحاسوب واللوحي والهاتف.',
+      },
+    ],
+    cta: 'عرض كل الأسئلة',
+  },
+  security: {
+    title: 'بيانات عقاراتك تبقى سرية',
+    lede: 'معلوماتك المالية والتعاقدية والشخصية محمية بإجراءات أمنية مناسبة.',
+    items: [
+      'تسجيل دخول آمن',
+      'تشفير الاتصالات (HTTPS)',
+      'فصل البيانات بين الحسابات',
+      'التحكم في الوصول',
+      'لا مشاركة تجارية لبياناتك',
+    ],
+    cta: 'معرفة المزيد عن الأمان',
+  },
+};

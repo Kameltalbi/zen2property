@@ -5,7 +5,7 @@ import { useI18n } from '../i18n';
 
 export function LeaseDetailPage() {
   const { id } = useParams();
-  const { t, locale } = useI18n();
+  const { t } = useI18n();
   const [lease, setLease] = useState<Lease | null>(null);
   const [property, setProperty] = useState<Property | null>(null);
   const [tenant, setTenant] = useState<Tenant | null>(null);
@@ -30,7 +30,7 @@ export function LeaseDetailPage() {
   }, [id]);
 
   if (error) return <p className="error">{error}</p>;
-  if (!lease) return <p className="muted">{locale === 'fr' ? 'Chargement…' : 'Loading…'}</p>;
+  if (!lease) return <p className="muted">{t.pages.loading}</p>;
 
   const increase =
     lease.rentIncreaseFrequency === 'none'

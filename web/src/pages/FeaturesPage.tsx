@@ -2,12 +2,11 @@ import { Link } from 'react-router-dom';
 import { useI18n } from '../i18n';
 
 export function FeaturesPage() {
-  const { t, locale } = useI18n();
+  const { t } = useI18n();
   const h = t.home;
-  const fr = locale === 'fr';
   return (
     <article className="container legal-page lp-page">
-      <p className="kicker">{fr ? 'Produit' : 'Product'}</p>
+      <p className="kicker">{t.pages.product}</p>
       <h1>{h.features.title}</h1>
       <p className="lede">{h.organize.body}</p>
       <div className="lp-card-grid three" style={{ marginTop: 28 }}>

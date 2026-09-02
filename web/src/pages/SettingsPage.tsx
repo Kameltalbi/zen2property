@@ -2,7 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../api';
 import { useAuth } from '../auth';
-import { useI18n } from '../i18n';
+import { useI18n, type Locale } from '../i18n';
 import { countryLabel, useCountries } from '../lib/countries';
 import { resetCoachTips } from '../onboarding/CoachChat';
 
@@ -74,7 +74,7 @@ function normalizeTax(tax?: TaxRules | null): TaxRules {
   };
 }
 
-function tnDefaults(locale: 'en' | 'fr'): { tax: TaxRules; documents: RequiredDocument[]; mentions: string[] } {
+function tnDefaults(locale: Locale): { tax: TaxRules; documents: RequiredDocument[]; mentions: string[] } {
   const fr = locale === 'fr';
   return {
     tax: {
@@ -214,7 +214,7 @@ export function SettingsPage() {
     try {
       await api('/me', { method: 'PATCH', body: JSON.stringify(form) });
       await refresh();
-      setNotice(locale === 'fr' ? 'Profil enregistré.' : 'Profile saved.');
+      setNotice(t.pages.profileSaved);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Save failed');
     }
@@ -346,8 +346,8 @@ export function SettingsPage() {
           </label>
         </div>
         <p className="muted">
-          {locale === 'fr' ? 'Plan actuel' : 'Current plan'}: {user?.plan}.{' '}
-          <Link to="/pricing">{locale === 'fr' ? 'Changer d’offre' : 'Change plan'}</Link>
+          {t.pages.currentPlan}: {user?.plan}.{' '}
+          <Link to="/pricing">{t.pages.changePlan}</Link>
         </p>
         <button className="btn" type="submit">
           Save
@@ -574,11 +574,11 @@ export function SettingsPage() {
 
       <div className="ws-grid two" style={{ marginTop: 16 }}>
         <div className="ws-card">
-          <h3>{locale === 'fr' ? 'Préférences' : 'Preferences'}</h3>
+          <h3>{t.pages.preferences}</h3>
           <p className="muted">
             {locale === 'fr'
-              ? 'Langue, devise et format de date suivent le compte et le basculeur FR/EN.'
-              : 'Language, currency and date format follow the account and the FR/EN toggle.'}
+              ? 'Langue, devise et format de date suivent le compte et le sélecteur de langue.'
+              : 'Language, currency and date format follow the account and the language selector.'}
           </p>
           <button
             type="button"
@@ -598,7 +598,7 @@ export function SettingsPage() {
           </p>
         </div>
         <div className="ws-card">
-          <h3>{locale === 'fr' ? 'Sécurité' : 'Security'}</h3>
+          <h3>{t.pages.security}</h3>
           <p className="muted">
             {locale === 'fr'
               ? 'Mot de passe et sessions JWT existants. Pas de changement d’auth.'
@@ -606,7 +606,7 @@ export function SettingsPage() {
           </p>
         </div>
         <div className="ws-card">
-          <h3>{locale === 'fr' ? 'Membres' : 'Members'}</h3>
+          <h3>{t.pages.members}</h3>
           <p className="muted">
             {locale === 'fr'
               ? 'Permissions multi-utilisateurs : schéma à valider avant migration.'
@@ -614,16 +614,16 @@ export function SettingsPage() {
           </p>
         </div>
         <div className="ws-card">
-          <h3>{locale === 'fr' ? 'Abonnement' : 'Billing'}</h3>
+          <h3>{t.pages.billing}</h3>
           <p className="muted">
-            {locale === 'fr' ? 'Plan actuel' : 'Current plan'}: {user?.plan}
+            {t.pages.currentPlan}: {user?.plan}
           </p>
           <p>
-            <Link to="/pricing">{locale === 'fr' ? 'Gérer l’abonnement (Stripe)' : 'Manage billing (Stripe)'}</Link>
+            <Link to="/pricing">{t.pages.manageBilling}</Link>
           </p>
         </div>
         <div className="ws-card">
-          <h3>{locale === 'fr' ? 'Import / export' : 'Import / export'}</h3>
+          <h3>{t.pages.importExport}</h3>
           <p className="muted">
             {locale === 'fr'
               ? 'CSV, Excel, PDF — interface prête, fichiers réels après schéma.'

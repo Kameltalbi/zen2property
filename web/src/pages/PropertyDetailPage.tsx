@@ -9,7 +9,7 @@ export function PropertyDetailPage() {
   const { id } = useParams();
   const { locale } = useI18n();
   const fr = locale === 'fr';
-  const loc = fr ? 'fr' : 'en';
+  const loc = locale;
   const [tab, setTab] = useState('overview');
   const p = properties.find((x) => x.id === id);
   if (!p) return <Navigate to="/app/properties" replace />;
