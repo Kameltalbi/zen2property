@@ -494,7 +494,8 @@ html[dir="rtl"] .lang-select {
     ),
     url('/hero.jpg');
   background-size: cover;
-  background-position: center right;
+  /* Couple is on the right of the photo; 78% keeps both people in a tall phone crop. Do not use `right` — it clips the woman. */
+  background-position: 78% 42%;
   background-repeat: no-repeat;
 }
 .home-hero > .container {
@@ -1230,7 +1231,7 @@ th { color: var(--muted); font-weight: 600; font-size: 0.8rem; text-transform: u
 
 @media (max-width: 960px) {
   .home-hero {
-    background-position: right 42%;
+    background-position: 78% 38%;
   }
   .home-hero > .container {
     padding-top: 104px;
@@ -2689,7 +2690,7 @@ html[dir="rtl"] .footer-simple .lang-switch { margin-left: 0; }
 @media (max-width: 390px) {
   :root { --page-gutter: 0.7cm; }
   .home-hero {
-    background-position: right 40%;
+    background-position: 76% 36%;
   }
   .home-hero-copy { max-width: 100%; }
   .brand-logo { height: 30px; max-width: 150px; }
