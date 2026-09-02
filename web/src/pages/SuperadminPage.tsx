@@ -192,17 +192,29 @@ export function SuperadminPage() {
           <table>
             <thead>
               <tr>
-                <th className="admin-actions-col">Actions</th>
                 <th>User</th>
                 <th>Country</th>
                 <th>Plan</th>
                 <th>Stripe</th>
                 <th>Status</th>
+                <th className="admin-actions-col">Actions</th>
               </tr>
             </thead>
             <tbody>
               {users.map((row) => (
                 <tr key={row.id}>
+                  <td>
+                    <strong>{row.fullName}</strong>
+                    <div className="muted">{row.email}</div>
+                  </td>
+                  <td>{row.countryCode}</td>
+                  <td>
+                    <span className={`pill ${row.plan}`}>{row.plan}</span>
+                  </td>
+                  <td>
+                    <span className={`pill ${row.subscriptionStatus}`}>{row.subscriptionStatus}</span>
+                  </td>
+                  <td>{row.isActive ? 'Active' : 'Disabled'}</td>
                   <td className="admin-actions-col">
                     <button
                       className="admin-kebab"
@@ -220,18 +232,6 @@ export function SuperadminPage() {
                       <span aria-hidden>⋮</span>
                     </button>
                   </td>
-                  <td>
-                    <strong>{row.fullName}</strong>
-                    <div className="muted">{row.email}</div>
-                  </td>
-                  <td>{row.countryCode}</td>
-                  <td>
-                    <span className={`pill ${row.plan}`}>{row.plan}</span>
-                  </td>
-                  <td>
-                    <span className={`pill ${row.subscriptionStatus}`}>{row.subscriptionStatus}</span>
-                  </td>
-                  <td>{row.isActive ? 'Active' : 'Disabled'}</td>
                 </tr>
               ))}
             </tbody>

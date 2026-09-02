@@ -1009,7 +1009,7 @@ th { color: var(--muted); font-weight: 600; font-size: 0.8rem; text-transform: u
 .admin-toolbar form { margin: 0; }
 .admin-actions-col {
   width: 52px;
-  text-align: center;
+  text-align: right;
 }
 .admin-kebab {
   width: 36px;
