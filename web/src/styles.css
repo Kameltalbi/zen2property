@@ -67,7 +67,7 @@ h3 { font-size: 1.15rem; }
 .narrow {
   width: min(460px, calc(100% - (2 * var(--page-gutter))));
   margin-inline: 0;
-  margin-left: var(--page-gutter);
+  margin-inline-start: var(--page-gutter);
   padding-inline: 0;
 }
 .narrow h1 { font-size: clamp(1.7rem, 6vw, 2.6rem); }
@@ -207,14 +207,14 @@ h3 { font-size: 1.15rem; }
   max-height: 100dvh;
 }
 .auth-split-page .auth-split-form h1 {
-  text-align: left;
+  text-align: start;
   margin: 8px 0 12px;
 }
 .auth-split-page .auth-lede {
   margin: 0 0 18px;
 }
 .auth-split-page .auth-panel-links {
-  text-align: left;
+  text-align: start;
   margin-top: 18px;
 }
 .auth-page-top {
@@ -288,7 +288,7 @@ h3 { font-size: 1.15rem; }
   line-height: 0;
 }
 .topnav > .brand {
-  margin-left: 1cm;
+  margin-inline-start: 1cm;
   min-width: 0;
 }
 .brand-logo {
@@ -322,7 +322,7 @@ h3 { font-size: 1.15rem; }
   left: 50%;
   transform: translateX(-50%);
 }
-.nav-actions { margin-left: auto; }
+.nav-actions { margin-inline-start: auto; }
 .nav-toggle {
   display: none;
   border: 1px solid var(--line);
@@ -372,7 +372,7 @@ html[dir="rtl"] .lang-select {
   outline: none;
 }
 .nav-toolbar .lang-switch { display: none; }
-.nav-actions .lang-switch { margin-right: 4px; }
+.nav-actions .lang-switch { margin-inline-end: 4px; }
 
 .faq-list { display: grid; gap: 12px; margin-top: 22px; }
 
@@ -497,6 +497,8 @@ html[dir="rtl"] .lang-select {
   /* Couple is on the right of the photo; 78% keeps both people in a tall phone crop. Do not use `right` — it clips the woman. */
   background-position: 78% 42%;
   background-repeat: no-repeat;
+  /* Photo + overlay stay left-anchored; Arabic copy is RTL inside .home-hero-copy. */
+  direction: ltr;
 }
 .home-hero > .container {
   width: 100%;
@@ -508,14 +510,18 @@ html[dir="rtl"] .lang-select {
 .home-hero-copy {
   position: relative;
   z-index: 1;
-  max-width: min(38rem, 100%);
-  text-align: left;
+  /* Explicit width + margin-right:auto keeps the column on the physical left
+     even when html[dir=rtl] would otherwise dock a max-width block to the right. */
+  width: min(38rem, 100%);
+  margin-left: 0;
+  margin-right: auto;
+  text-align: start;
 }
 .home-hero .kicker,
 .home-hero .lede,
 .home-hero h1 {
   color: #fff;
-  text-align: left;
+  text-align: start;
 }
 .home-hero .lede {
   opacity: 0.92;
@@ -555,7 +561,7 @@ html[dir="rtl"] .lang-select {
 .pricing-detect { margin: 16px 0; }
 .pricing-limit { font-weight: 650; margin: 0; }
 .pricing-cycle .pricing-save {
-  margin-left: 8px;
+  margin-inline-start: 8px;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -922,7 +928,7 @@ textarea { min-height: 90px; resize: vertical; }
 .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 table { width: 100%; border-collapse: collapse; min-width: 560px; }
 th, td {
-  text-align: left;
+  text-align: start;
   padding: 10px 8px;
   border-bottom: 1px solid var(--line);
   font-size: 0.95rem;
@@ -1043,7 +1049,7 @@ th { color: var(--muted); font-weight: 600; font-size: 0.8rem; text-transform: u
 .admin-kebab-menu button {
   display: block;
   width: 100%;
-  text-align: left;
+  text-align: start;
   border: 0;
   background: transparent;
   color: var(--ink);
@@ -1121,7 +1127,7 @@ th { color: var(--muted); font-weight: 600; font-size: 0.8rem; text-transform: u
   color: var(--text);
 }
 .footer-simple .lang-switch {
-  margin-left: auto;
+  margin-inline-start: auto;
 }
 .footer-grid h3 { font-size: 0.85rem; margin-bottom: 10px; }
 .footer-grid a { display: block; text-decoration: none; color: var(--muted); margin-top: 6px; }
@@ -1201,7 +1207,7 @@ th { color: var(--muted); font-weight: 600; font-size: 0.8rem; text-transform: u
     transform: none;
   }
   .nav-toggle { display: inline-flex; align-items: center; gap: 8px; }
-  .nav-toolbar { margin-left: auto; order: 2; }
+  .nav-toolbar { margin-inline-start: auto; order: 2; }
   .nav-toolbar .lang-switch { display: inline-flex; }
   .nav-actions .lang-switch { display: none; }
   .nav-panel {
@@ -1218,7 +1224,7 @@ th { color: var(--muted); font-weight: 600; font-size: 0.8rem; text-transform: u
     flex-direction: column;
     align-items: stretch;
     gap: 4px;
-    margin-left: 0;
+    margin-inline-start: 0;
     white-space: normal;
   }
   .nav-panel .nav-links a,
@@ -1280,7 +1286,7 @@ th { color: var(--muted); font-weight: 600; font-size: 0.8rem; text-transform: u
   .grid-2 { grid-template-columns: 1fr; }
   .form .btn, .card > .btn { width: 100%; }
   .app-header-logout { padding: 8px 12px; }
-  .topnav > .brand { margin-left: 0; min-width: 0; }
+  .topnav > .brand { margin-inline-start: 0; min-width: 0; }
   .nav-toggle {
     min-width: 44px;
     min-height: 44px;
@@ -1317,7 +1323,7 @@ th { color: var(--muted); font-weight: 600; font-size: 0.8rem; text-transform: u
   .grid-3, .grid-4, .footer-grid { grid-template-columns: 1fr; }
   .public-shell .narrow {
     width: 100%;
-    margin-left: 0;
+    margin-inline-start: 0;
   }
   .lede { font-size: 1.02rem; max-width: 100%; }
   .price { font-size: 2rem; }
@@ -1838,7 +1844,7 @@ th { color: var(--muted); font-weight: 600; font-size: 0.8rem; text-transform: u
 }
 .lp-screen-table th,
 .lp-screen-table td {
-  text-align: left;
+  text-align: start;
   padding: 8px 6px;
   border-bottom: 1px solid var(--line);
 }
@@ -2651,7 +2657,7 @@ th { color: var(--muted); font-weight: 600; font-size: 0.8rem; text-transform: u
     width: 100%;
   }
   .home-docs-copy { padding: 28px 20px; }
-  .footer-simple .lang-switch { margin-left: 0; }
+  .footer-simple .lang-switch { margin-inline-start: 0; }
 }
 
 @media (max-width: 720px) {
@@ -2683,16 +2689,22 @@ html[lang="ar"] h2,
 html[lang="ar"] h3 {
   font-family: "Noto Sans Arabic", var(--font);
 }
-html[dir="rtl"] .nav-toolbar { margin-left: 0; margin-right: auto; }
-html[dir="rtl"] .nav-actions .lang-switch { margin-right: 0; margin-left: 4px; }
-html[dir="rtl"] .footer-simple .lang-switch { margin-left: 0; }
+html[dir="rtl"] .home-hero-copy {
+  direction: rtl;
+  text-align: right;
+}
+html[dir="rtl"] .home-hero .kicker,
+html[dir="rtl"] .home-hero .lede,
+html[dir="rtl"] .home-hero h1 {
+  text-align: right;
+}
 
 @media (max-width: 390px) {
   :root { --page-gutter: 0.7cm; }
   .home-hero {
     background-position: 76% 36%;
   }
-  .home-hero-copy { max-width: 100%; }
+  .home-hero-copy { width: 100%; max-width: 100%; }
   .brand-logo { height: 30px; max-width: 150px; }
 }
 
