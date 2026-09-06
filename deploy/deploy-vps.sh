@@ -83,13 +83,32 @@ systemctl daemon-reload
 systemctl enable rentelyo
 systemctl restart rentelyo
 
-echo "==> Nginx site www.rentelyo.com (fichier dédié)"
+echo "==> Nginx site rentelyo.com (fichier dédié, canonique https://rentelyo.com)"
+mkdir -p /etc/nginx/snippets
 cp deploy/nginx/rentelyo.com.conf /etc/nginx/sites-available/rentelyo.com
 ln -sfn /etc/nginx/sites-available/rentelyo.com /etc/nginx/sites-enabled/rentelyo.com
+
+CERT_LIVE=""
+if [[ -f /etc/letsencrypt/live/www.rentelyo.com/fullchain.pem ]]; then
+  CERT_LIVE="/etc/letsencrypt/live/www.rentelyo.com"
+elif [[ -f /etc/letsencrypt/live/rentelyo.com/fullchain.pem ]]; then
+  CERT_LIVE="/etc/letsencrypt/live/rentelyo.com"
+fi
+
+if [[ -n "$CERT_LIVE" ]]; then
+  sed "s|__LETSENCRYPT_LIVE__|${CERT_LIVE}|g" deploy/nginx/rentelyo-ssl.conf \
+    > /etc/nginx/snippets/rentelyo-ssl.conf
+else
+  cp deploy/nginx/rentelyo-ssl.empty.conf /etc/nginx/snippets/rentelyo-ssl.conf
+  echo "!! Certificats TLS absents. Après DNS :"
+  echo "   sudo certbot certonly --webroot -w /var/www/html -d rentelyo.com -d www.rentelyo.com"
+  echo "   puis relancer ce script pour activer HTTPS et la redirection www → apex."
+fi
+
 nginx -t
 systemctl reload nginx
 
 echo ""
-echo "OK. Ensuite DNS A/AAAA (rentelyo.com + www) vers ce VPS, puis:"
-echo "  sudo certbot --nginx -d www.rentelyo.com -d rentelyo.com"
+echo "OK. Domaine canonique: https://rentelyo.com"
+echo "Vérifier APP_ORIGIN=https://rentelyo.com dans $APP_DIR/.env"
 echo "Health: curl -s http://127.0.0.1:3120/health"

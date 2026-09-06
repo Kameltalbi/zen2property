@@ -14,8 +14,9 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "paths": {
-      "@data/*": ["../src/data/*"]
+      "@data/*": ["../src/data/*"],
+      "@seo": ["../src/lib/seo.ts"]
     }
   },
-  "include": ["src", "../src/data/isoCountries.ts"]
+  "include": ["src", "../src/data/isoCountries.ts", "../src/lib/seo.ts"]
 }

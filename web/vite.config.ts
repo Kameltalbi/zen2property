@@ -7,6 +7,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@data': path.resolve(__dirname, '../src/data'),
+      '@seo': path.resolve(__dirname, '../src/lib/seo.ts'),
     },
   },
   server: {

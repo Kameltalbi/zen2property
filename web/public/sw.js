@@ -1,5 +1,5 @@
 /* Rentelyo service worker — app shell + static assets. API stays network-only. */
-const CACHE = 'rentelyo-v1';
+const CACHE = 'rentelyo-v2';
 const PRECACHE = [
   '/manifest.json',
   '/favicon.png',
@@ -33,6 +33,7 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
   if (url.pathname.startsWith('/api/') || url.pathname === '/health') return;
+  if (url.pathname === '/robots.txt' || url.pathname === '/sitemap.xml') return;
 
   if (request.mode === 'navigate') {
     event.respondWith(networkFirst(request, '/index.html'));

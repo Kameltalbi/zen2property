@@ -12,6 +12,7 @@
     "build:web": "npm run build --prefix web",
     "migrate": "tsx src/db/migrate.ts",
     "test:pricing": "tsx src/modules/billing/pricingMarkets.test.ts && tsx src/modules/billing/stripeClient.test.ts",
+    "test:seo": "tsx src/lib/seo.test.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit && npm run build --prefix web --if-present"
   },
   "engines": {

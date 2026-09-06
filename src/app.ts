@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import fs from 'node:fs';
 import path from 'node:path';
 import { authRouter, meRouter } from './modules/auth/auth.routes';
 import { propertiesRouter } from './modules/properties/properties.routes';
@@ -20,6 +21,7 @@ import { asyncHandler } from './lib/asyncHandler';
 import { handleStripeWebhook } from './modules/billing/stripeWebhook';
 import { HttpError } from './lib/httpError';
 import { rateLimit } from './middleware/rateLimit';
+import { applySeoToHtml, isKnownDocumentPath, robotsTxt, seoForPath, sitemapXml } from './lib/seo';
 
 export function createApp() {
   const app = express();
@@ -74,6 +76,39 @@ export function createApp() {
 
   app.use(express.json({ limit: '1mb' }));
 
+  app.use((req, res, next) => {
+    if (req.method !== 'GET' && req.method !== 'HEAD') return next();
+    if (req.path.length > 1 && req.path.endsWith('/')) {
+      const queryIndex = req.originalUrl.indexOf('?');
+      const query = queryIndex >= 0 ? req.originalUrl.slice(queryIndex) : '';
+      return res.redirect(301, `${req.path.slice(0, -1)}${query}`);
+    }
+    next();
+  });
+
+  app.get('/robots.txt', (_req, res) => {
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, max-age=300');
+    res.send(robotsTxt());
+  });
+
+  app.get('/sitemap.xml', (_req, res) => {
+    res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, max-age=300');
+    res.send(sitemapXml());
+  });
+
+  app.get('/tarifs', (req, res) => {
+    const queryIndex = req.originalUrl.indexOf('?');
+    const query = queryIndex >= 0 ? req.originalUrl.slice(queryIndex) : '';
+    res.redirect(301, `/pricing${query}`);
+  });
+
+  app.use('/api', (_req, res, next) => {
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    next();
+  });
+
   app.use('/api/v1/auth/login', rateLimit({ windowMs: 15 * 60_000, max: 10, prefix: 'login' }));
   app.use('/api/v1/auth/register', rateLimit({ windowMs: 60 * 60_000, max: 5, prefix: 'register' }));
   app.use('/api/v1/auth/forgot-password', rateLimit({ windowMs: 60 * 60_000, max: 5, prefix: 'forgot' }));
@@ -114,11 +149,24 @@ export function createApp() {
         },
       }),
     );
+    const indexPath = path.join(webDist, 'index.html');
+    const indexHtml = fs.existsSync(indexPath) ? fs.readFileSync(indexPath, 'utf8') : '';
     app.get('*', (req, res, next) => {
       if (req.path.startsWith('/api/') || req.path === '/health') return next();
-      res.sendFile(path.join(webDist, 'index.html'), (err) => {
-        if (err) next(err);
-      });
+      if (path.extname(req.path)) {
+        res.status(404).type('text/plain').send('Not found');
+        return;
+      }
+      if (!indexHtml) {
+        res.sendFile(indexPath, (err) => {
+          if (err) next(err);
+        });
+        return;
+      }
+      const status = isKnownDocumentPath(req.path) ? 200 : 404;
+      const seo = seoForPath(req.path);
+      res.setHeader('X-Robots-Tag', seo.robots);
+      res.status(status).type('html').send(applySeoToHtml(indexHtml, req.path));
     });
   } else {
     app.get('/', (_req, res) => {

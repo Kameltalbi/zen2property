@@ -1,4 +1,4 @@
-# Déploiement VPS isolé — www.rentelyo.com
+# Déploiement VPS isolé — rentelyo.com
 
 Tout vit dans **`/var/www/rentelyo`**. Aucun autre dossier d’app n’est modifié.
 
@@ -14,13 +14,13 @@ Tout vit dans **`/var/www/rentelyo`**. Aucun autre dossier d’app n’est modif
 | Port app | `127.0.0.1:3120` |
 | Systemd | `rentelyo.service` |
 | Nginx | `/etc/nginx/sites-available/rentelyo.com` |
-| Domaine canonique | `https://www.rentelyo.com` |
+| Domaine canonique | `https://rentelyo.com` |
 
 ## Prérequis VPS
 
 - Node.js ≥ 20, npm, git, Docker + Compose plugin
 - Nginx (déjà présent pour tes autres apps)
-- DNS `www.rentelyo.com` + `rentelyo.com` → IP du VPS (`rentelyo.com` redirige vers www)
+- DNS `rentelyo.com` + `www.rentelyo.com` → IP du VPS (`www` redirige vers l’apex)
 
 ## Première install
 
@@ -34,9 +34,11 @@ git clone -b develop https://github.com/Kameltalbi/rentelyo.git /var/www/rentely
 cd /var/www/rentelyo
 cp deploy/env.production.example .env
 nano .env   # JWT_SECRET + POSTGRES_PASSWORD + DATABASE_URL identiques
+# APP_ORIGIN=https://rentelyo.com
 chmod +x deploy/deploy-vps.sh
 sudo ./deploy/deploy-vps.sh
-sudo certbot --nginx -d www.rentelyo.com -d rentelyo.com
+sudo certbot certonly --webroot -w /var/www/html -d rentelyo.com -d www.rentelyo.com
+sudo ./deploy/deploy-vps.sh
 ```
 
 ## Certificat HTTPS (`ERR_CERT_COMMON_NAME_INVALID`)
@@ -49,16 +51,23 @@ Sur le VPS, après le déploiement Nginx :
 sudo cp /var/www/rentelyo/deploy/nginx/rentelyo.com.conf /etc/nginx/sites-available/rentelyo.com
 sudo ln -sfn /etc/nginx/sites-available/rentelyo.com /etc/nginx/sites-enabled/rentelyo.com
 sudo nginx -t && sudo systemctl reload nginx
-sudo certbot --nginx -d www.rentelyo.com -d rentelyo.com --redirect
+sudo certbot certonly --webroot -w /var/www/html -d rentelyo.com -d www.rentelyo.com
+sudo /var/www/rentelyo/deploy/deploy-vps.sh
 ```
 
 Vérifier ensuite :
 
 ```bash
-echo | openssl s_client -connect www.rentelyo.com:443 -servername www.rentelyo.com 2>/dev/null \
+echo | openssl s_client -connect rentelyo.com:443 -servername rentelyo.com 2>/dev/null \
   | openssl x509 -noout -subject -ext subjectAltName
-# attendu : DNS:www.rentelyo.com
+# attendu : DNS:rentelyo.com
 ```
+
+Redirections attendues (301, un seul hop) :
+
+- `http://rentelyo.com/*` → `https://rentelyo.com/*`
+- `http://www.rentelyo.com/*` → `https://rentelyo.com/*`
+- `https://www.rentelyo.com/*` → `https://rentelyo.com/*`
 
 ## Mise à jour
 

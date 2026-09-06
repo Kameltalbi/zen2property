@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+Disallow: /api/
+Disallow: /app/
+Disallow: /app$
+Disallow: /superadmin
+Disallow: /superadmin/
+Disallow: /health
+Disallow: /checkout
+Disallow: /checkout/
+
+Sitemap: https://rentelyo.com/sitemap.xml
