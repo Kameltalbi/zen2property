@@ -65,7 +65,7 @@ export const homeEn = {
     },
     documents: {
       title: 'Documents ready in a few clicks',
-      body: 'Generate receipts, certificates, reminders and increase notices from information you already saved.',
+      body: 'Store leases, invoices and proofs, and generate a PDF receipt from a paid rent.',
     },
     expenses: {
       title: 'Income and expenses',
@@ -78,17 +78,17 @@ export const homeEn = {
   },
   documents: {
     kicker: 'Your rental documents',
-    title: 'Generate certificates without retyping information',
-    body: 'Property, tenant and payment data is reused to create clean documents that are easy to find again.',
+    title: 'Keep rental files in one library',
+    body: 'Upload contracts, invoices and proofs, then download them later. Paid rents can also produce a PDF receipt.',
     cta: 'Discover documents',
     imageAlt: 'A landlord working in Rentelyo on a laptop',
     checks: [
       'Payment receipts',
-      'Rent certificates',
-      'Payment reminders',
-      'Increase notices',
-      'Rent statements',
-      'Expense summaries',
+      'Uploaded contracts',
+      'Invoices and quotes',
+      'Inventories and proofs',
+      'CSV rent statements',
+      'CSV expense summaries',
     ],
   },
   control: {
@@ -218,7 +218,7 @@ export const homeFr = {
     },
     documents: {
       title: 'Documents prêts en quelques clics',
-      body: 'Générez vos reçus, justificatifs, rappels et avis d’augmentation à partir des informations enregistrées.',
+      body: 'Stockez baux, factures et justificatifs, et générez un reçu PDF à partir d’un loyer payé.',
     },
     expenses: {
       title: 'Revenus et dépenses',
@@ -231,17 +231,17 @@ export const homeFr = {
   },
   documents: {
     kicker: 'Vos documents locatifs',
-    title: 'Générez vos justificatifs sans ressaisir les informations',
-    body: 'Les données de vos biens, locataires et paiements sont automatiquement reprises pour créer des documents propres et faciles à retrouver.',
+    title: 'Conservez vos dossiers locatifs dans une bibliothèque',
+    body: 'Téléversez contrats, factures et justificatifs, puis retéléchargez-les. Un loyer payé peut aussi produire un reçu PDF.',
     cta: 'Découvrir les documents',
     imageAlt: 'Un propriétaire travaille dans Rentelyo sur son ordinateur',
     checks: [
       'Reçus de paiement',
-      'Justificatifs de loyer',
-      'Rappels de paiement',
-      'Avis d’augmentation',
-      'Relevés des loyers',
-      'Résumés des dépenses',
+      'Contrats téléversés',
+      'Factures et devis',
+      'États des lieux et preuves',
+      'Exports CSV des loyers',
+      'Exports CSV des dépenses',
     ],
   },
   control: {
@@ -397,7 +397,7 @@ export const homeEs: HomeCopy = {
     },
     documents: {
       title: 'Documentos listos en unos clics',
-      body: 'Genera recibos, justificantes, recordatorios y avisos de subida con los datos ya guardados.',
+      body: 'Guarda contratos, facturas y justificantes, y genera un recibo PDF de una renta pagada.',
     },
     expenses: {
       title: 'Ingresos y gastos',
@@ -410,17 +410,17 @@ export const homeEs: HomeCopy = {
   },
   documents: {
     kicker: 'Tus documentos de alquiler',
-    title: 'Genera justificantes sin volver a escribir los datos',
-    body: 'Los datos de inmuebles, inquilinos y pagos se reutilizan para crear documentos claros y fáciles de encontrar.',
+    title: 'Guarda tus expedientes de alquiler en una biblioteca',
+    body: 'Sube contratos, facturas y justificantes, y descárgalos después. Una renta pagada también puede generar un recibo PDF.',
     cta: 'Ver los documentos',
     imageAlt: 'Un propietario trabajando en Rentelyo en un portátil',
     checks: [
       'Recibos de pago',
-      'Justificantes de renta',
-      'Recordatorios de pago',
-      'Avisos de subida',
-      'Extractos de rentas',
-      'Resúmenes de gastos',
+      'Contratos subidos',
+      'Facturas y presupuestos',
+      'Inventarios y pruebas',
+      'Extractos CSV de rentas',
+      'Resúmenes CSV de gastos',
     ],
   },
   control: {
@@ -541,7 +541,7 @@ export const homeDe: HomeCopy = {
     },
     documents: {
       title: 'Dokumente in wenigen Klicks',
-      body: 'Quittungen, Nachweise, Erinnerungen und Erhöhungsschreiben aus gespeicherten Daten erzeugen.',
+      body: 'Mietverträge, Rechnungen und Nachweise speichern und aus einer bezahlten Miete eine PDF-Quittung erzeugen.',
     },
     expenses: {
       title: 'Einnahmen und Ausgaben',
@@ -554,17 +554,17 @@ export const homeDe: HomeCopy = {
   },
   documents: {
     kicker: 'Ihre Mietdokumente',
-    title: 'Nachweise erzeugen, ohne Daten neu einzugeben',
-    body: 'Objekt-, Mieter- und Zahlungsdaten werden wiederverwendet, um klare, wiederauffindbare Dokumente zu erstellen.',
+    title: 'Mietunterlagen in einer Bibliothek behalten',
+    body: 'Laden Sie Verträge, Rechnungen und Nachweise hoch und laden Sie sie später herunter. Eine bezahlte Miete kann auch eine PDF-Quittung erzeugen.',
     cta: 'Dokumente entdecken',
     imageAlt: 'Ein Vermieter arbeitet in Rentelyo am Laptop',
     checks: [
       'Zahlungsquittungen',
-      'Mietbescheinigungen',
-      'Zahlungserinnerungen',
-      'Erhöhungsschreiben',
-      'Mietaufstellungen',
-      'Ausgabenzusammenfassungen',
+      'Hochgeladene Verträge',
+      'Rechnungen und Angebote',
+      'Übergabeprotokolle und Nachweise',
+      'CSV-Mietaufstellungen',
+      'CSV-Ausgabenzusammenfassungen',
     ],
   },
   control: {
@@ -685,7 +685,7 @@ export const homePt: HomeCopy = {
     },
     documents: {
       title: 'Documentos prontos em poucos cliques',
-      body: 'Gere recibos, comprovativos, lembretes e avisos de aumento a partir dos dados já guardados.',
+      body: 'Guarde contratos, faturas e comprovativos, e gere um recibo PDF a partir de uma renda paga.',
     },
     expenses: {
       title: 'Receitas e despesas',
@@ -698,17 +698,17 @@ export const homePt: HomeCopy = {
   },
   documents: {
     kicker: 'Os seus documentos de arrendamento',
-    title: 'Gere comprovativos sem voltar a inserir os dados',
-    body: 'Os dados de imóveis, inquilinos e pagamentos são reutilizados para criar documentos claros e fáceis de encontrar.',
+    title: 'Guarde os processos de arrendamento numa biblioteca',
+    body: 'Carregue contratos, faturas e comprovativos e descarregue-os depois. Uma renda paga também pode gerar um recibo PDF.',
     cta: 'Ver os documentos',
     imageAlt: 'Um senhorio a trabalhar na Rentelyo no computador',
     checks: [
       'Recibos de pagamento',
-      'Comprovativos de renda',
-      'Lembretes de pagamento',
-      'Avisos de aumento',
-      'Extratos de rendas',
-      'Resumos de despesas',
+      'Contratos carregados',
+      'Faturas e orçamentos',
+      'Inventários e provas',
+      'Extratos CSV de rendas',
+      'Resumos CSV de despesas',
     ],
   },
   control: {
@@ -829,7 +829,7 @@ export const homeAr: HomeCopy = {
     },
     documents: {
       title: 'مستندات جاهزة ببضع نقرات',
-      body: 'أنشئ وصولات وإثباتات وتذكيرات وإشعارات زيادة من البيانات المحفوظة.',
+      body: 'احفظ العقود والفواتير والإثباتات، وأنشئ وصلاً PDF من إيجار مدفوع.',
     },
     expenses: {
       title: 'الإيرادات والمصاريف',
@@ -842,17 +842,17 @@ export const homeAr: HomeCopy = {
   },
   documents: {
     kicker: 'مستندات الإيجار',
-    title: 'أنشئ الإثباتات دون إعادة إدخال البيانات',
-    body: 'تُعاد استخدام بيانات العقارات والمستأجرين والمدفوعات لإنشاء مستندات واضحة وسهلة الاسترجاع.',
+    title: 'احتفظ بملفات الإيجار في مكتبة واحدة',
+    body: 'ارفع العقود والفواتير والإثباتات ثم نزّلها لاحقًا. الإيجار المدفوع يمكن أن يُنتج أيضًا وصلاً PDF.',
     cta: 'اكتشف المستندات',
     imageAlt: 'مالك يعمل في Rentelyo على حاسوبه',
     checks: [
       'وصولات الدفع',
-      'إثباتات الإيجار',
-      'تذكيرات الدفع',
-      'إشعارات الزيادة',
-      'كشوف الإيجارات',
-      'ملخصات المصاريف',
+      'عقود مرفوعة',
+      'فواتير وعروض أسعار',
+      'محاضر وجرد وإثباتات',
+      'كشوف إيجار CSV',
+      'ملخصات مصاريف CSV',
     ],
   },
   control: {

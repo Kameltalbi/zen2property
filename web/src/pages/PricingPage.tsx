@@ -220,7 +220,7 @@ export function PricingPage() {
               </p>
               <p className="muted">{taglineFor(plan.code)}</p>
               <p className="pricing-limit">{limitLine(plan.maxProperties, t.pricing.units)}</p>
-              <p className="pricing-limit">{limitLine(plan.maxUsers, t.pricing.users)}</p>
+              <p className="pricing-limit">{limitLine(plan.maxTenants, t.pricing.tenantLimit)}</p>
               <ul className="muted pricing-features">
                 {featuresFor(plan.code).map((line) => (
                   <li key={line}>{line}</li>

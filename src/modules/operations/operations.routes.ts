@@ -6,11 +6,15 @@ import {
   convertMaintenanceToExpense,
   createExpense,
   createMaintenance,
+  deleteExpense,
+  deleteMaintenance,
   expenseSchema,
+  expenseUpdateSchema,
   listExpenses,
   listMaintenance,
   maintenanceSchema,
   maintenanceUpdateSchema,
+  updateExpense,
   updateMaintenance,
 } from './operations.service';
 
@@ -25,6 +29,15 @@ operationsRouter.post('/expenses', validate(expenseSchema), asyncHandler(async (
   res.status(201).json({ expense: await createExpense(req.user!.id, req.body) });
 }));
 
+operationsRouter.patch('/expenses/:id', validate(expenseUpdateSchema), asyncHandler(async (req, res) => {
+  res.json({ expense: await updateExpense(req.user!.id, req.params.id, req.body) });
+}));
+
+operationsRouter.delete('/expenses/:id', asyncHandler(async (req, res) => {
+  await deleteExpense(req.user!.id, req.params.id);
+  res.status(204).end();
+}));
+
 operationsRouter.get('/maintenance', asyncHandler(async (req, res) => {
   res.json({ maintenance: await listMaintenance(req.user!.id) });
 }));
@@ -37,6 +50,12 @@ operationsRouter.patch('/maintenance/:id', validate(maintenanceUpdateSchema), as
   res.json({ maintenance: await updateMaintenance(req.user!.id, req.params.id, req.body) });
 }));
 
+operationsRouter.delete('/maintenance/:id', asyncHandler(async (req, res) => {
+  await deleteMaintenance(req.user!.id, req.params.id);
+  res.status(204).end();
+}));
+
 operationsRouter.post('/maintenance/:id/expense', asyncHandler(async (req, res) => {
-  res.status(201).json({ expense: await convertMaintenanceToExpense(req.user!.id, req.params.id, String(req.body.currency ?? 'EUR')) });
+  const currency = typeof req.body?.currency === 'string' ? req.body.currency : undefined;
+  res.status(201).json({ expense: await convertMaintenanceToExpense(req.user!.id, req.params.id, currency) });
 }));

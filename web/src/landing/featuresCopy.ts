@@ -106,7 +106,7 @@ export const featuresEn: FeaturesPageCopy = {
       },
       {
         title: 'Related documents',
-        body: 'Generate a PDF payment receipt from information already saved.',
+        body: 'Store the lease file in the document library, or generate a PDF payment receipt from a paid rent.',
       },
       {
         title: 'Linked to the property',
@@ -114,16 +114,16 @@ export const featuresEn: FeaturesPageCopy = {
       },
     ],
     footnote:
-      'The tenant, property and lease stay linked. You then record each rent due date in payment tracking.',
+      'The tenant, property and lease stay linked. Expected rent due dates are then created automatically from the active lease.',
   },
   rents: {
     kicker: 'Rent tracking',
     title: 'See immediately what is paid and what is still due',
-    body: 'Each due date is tracked separately so you keep a clear history of every payment.',
+        body: 'Each due date is created from the lease and tracked so you keep a clear history of every payment.',
     cards: [
       {
         title: 'Recorded due dates',
-        body: 'Log each rent with its amount, period and due date from the lease.',
+        body: 'Expected rent periods are created from active leases, with amount, charges, due date and frequency.',
       },
       {
         title: 'Paid or still due',
@@ -131,7 +131,7 @@ export const featuresEn: FeaturesPageCopy = {
       },
       {
         title: 'Overdue rents in view',
-        body: 'Spot rents that have reached their due date and are still unpaid.',
+        body: 'Unpaid rents become late automatically after the due date.',
       },
       {
         title: 'History kept',
@@ -218,7 +218,7 @@ export const featuresFr: FeaturesPageCopy = {
       },
       {
         title: 'Documents associés',
-        body: 'Générez le reçu de paiement PDF à partir des informations déjà enregistrées.',
+        body: 'Stockez le fichier du bail dans la bibliothèque, ou générez un reçu PDF à partir d’un loyer payé.',
       },
       {
         title: 'Lien avec le bien',
@@ -226,16 +226,16 @@ export const featuresFr: FeaturesPageCopy = {
       },
     ],
     footnote:
-      'Le locataire, le bien et le contrat restent liés. Vous enregistrez ensuite chaque échéance de loyer dans le suivi des paiements.',
+      'Le locataire, le bien et le contrat restent liés. Les échéances de loyer sont ensuite créées automatiquement à partir du bail actif.',
   },
   rents: {
     kicker: 'Suivi des loyers',
     title: 'Voyez immédiatement ce qui est payé et ce qui reste à recevoir',
-    body: 'Chaque échéance est suivie séparément afin de conserver un historique clair de tous les paiements.',
+    body: 'Les échéances sont créées à partir du bail et suivies séparément afin de conserver un historique clair de tous les paiements.',
     cards: [
       {
         title: 'Échéances enregistrées',
-        body: 'Saisissez chaque loyer avec son montant, sa période et sa date d’échéance.',
+        body: 'Les périodes de loyer attendues sont créées à partir des baux actifs, avec montant, charges, échéance et fréquence.',
       },
       {
         title: 'Payé ou en attente',
@@ -243,7 +243,7 @@ export const featuresFr: FeaturesPageCopy = {
       },
       {
         title: 'Retards visibles',
-        body: 'Identifiez rapidement les loyers arrivés à échéance et non réglés.',
+        body: 'Les loyers non payés passent automatiquement en retard après la date d’échéance.',
       },
       {
         title: 'Historique conservé',

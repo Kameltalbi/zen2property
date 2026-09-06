@@ -1,10 +1,12 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { api, type Property, type Tenant } from '../api';
 import { useI18n } from '../i18n';
 
 export function TenantFormPage() {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const presetPropertyId = searchParams.get('propertyId') ?? '';
   const navigate = useNavigate();
   const { t } = useI18n();
   const editing = Boolean(id);
@@ -23,7 +25,10 @@ export function TenantFormPage() {
   useEffect(() => {
     void api<{ properties: Property[] }>('/properties').then((d) => {
       setProperties(d.properties);
-      setForm((f) => ({ ...f, propertyId: f.propertyId || d.properties[0]?.id || '' }));
+      setForm((f) => ({
+        ...f,
+        propertyId: f.propertyId || presetPropertyId || d.properties[0]?.id || '',
+      }));
     });
     if (!id) return;
     void api<{ tenant: Tenant }>(`/tenants/${id}`)
@@ -39,7 +44,7 @@ export function TenantFormPage() {
         });
       })
       .catch((e) => setError(e.message));
-  }, [id]);
+  }, [id, presetPropertyId]);
 
   function set<K extends keyof typeof form>(key: K, value: string) {
     setForm((f) => ({ ...f, [key]: value }));

@@ -1451,7 +1451,7 @@ th { color: var(--muted); font-weight: 600; font-size: 0.8rem; text-transform: u
   display: grid;
   gap: 12px;
 }
-.ws-kanban { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.ws-kanban { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
 .ws-kanban-col { background: var(--paper-2); border-radius: var(--radius); padding: 12px; min-height: 160px; }
 .ws-kanban-col h3 { font-size: 0.85rem; margin-bottom: 10px; }
 .ws-job { background: var(--white); border: 1px solid var(--line); border-radius: 10px; padding: 10px; margin-bottom: 8px; }

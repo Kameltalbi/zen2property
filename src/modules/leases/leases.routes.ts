@@ -4,6 +4,7 @@ import { requireAuth } from '../../middleware/auth';
 import { validate } from '../../middleware/validate';
 import { asyncHandler } from '../../lib/asyncHandler';
 import {
+  applyRentIncrease,
   createLease,
   createLeaseSchema,
   deleteLease,
@@ -48,6 +49,13 @@ leasesRouter.get(
   '/:id',
   asyncHandler(async (req, res) => {
     res.json({ lease: await getLease(req.user!.id, req.params.id) });
+  }),
+);
+
+leasesRouter.post(
+  '/:id/apply-increase',
+  asyncHandler(async (req, res) => {
+    res.json({ lease: await applyRentIncrease(req.user!.id, req.params.id) });
   }),
 );
 

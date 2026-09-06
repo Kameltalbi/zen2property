@@ -156,11 +156,10 @@ export function AppLayout() {
           <NavLink to="/app/properties">{t.app.properties}</NavLink>
           <NavLink to="/app/tenants">{t.app.tenants}</NavLink>
           <NavLink to="/app/leases">{t.app.leases}</NavLink>
+          <NavLink to="/app/rent">{t.leases.rent}</NavLink>
           <NavLink to="/app/finances">{t.app.finances}</NavLink>
-          <NavLink to="/app/documents">{t.app.documents}</NavLink>
           <NavLink to="/app/maintenance">{t.app.maintenance}</NavLink>
-          <NavLink to="/app/calendar">{t.app.calendar}</NavLink>
-          <NavLink to="/app/contacts">{t.app.contacts}</NavLink>
+          <NavLink to="/app/documents">{t.app.documents}</NavLink>
           <NavLink to="/app/reports">{t.app.reports}</NavLink>
           <NavLink to="/app/settings">{t.app.settings}</NavLink>
           {user.isAdmin && <NavLink to="/superadmin">Superadmin</NavLink>}

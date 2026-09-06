@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { api, downloadPdf, type Payment, type Property, type Tenant } from '../api';
 import { useI18n } from '../i18n';
+import { useSearchParams } from 'react-router-dom';
 
 function monthRange(isoDay = new Date().toISOString().slice(0, 10)) {
   const [y, m] = isoDay.split('-').map(Number);
@@ -12,6 +13,8 @@ function monthRange(isoDay = new Date().toISOString().slice(0, 10)) {
 
 export function RentPage() {
   const { locale } = useI18n();
+  const [searchParams] = useSearchParams();
+  const presetPropertyId = searchParams.get('propertyId') ?? '';
   const fr = locale === 'fr';
   const { start, end } = monthRange();
   const [properties, setProperties] = useState<Property[]>([]);
@@ -39,7 +42,7 @@ export function RentPage() {
     setProperties(p.properties);
     setTenants(t.tenants);
     setPayments(pay.payments);
-    setForm((f) => ({ ...f, propertyId: f.propertyId || p.properties[0]?.id || '' }));
+    setForm((f) => ({ ...f, propertyId: f.propertyId || presetPropertyId || p.properties[0]?.id || '' }));
   }
 
   useEffect(() => {

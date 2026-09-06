@@ -5,11 +5,13 @@ import { useI18n } from '../i18n';
 
 export function LeaseDetailPage() {
   const { id } = useParams();
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [lease, setLease] = useState<Lease | null>(null);
   const [property, setProperty] = useState<Property | null>(null);
   const [tenant, setTenant] = useState<Tenant | null>(null);
   const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -29,8 +31,25 @@ export function LeaseDetailPage() {
     })();
   }, [id]);
 
-  if (error) return <p className="error">{error}</p>;
-  if (!lease) return <p className="muted">{t.pages.loading}</p>;
+  if (!lease) {
+    return error ? <p className="error">{error}</p> : <p className="muted">{t.pages.loading}</p>;
+  }
+
+  async function applyIncrease() {
+    if (!lease) return;
+    setBusy(true);
+    setError('');
+    setNotice('');
+    try {
+      const { lease: next } = await api<{ lease: Lease }>(`/leases/${lease.id}/apply-increase`, { method: 'POST' });
+      setLease(next);
+      setNotice(locale === 'fr' ? 'Nouveau loyer contractuel enregistré.' : 'Contractual rent updated.');
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Update failed');
+    } finally {
+      setBusy(false);
+    }
+  }
 
   const increase =
     lease.rentIncreaseFrequency === 'none'
@@ -59,6 +78,8 @@ export function LeaseDetailPage() {
         </Link>
       </div>
 
+      {notice && <p className="ok">{notice}</p>}
+      {error && <p className="error">{error}</p>}
       <div className="ws-grid two">
         <div className="ws-card">
           <h3>{t.leases.sectionDates}</h3>
@@ -123,9 +144,21 @@ export function LeaseDetailPage() {
                 <li>
                   <strong>{t.leases.nextIncrease}</strong> · {lease.nextIncreaseDate?.slice(0, 10) ?? '—'}
                 </li>
+                {lease.proposedIncrease && (
+                  <li>
+                    {lease.proposedIncrease.canApply && lease.proposedIncrease.newRent != null
+                      ? `${locale === 'fr' ? 'Loyer proposé' : 'Proposed rent'} · ${lease.proposedIncrease.newRent} ${lease.currency}`
+                      : lease.proposedIncrease.message}
+                  </li>
+                )}
               </>
             )}
           </ul>
+          {lease.proposedIncrease?.canApply && (
+            <button className="btn" type="button" disabled={busy} onClick={() => void applyIncrease()} style={{ marginTop: 12 }}>
+              {locale === 'fr' ? 'Confirmer l’augmentation' : 'Confirm rent increase'}
+            </button>
+          )}
         </div>
         <div className="ws-card">
           <h3>{t.leases.sectionExtras}</h3>

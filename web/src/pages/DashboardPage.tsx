@@ -19,6 +19,12 @@ type Dashboard = {
   alerts: { id: string; kind: string; title: string; due_date: string }[];
 };
 
+function alertPath(kind: string, id: string): string {
+  if (kind === 'MAINTENANCE') return '/app/maintenance';
+  if (kind === 'LEASE_EXPIRY' || kind === 'RENT_INCREASE') return `/app/leases/${id}`;
+  return '/app/rent';
+}
+
 export function DashboardPage() {
   const { user } = useAuth();
   const { t, locale } = useI18n();
@@ -71,7 +77,7 @@ export function DashboardPage() {
           <ul className="ws-list">
             {dashboard.alerts.map((alert) => (
               <li key={`${alert.kind}-${alert.id}`}>
-                <Link to="/app/rent">{alert.title}</Link>
+                <Link to={alertPath(alert.kind, alert.id)}>{alert.title}</Link>
               </li>
             ))}
             {!dashboard.alerts.length && <li className="muted">{t.pages.nothingUrgent}</li>}

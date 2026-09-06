@@ -1,14 +1,17 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { api, type Property } from '../api';
+import { useAuth } from '../auth';
 import { ISO_COUNTRIES } from '../../../src/data/isoCountries';
 import { useI18n } from '../i18n';
 import { countryLabel, useCountries } from '../lib/countries';
+import { propertyTypeLabel } from '../workspace/format';
 
 export function PropertyFormPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { locale } = useI18n();
+  const { locale, t } = useI18n();
+  const { user } = useAuth();
   const countries = useCountries();
   const [error, setError] = useState('');
   const [form, setForm] = useState({
@@ -16,11 +19,11 @@ export function PropertyFormPage() {
     address: '',
     city: '',
     postalCode: '',
-    countryCode: 'GB',
+    countryCode: user?.countryCode || 'GB',
     type: 'APARTMENT',
     monthlyRent: '',
     monthlyCharges: '0',
-    currency: 'GBP',
+    currency: user?.defaultCurrency || 'GBP',
     surface: '',
   });
 
@@ -66,10 +69,14 @@ export function PropertyFormPage() {
     try {
       if (id) {
         await api(`/properties/${id}`, { method: 'PATCH', body: JSON.stringify(body) });
+        navigate(`/app/properties/${id}`);
       } else {
-        await api('/properties', { method: 'POST', body: JSON.stringify(body) });
+        const created = await api<{ property: Property }>('/properties', {
+          method: 'POST',
+          body: JSON.stringify(body),
+        });
+        navigate(`/app/properties/${created.property.id}`);
       }
-      navigate('/app/properties');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Save failed');
     }
@@ -78,7 +85,7 @@ export function PropertyFormPage() {
   return (
     <>
       <div className="page-head">
-        <h1>{id ? 'Edit property' : 'Add property'}</h1>
+        <h1>{id ? (locale === 'fr' ? 'Modifier le bien' : 'Edit property') : t.app.addProperty}</h1>
       </div>
       <form className="form card" onSubmit={(e) => void onSubmit(e)}>
         <label>
@@ -120,10 +127,10 @@ export function PropertyFormPage() {
           <label>
             Type
             <select value={form.type} onChange={(e) => set('type', e.target.value)}>
-              <option>APARTMENT</option>
-              <option>HOUSE</option>
-              <option>STUDIO</option>
-              <option>OTHER</option>
+              <option value="APARTMENT">{propertyTypeLabel('APARTMENT', locale)}</option>
+              <option value="HOUSE">{propertyTypeLabel('HOUSE', locale)}</option>
+              <option value="STUDIO">{propertyTypeLabel('STUDIO', locale)}</option>
+              <option value="OTHER">{propertyTypeLabel('OTHER', locale)}</option>
             </select>
           </label>
         </div>

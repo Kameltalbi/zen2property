@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { api, type Lease, type Property, type Tenant } from '../api';
 import { useI18n } from '../i18n';
 
@@ -32,6 +32,9 @@ const emptyForm = {
 
 export function LeaseFormPage() {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const presetPropertyId = searchParams.get('propertyId') ?? '';
+  const presetTenantId = searchParams.get('tenantId') ?? '';
   const editing = Boolean(id);
   const navigate = useNavigate();
   const { t } = useI18n();
@@ -49,13 +52,13 @@ export function LeaseFormPage() {
       setProperties(p.properties);
       setTenants(ten.tenants);
       setForm((f) => {
-        const propertyId = f.propertyId || p.properties[0]?.id || '';
+        const propertyId = f.propertyId || presetPropertyId || p.properties[0]?.id || '';
         const forProperty = ten.tenants.filter((x) => x.propertyId === propertyId);
         return {
           ...f,
           propertyId,
-          tenantId: f.tenantId || forProperty[0]?.id || '',
-          currency: f.currency || p.properties[0]?.currency || 'EUR',
+          tenantId: f.tenantId || presetTenantId || forProperty[0]?.id || '',
+          currency: f.currency || p.properties.find((x) => x.id === propertyId)?.currency || p.properties[0]?.currency || 'EUR',
         };
       });
     });

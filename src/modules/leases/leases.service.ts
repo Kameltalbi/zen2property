@@ -121,7 +121,117 @@ function mapLease(row: LeaseRow) {
     notes: row.notes,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+    proposedIncrease: proposeRentIncrease(row),
   };
+}
+
+export function proposeRentIncrease(row: Pick<
+  LeaseRow,
+  'monthly_rent' | 'rent_increase_frequency' | 'rent_increase_type' | 'rent_increase_value' | 'next_increase_date'
+>) {
+  if (row.rent_increase_frequency === 'none') return null;
+  const currentRent = Number(row.monthly_rent);
+  const value = Number(row.rent_increase_value);
+  if (row.rent_increase_type === 'index') {
+    return {
+      type: 'index' as const,
+      currentRent,
+      newRent: null as number | null,
+      amount: null as number | null,
+      canApply: false,
+      nextIncreaseDate: row.next_increase_date,
+      message: 'Index-based reviews are notified only. Enter a percent or fixed amount, then confirm to change the contractual rent.',
+    };
+  }
+  const newRent =
+    row.rent_increase_type === 'percent'
+      ? Math.round(currentRent * (1 + value / 100) * 100) / 100
+      : Math.round((currentRent + value) * 100) / 100;
+  return {
+    type: row.rent_increase_type,
+    currentRent,
+    newRent,
+    amount: Math.round((newRent - currentRent) * 100) / 100,
+    canApply: true,
+    nextIncreaseDate: row.next_increase_date,
+    message: null as string | null,
+  };
+}
+
+function isoDate(value: unknown): string {
+  if (!value) return '';
+  if (value instanceof Date) {
+    const iso = value.toISOString();
+    if (iso.endsWith('T00:00:00.000Z')) return iso.slice(0, 10);
+    const y = value.getFullYear();
+    const m = String(value.getMonth() + 1).padStart(2, '0');
+    const d = String(value.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+  return String(value).slice(0, 10);
+}
+
+function advanceIncreaseDate(
+  fromIso: string,
+  frequency: LeaseRow['rent_increase_frequency'],
+  otherMonths: number | null,
+): string | null {
+  const date = new Date(`${isoDate(fromIso)}T00:00:00.000Z`);
+  if (frequency === 'yearly') date.setUTCFullYear(date.getUTCFullYear() + 1);
+  else if (frequency === 'every_2_years') date.setUTCFullYear(date.getUTCFullYear() + 2);
+  else if (frequency === 'every_3_years') date.setUTCFullYear(date.getUTCFullYear() + 3);
+  else if (frequency === 'other' && otherMonths) date.setUTCMonth(date.getUTCMonth() + otherMonths);
+  else return null;
+  return date.toISOString().slice(0, 10);
+}
+
+export async function applyRentIncrease(userId: string, id: string) {
+  const current = await queryOne<LeaseRow>('SELECT * FROM leases WHERE id = $1 AND user_id = $2', [id, userId]);
+  if (!current) notFound('Lease');
+  if (current.status !== 'active') throw new HttpError(400, 'Only an active lease can receive a rent increase.');
+  const proposed = proposeRentIncrease(current);
+  if (!proposed?.canApply || proposed.newRent == null) {
+    throw new HttpError(400, proposed?.message || 'This increase cannot be applied automatically.');
+  }
+  const effective = isoDate(current.next_increase_date || new Date());
+  const nextDate = advanceIncreaseDate(effective, current.rent_increase_frequency, current.rent_increase_other_months);
+
+  const row = await queryOne<LeaseRow>(
+    `WITH applied AS (
+       INSERT INTO rent_increases (
+         user_id, lease_id, old_rent, new_rent, amount, percentage, effective_date, reason, calculation, status
+       ) VALUES ($1, $2, $3, $4, $5, $6, $7::date, 'Landlord confirmation', $8, 'APPLIED')
+       RETURNING id
+     )
+     UPDATE leases SET
+       monthly_rent = $4,
+       next_increase_date = $9::date,
+       updated_at = now()
+     WHERE id = $2 AND user_id = $1
+     RETURNING *`,
+    [
+      userId,
+      id,
+      Number(current.monthly_rent),
+      proposed.newRent,
+      proposed.amount,
+      current.rent_increase_type === 'percent' ? Number(current.rent_increase_value) : null,
+      effective,
+      current.rent_increase_type,
+      nextDate,
+    ],
+  );
+  if (!row) notFound('Lease');
+  await query(
+    `UPDATE payments SET
+       rent_amount = $3,
+       amount = $3 + COALESCE(charges_amount, 0),
+       updated_at = now()
+     WHERE user_id = $1 AND lease_id = $2 AND status IN ('PENDING', 'LATE')
+       AND period_start >= $4::date`,
+    [userId, id, proposed.newRent, effective],
+  );
+  return mapLease(row);
 }
 
 async function assertOwnedProperty(userId: string, propertyId: string): Promise<{ currency: string }> {
@@ -224,6 +334,8 @@ export async function createLease(userId: string, input: z.infer<typeof createLe
     ],
   );
   if (!row) throw new HttpError(500, 'Unable to create lease');
+  const { generateRentPeriods } = await import('../payments/rentSchedule');
+  await generateRentPeriods(userId);
   return mapLease(row);
 }
 

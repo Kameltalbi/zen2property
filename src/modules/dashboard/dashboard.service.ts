@@ -11,6 +11,8 @@ type DashboardRow = {
 };
 
 export async function getDashboard(userId: string) {
+  const { syncRentLedger } = await import('../payments/rentSchedule');
+  await syncRentLedger(userId);
   const row = await queryOne<DashboardRow>(
     `WITH occupied AS (
        SELECT DISTINCT property_id
@@ -54,6 +56,31 @@ export async function getDashboard(userId: string) {
             due_date::text
      FROM payments
      WHERE user_id = $1 AND status = 'PENDING' AND due_date <= CURRENT_DATE + INTERVAL '7 days'
+     UNION ALL
+     SELECT id, 'MAINTENANCE' AS kind,
+            'Maintenance · ' || title AS title,
+            COALESCE(scheduled_at::date, created_at::date)::text
+     FROM maintenance_requests
+     WHERE user_id = $1 AND status NOT IN ('COMPLETED', 'CANCELLED')
+     UNION ALL
+     SELECT l.id, 'LEASE_EXPIRY' AS kind,
+            'Lease ending · ' || COALESCE(l.label, p.name) AS title,
+            l.end_date::text
+     FROM leases l
+     JOIN properties p ON p.id = l.property_id
+     JOIN users u ON u.id = l.user_id
+     WHERE l.user_id = $1 AND l.status = 'active' AND l.end_date IS NOT NULL
+       AND l.end_date BETWEEN CURRENT_DATE AND CURRENT_DATE + (COALESCE(u.lease_expiry_warning_days, 60) * INTERVAL '1 day')
+     UNION ALL
+     SELECT l.id, 'RENT_INCREASE' AS kind,
+            'Rent review · ' || COALESCE(l.label, p.name) AS title,
+            l.next_increase_date::text
+     FROM leases l
+     JOIN properties p ON p.id = l.property_id
+     WHERE l.user_id = $1 AND l.status = 'active'
+       AND l.rent_increase_frequency <> 'none'
+       AND l.next_increase_date IS NOT NULL
+       AND l.next_increase_date BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '60 days'
      ORDER BY due_date
      LIMIT 8`,
     [userId],

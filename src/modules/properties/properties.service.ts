@@ -124,9 +124,43 @@ export async function updateProperty(userId: string, id: string, input: z.infer<
 }
 
 export async function deleteProperty(userId: string, id: string) {
-  const row = await queryOne<{ id: string }>(
-    'DELETE FROM properties WHERE id = $1 AND user_id = $2 RETURNING id',
+  const existing = await queryOne<{ id: string }>(
+    'SELECT id FROM properties WHERE id = $1 AND user_id = $2',
     [id, userId],
   );
-  if (!row) notFound('Property');
+  if (!existing) notFound('Property');
+
+  const related = await queryOne<{ tenants: string; leases: string; payments: string }>(
+    `SELECT
+       (SELECT COUNT(*)::text FROM tenants WHERE property_id = $1 AND user_id = $2) AS tenants,
+       (SELECT COUNT(*)::text FROM leases WHERE property_id = $1 AND user_id = $2) AS leases,
+       (SELECT COUNT(*)::text FROM payments WHERE property_id = $1 AND user_id = $2) AS payments`,
+    [id, userId],
+  );
+  const tenants = Number(related?.tenants ?? 0);
+  const leases = Number(related?.leases ?? 0);
+  const payments = Number(related?.payments ?? 0);
+  if (tenants > 0 || leases > 0 || payments > 0) {
+    throw new HttpError(
+      409,
+      'Remove related tenants, leases and payments before deleting this property.',
+    );
+  }
+
+  try {
+    const row = await queryOne<{ id: string }>(
+      'DELETE FROM properties WHERE id = $1 AND user_id = $2 RETURNING id',
+      [id, userId],
+    );
+    if (!row) notFound('Property');
+  } catch (err) {
+    const code = typeof err === 'object' && err && 'code' in err ? String((err as { code: unknown }).code) : '';
+    if (code === '23503') {
+      throw new HttpError(
+        409,
+        'Remove related tenants, leases and payments before deleting this property.',
+      );
+    }
+    throw err;
+  }
 }

@@ -15,6 +15,8 @@ import { billingRouter } from './modules/billing/billing.routes';
 import { dashboardRouter } from './modules/dashboard/dashboard.routes';
 import { adminRouter } from './modules/admin/admin.routes';
 import { operationsRouter } from './modules/operations/operations.routes';
+import { documentsRouter } from './modules/documents/documents.routes';
+import { reportsRouter } from './modules/reports/reports.routes';
 import { env } from './config/env';
 import { errorHandler } from './middleware/errorHandler';
 import { asyncHandler } from './lib/asyncHandler';
@@ -131,6 +133,8 @@ export function createApp() {
   app.use('/api/v1/billing', billingRouter);
   app.use('/api/v1/admin', adminRouter);
   app.use('/api/v1/operations', operationsRouter);
+  app.use('/api/v1/documents', documentsRouter);
+  app.use('/api/v1/reports', reportsRouter);
 
   if (env.NODE_ENV === 'production') {
     const webDist = path.resolve(__dirname, '../web/dist');

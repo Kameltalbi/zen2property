@@ -49,6 +49,8 @@ function mapPayment(row: PaymentRow) {
 }
 
 export async function listPayments(userId: string, filters: { propertyId?: string; tenantId?: string; status?: string }) {
+  const { syncRentLedger } = await import('./rentSchedule');
+  await syncRentLedger(userId);
   const params: unknown[] = [userId];
   const clauses = ['user_id = $1'];
   if (filters.propertyId) {

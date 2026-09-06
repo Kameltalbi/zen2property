@@ -37,12 +37,16 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
 }
 
 export async function downloadPdf(path: string, filename: string): Promise<void> {
+  return downloadBlob(path, filename);
+}
+
+export async function downloadBlob(path: string, filename: string): Promise<void> {
   const token = getToken();
   const res = await fetch(`/api/v1${path}`, {
     headers: token ? { Authorization: `Bearer ${token}` } : {},
     credentials: 'same-origin',
   });
-  if (!res.ok) throw new ApiError('Unable to download PDF', res.status);
+  if (!res.ok) throw new ApiError('Unable to download file', res.status);
   const blob = await res.blob();
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -50,6 +54,16 @@ export async function downloadPdf(path: string, filename: string): Promise<void>
   a.download = filename;
   a.click();
   URL.revokeObjectURL(url);
+}
+
+export async function apiUpload<T>(path: string, form: FormData): Promise<T> {
+  const headers = new Headers();
+  const token = getToken();
+  if (token) headers.set('Authorization', `Bearer ${token}`);
+  const res = await fetch(`/api/v1${path}`, { method: 'POST', body: form, headers, credentials: 'same-origin' });
+  const data = (await res.json().catch(() => ({}))) as { error?: string };
+  if (!res.ok) throw new ApiError(data.error || 'Request failed', res.status);
+  return data as T;
 }
 
 export type User = {
@@ -70,6 +84,9 @@ export type User = {
   billingRegion?: string | null;
   pricingMarket?: string;
   preferredCurrency?: string;
+  rentRemindersEnabled?: boolean;
+  leaseExpiryRemindersEnabled?: boolean;
+  leaseExpiryWarningDays?: number;
 };
 
 export function homePath(user: Pick<User, 'isAdmin'>): string {
@@ -118,6 +135,24 @@ export type Payment = {
   method: string | null;
 };
 
+export type MaintenanceRequest = {
+  id: string;
+  propertyId: string;
+  tenantId: string | null;
+  title: string;
+  description: string | null;
+  category: string;
+  priority: 'LOW' | 'NORMAL' | 'HIGH' | 'URGENT';
+  status: 'NEW' | 'TO_PLAN' | 'PLANNED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
+  scheduledAt: string | null;
+  provider: string | null;
+  estimatedCost: number | null;
+  actualCost: number | null;
+  ownerResponsible: boolean;
+  completedAt: string | null;
+  notes: string | null;
+};
+
 export type Lease = {
   id: string;
   propertyId: string;
@@ -144,6 +179,46 @@ export type Lease = {
   includesUtilities: boolean;
   petsAllowed: boolean;
   notes: string | null;
+  proposedIncrease?: {
+    type: 'percent' | 'fixed' | 'index';
+    currentRent: number;
+    newRent: number | null;
+    amount: number | null;
+    canApply: boolean;
+    nextIncreaseDate: string | null;
+    message: string | null;
+  } | null;
+};
+
+export type Expense = {
+  id: string;
+  propertyId: string;
+  maintenanceId: string | null;
+  category: 'MAINTENANCE' | 'REPAIR' | 'INSURANCE' | 'TAXES' | 'CONDO' | 'SERVICES' | 'MANAGEMENT' | 'WORKS' | 'BANK_FEES' | 'OTHER';
+  label: string;
+  amount: number;
+  currency: string;
+  expenseDate: string;
+  vendor: string | null;
+  paymentMethod: string | null;
+  recurring: boolean;
+  notes: string | null;
+};
+
+export type StoredDocument = {
+  id: string;
+  propertyId: string | null;
+  tenantId: string | null;
+  leaseId: string | null;
+  category: 'CONTRACT' | 'ID' | 'INVENTORY' | 'INVOICE' | 'QUOTE' | 'INSURANCE' | 'GUARANTEE' | 'LETTER' | 'PHOTO' | 'PROOF' | 'OTHER';
+  title: string;
+  fileName: string;
+  mimeType: string;
+  sizeBytes: number;
+  documentDate: string | null;
+  expiresAt: string | null;
+  notes: string | null;
+  createdAt: string;
 };
 
 export type PlanCatalogPlan = {

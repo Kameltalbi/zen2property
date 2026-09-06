@@ -37,6 +37,11 @@ export const typeLabel: Record<PropertyType, Record<Locale, string>> = {
   other: L('Other', 'Autre', 'Otro', 'Sonstiges', 'Outro', 'أخرى'),
 };
 
+export function propertyTypeLabel(type: string, locale: Locale): string {
+  const key = type.toLowerCase() as PropertyType;
+  return typeLabel[key]?.[locale] ?? type;
+}
+
 export const occupancyLabel: Record<Occupancy, Record<Locale, string>> = {
   rented: L('Rented', 'Loué', 'Alquilado', 'Vermietet', 'Arrendado', 'مؤجر'),
   vacant: L('Vacant', 'Vacant', 'Libre', 'Frei', 'Livre', 'شاغر'),

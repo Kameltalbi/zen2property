@@ -593,9 +593,50 @@ export function SettingsPage() {
           <h3>Notifications</h3>
           <p className="muted">
             {locale === 'fr'
-              ? 'Rappels d’expiration documents, loyers et maintenance (à brancher).'
-              : 'Document expiry, rent and maintenance reminders (to be wired).'}
+              ? 'E-mails pour les loyers à venir, les loyers en retard et les baux qui se terminent. Pas de SMS.'
+              : 'Email alerts for upcoming rent, overdue rent and leases ending soon. No SMS.'}
           </p>
+          <label className="checkbox" style={{ display: 'block', marginTop: 10 }}>
+            <input
+              type="checkbox"
+              checked={user?.rentRemindersEnabled !== false}
+              onChange={(e) =>
+                void api('/me', { method: 'PATCH', body: JSON.stringify({ rentRemindersEnabled: e.target.checked }) })
+                  .then(() => refresh())
+                  .catch((err) => setError(err instanceof Error ? err.message : 'Save failed'))
+              }
+            />
+            {locale === 'fr' ? 'Rappels de loyer' : 'Rent reminders'}
+          </label>
+          <label className="checkbox" style={{ display: 'block', marginTop: 8 }}>
+            <input
+              type="checkbox"
+              checked={user?.leaseExpiryRemindersEnabled !== false}
+              onChange={(e) =>
+                void api('/me', { method: 'PATCH', body: JSON.stringify({ leaseExpiryRemindersEnabled: e.target.checked }) })
+                  .then(() => refresh())
+                  .catch((err) => setError(err instanceof Error ? err.message : 'Save failed'))
+              }
+            />
+            {locale === 'fr' ? 'Alerte de fin de bail' : 'Lease expiry alerts'}
+          </label>
+          <label style={{ display: 'block', marginTop: 8 }}>
+            {locale === 'fr' ? 'Préavis (jours)' : 'Warning period (days)'}
+            <input
+              type="number"
+              min={7}
+              max={180}
+              value={user?.leaseExpiryWarningDays ?? 60}
+              onChange={(e) =>
+                void api('/me', {
+                  method: 'PATCH',
+                  body: JSON.stringify({ leaseExpiryWarningDays: Number(e.target.value) }),
+                })
+                  .then(() => refresh())
+                  .catch((err) => setError(err instanceof Error ? err.message : 'Save failed'))
+              }
+            />
+          </label>
         </div>
         <div className="ws-card">
           <h3>{t.pages.security}</h3>
@@ -609,8 +650,8 @@ export function SettingsPage() {
           <h3>{t.pages.members}</h3>
           <p className="muted">
             {locale === 'fr'
-              ? 'Permissions multi-utilisateurs : schéma à valider avant migration.'
-              : 'Multi-user permissions: schema to approve before any migration.'}
+              ? 'Chaque compte est individuel. Les sièges d’équipe ne sont pas disponibles.'
+              : 'Each account is for one landlord. Team seats are not available.'}
           </p>
         </div>
         <div className="ws-card">

@@ -57,6 +57,16 @@ export async function getTenant(userId: string, id: string) {
 
 export async function createTenant(userId: string, input: z.infer<typeof createTenantSchema>) {
   await assertOwnedProperty(userId, input.propertyId);
+  const owner = await queryOne<{ plan: string }>('SELECT plan FROM users WHERE id = $1', [userId]);
+  if (!owner) throw new HttpError(401, 'User not found');
+  const { planOf } = await import('../billing/plans');
+  const plan = planOf(owner.plan);
+  if (plan.maxTenants != null) {
+    const count = await queryOne<{ n: string }>('SELECT COUNT(*)::text AS n FROM tenants WHERE user_id = $1', [userId]);
+    if (Number(count?.n ?? 0) >= plan.maxTenants) {
+      throw new HttpError(402, 'Upgrade to Rentelyo Smart for unlimited tenants.');
+    }
+  }
   const row = await queryOne<TenantRow>(
     `INSERT INTO tenants
        (user_id, property_id, first_name, last_name, email, phone, move_in_date, move_out_date, deposit)

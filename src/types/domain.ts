@@ -81,6 +81,9 @@ export type UserRow = {
   pricing_market?: string | null;
   preferred_currency?: string | null;
   country_updated_at?: string | null;
+  rent_reminders_enabled?: boolean;
+  lease_expiry_reminders_enabled?: boolean;
+  lease_expiry_warning_days?: number;
   created_at: string;
   updated_at: string;
 };

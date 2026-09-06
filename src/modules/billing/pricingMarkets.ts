@@ -12,9 +12,9 @@ export type PlanLimits = {
 };
 
 export const PLAN_LIMITS: Record<PlanCode, PlanLimits> = {
-  free: { maxProperties: 1, maxUsers: 1, maxTenants: 1 },
-  smart: { maxProperties: 5, maxUsers: 3, maxTenants: null },
-  premium: { maxProperties: 15, maxUsers: 5, maxTenants: null },
+  free: { maxProperties: 1, maxUsers: null, maxTenants: 1 },
+  smart: { maxProperties: 5, maxUsers: null, maxTenants: null },
+  premium: { maxProperties: 15, maxUsers: null, maxTenants: null },
   agency: { maxProperties: null, maxUsers: null, maxTenants: null },
 };
 

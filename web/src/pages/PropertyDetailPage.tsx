@@ -1,176 +1,197 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
+import { api, type Lease, type MaintenanceRequest, type Payment, type Property, type Tenant } from '../api';
 import { useI18n } from '../i18n';
-import { contacts, documents, events, jobs, operations, properties } from '../workspace/demo';
-import { money, occupancyLabel, pct, typeLabel, yieldOf } from '../workspace/format';
-import { PageHeader, Tabs } from '../workspace/ui';
+import { money, occupancyLabel, propertyTypeLabel } from '../workspace/format';
+import { ErrorState, LoadingState, PageHeader } from '../workspace/ui';
 
 export function PropertyDetailPage() {
   const { id } = useParams();
-  const { locale } = useI18n();
+  const { locale, t } = useI18n();
   const fr = locale === 'fr';
-  const loc = locale;
-  const [tab, setTab] = useState('overview');
-  const p = properties.find((x) => x.id === id);
-  if (!p) return <Navigate to="/app/properties" replace />;
+  const [property, setProperty] = useState<Property | null>(null);
+  const [tenants, setTenants] = useState<Tenant[]>([]);
+  const [leases, setLeases] = useState<Lease[]>([]);
+  const [payments, setPayments] = useState<Payment[]>([]);
+  const [jobs, setJobs] = useState<MaintenanceRequest[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [missing, setMissing] = useState(false);
 
-  const y = yieldOf(p.monthlyIncome, p.estimatedValue);
-  const docs = documents.filter((d) => d.propertyId === p.id);
-  const relatedJobs = jobs.filter((j) => j.propertyId === p.id);
-  const ops = operations.filter((o) => o.propertyId === p.id);
-  const people = contacts.filter((c) => c.propertyIds.includes(p.id));
+  async function load() {
+    if (!id) return;
+    try {
+      setError(null);
+      const [prop, ten, lease, pay, maint] = await Promise.all([
+        api<{ property: Property }>(`/properties/${id}`),
+        api<{ tenants: Tenant[] }>(`/tenants?propertyId=${id}`),
+        api<{ leases: Lease[] }>(`/leases?propertyId=${id}`),
+        api<{ payments: Payment[] }>(`/payments?propertyId=${id}`),
+        api<{ maintenance: MaintenanceRequest[] }>('/operations/maintenance'),
+      ]);
+      setProperty(prop.property);
+      setTenants(ten.tenants);
+      setLeases(lease.leases);
+      setPayments(pay.payments);
+      setJobs(maint.maintenance.filter((job) => job.propertyId === id));
+    } catch (err) {
+      const status = err && typeof err === 'object' && 'status' in err ? Number(err.status) : 0;
+      if (status === 404) {
+        setMissing(true);
+        return;
+      }
+      setError(err instanceof Error ? err.message : 'Unable to load property');
+    }
+  }
+
+  useEffect(() => {
+    void load();
+  }, [id]);
+
+  if (missing) return <Navigate to="/app/properties" replace />;
+  if (error) return <ErrorState message={error} onRetry={() => void load()} />;
+  if (!property) return <LoadingState label={t.pages.loading} />;
+
+  const occupied = tenants.some((tenant) => !tenant.moveOutDate);
+  const location = [property.address, property.postalCode, property.city, property.countryCode]
+    .filter(Boolean)
+    .join(', ');
 
   return (
     <>
       <PageHeader
         kicker={fr ? 'Fiche bien' : 'Property'}
-        title={p.name}
+        title={property.name}
         actions={
           <>
-            <Link className="btn secondary" to={`/app/properties/${p.id}/edit`}>
+            <Link className="btn secondary" to={`/app/properties/${property.id}/edit`}>
               {fr ? 'Modifier' : 'Edit'}
             </Link>
-            <Link className="btn" to="/app/finances">
-              {fr ? 'Ajouter une opération' : 'Add a transaction'}
+            <Link className="btn" to={`/app/tenants/new?propertyId=${property.id}`}>
+              {t.app.addTenant}
             </Link>
           </>
         }
       />
-      <div className="ws-card ws-hero-prop">
-        <img src={p.photo} alt="" />
-        <div>
-          <p className="muted">{p.address}</p>
-          <p>
-            <span className={`ws-pill ${p.occupancy}`}>{occupancyLabel[p.occupancy][loc]}</span>
-          </p>
-          <div className="ws-grid kpi" style={{ marginTop: 12 }}>
-            <div>
-              <span className="muted">{fr ? 'Valeur' : 'Value'}</span>
-              <b>{money(p.estimatedValue)}</b>
-            </div>
-            <div>
-              <span className="muted">{fr ? 'Revenus / mois' : 'Income / mo'}</span>
-              <b>{money(p.monthlyIncome)}</b>
-            </div>
-            <div>
-              <span className="muted">{fr ? 'Dépenses / mois' : 'Expenses / mo'}</span>
-              <b>{money(p.monthlyExpenses)}</b>
-            </div>
-            <div>
-              <span className="muted">{fr ? 'Rentabilité' : 'Yield'}</span>
-              <b>{pct(y)}</b>
-            </div>
+      <div className="ws-card">
+        <p className="muted">{location}</p>
+        <p>
+          <span className={`ws-pill ${occupied ? 'rented' : 'vacant'}`}>
+            {occupancyLabel[occupied ? 'rented' : 'vacant'][locale]}
+          </span>
+        </p>
+        <div className="ws-grid kpi" style={{ marginTop: 12 }}>
+          <div>
+            <span className="muted">{fr ? 'Type' : 'Type'}</span>
+            <b>{propertyTypeLabel(property.type, locale)}</b>
+          </div>
+          <div>
+            <span className="muted">m²</span>
+            <b>{property.surface ?? '—'}</b>
+          </div>
+          <div>
+            <span className="muted">{fr ? 'Loyer / mois' : 'Rent / mo'}</span>
+            <b>
+              {property.monthlyRent != null
+                ? money(property.monthlyRent, property.currency, locale)
+                : '—'}
+            </b>
+          </div>
+          <div>
+            <span className="muted">{fr ? 'Charges / mois' : 'Charges / mo'}</span>
+            <b>{money(property.monthlyCharges, property.currency, locale)}</b>
           </div>
         </div>
       </div>
-      <Tabs
-        value={tab}
-        onChange={setTab}
-        tabs={[
-          { id: 'overview', label: fr ? 'Vue d’ensemble' : 'Overview' },
-          { id: 'finances', label: 'Finances' },
-          { id: 'documents', label: 'Documents' },
-          { id: 'maintenance', label: 'Maintenance' },
-          { id: 'occupation', label: fr ? 'Occupation' : 'Occupancy' },
-          { id: 'history', label: fr ? 'Historique' : 'History' },
-        ]}
-      />
-      {tab === 'overview' && (
-        <div className="ws-grid two">
-          <div className="ws-card">
-            <h3>{fr ? 'Caractéristiques' : 'Details'}</h3>
-            <p>
-              {typeLabel[p.type][loc]} · {p.surface} m² · {p.rooms} {fr ? 'pièces' : 'rooms'} · {p.bedrooms}{' '}
-              {fr ? 'chambres' : 'bedrooms'} · {p.yearBuilt}
-            </p>
-            <p className="muted">{fr ? 'Prochaine échéance' : 'Next due'}: {p.nextDueLabel}</p>
-            {p.alert && <p className="error">{p.alert}</p>}
-          </div>
-          <div className="ws-card">
-            <h3>{fr ? 'Contacts associés' : 'Related contacts'}</h3>
-            {people.map((c) => (
-              <p key={c.id}>
-                {c.name} · {c.role}
-              </p>
-            ))}
-          </div>
-        </div>
-      )}
-      {tab === 'finances' && (
+
+      <div className="ws-grid two" style={{ marginTop: 16 }}>
         <div className="ws-card">
-          <p>
-            {fr ? 'Cash-flow mensuel' : 'Monthly cash-flow'} <strong>{money(p.monthlyIncome - p.monthlyExpenses)}</strong>
-            {' · '}
-            {fr ? 'Brute' : 'Gross'} {pct(y)}
-          </p>
+          <h3>{t.app.tenants}</h3>
+          {tenants.length === 0 ? (
+            <p className="muted">{t.tenants.empty}</p>
+          ) : (
+            tenants.map((tenant) => (
+              <p key={tenant.id}>
+                <Link to={`/app/tenants/${tenant.id}`}>
+                  {tenant.firstName} {tenant.lastName}
+                </Link>
+                {tenant.email ? ` · ${tenant.email}` : ''}
+              </p>
+            ))
+          )}
+          <Link className="btn secondary" to={`/app/tenants/new?propertyId=${property.id}`}>
+            {t.app.addTenant}
+          </Link>
+        </div>
+        <div className="ws-card">
+          <h3>{t.app.leases}</h3>
+          {leases.length === 0 ? (
+            <p className="muted">{t.leases.empty}</p>
+          ) : (
+            leases.map((lease) => (
+              <p key={lease.id}>
+                <Link to={`/app/leases/${lease.id}`}>{lease.label || t.app.leases}</Link>
+                {' · '}
+                {t.leases.statusLabels[lease.status]}
+              </p>
+            ))
+          )}
+          <Link
+            className="btn secondary"
+            to={`/app/leases/new?propertyId=${property.id}${tenants[0] ? `&tenantId=${tenants[0].id}` : ''}`}
+          >
+            {t.leases.add}
+          </Link>
+        </div>
+      </div>
+
+      <div className="ws-card" style={{ marginTop: 16 }}>
+        <h3>{t.leases.rent}</h3>
+        {payments.length === 0 ? (
+          <p className="muted">{fr ? 'Aucun loyer enregistré.' : 'No rent recorded yet.'}</p>
+        ) : (
           <div className="table-scroll">
             <table>
               <thead>
                 <tr>
-                  <th>Date</th>
-                  <th>{fr ? 'Libellé' : 'Label'}</th>
+                  <th>{fr ? 'Période' : 'Period'}</th>
                   <th>{fr ? 'Montant' : 'Amount'}</th>
+                  <th>{fr ? 'Statut' : 'Status'}</th>
                 </tr>
               </thead>
               <tbody>
-                {ops.map((o) => (
-                  <tr key={o.id}>
-                    <td>{o.date}</td>
-                    <td>{o.label}</td>
+                {payments.map((payment) => (
+                  <tr key={payment.id}>
                     <td>
-                      {o.kind === 'income' ? '+' : '−'}
-                      {money(o.amount)}
+                      {payment.periodStart.slice(0, 10)} → {payment.periodEnd.slice(0, 10)}
                     </td>
+                    <td>{money(payment.amount, payment.currency, locale)}</td>
+                    <td>{payment.status}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-        </div>
-      )}
-      {tab === 'documents' && (
-        <div className="ws-card">
-          {docs.map((d) => (
-            <p key={d.id}>
-              <span className={`ws-pill ${d.status}`}>{d.status}</span> {d.title} · {d.category}
+        )}
+        <Link className="btn" to={`/app/rent?propertyId=${property.id}`}>
+          {fr ? 'Enregistrer un loyer' : 'Record rent'}
+        </Link>
+      </div>
+
+      <div className="ws-card" style={{ marginTop: 16 }}>
+        <h3>{t.app.maintenance}</h3>
+        {jobs.length === 0 ? (
+          <p className="muted">{fr ? 'Aucune intervention.' : 'No jobs yet.'}</p>
+        ) : (
+          jobs.map((job) => (
+            <p key={job.id}>
+              {job.title} · {job.status} · {job.priority}
             </p>
-          ))}
-        </div>
-      )}
-      {tab === 'maintenance' && (
-        <div className="ws-card">
-          {relatedJobs.map((j) => (
-            <p key={j.id}>
-              <strong>{j.title}</strong> · {j.vendor} · {j.status}
-            </p>
-          ))}
-        </div>
-      )}
-      {tab === 'occupation' && (
-        <div className="ws-card">
-          <p>
-            {occupancyLabel[p.occupancy][loc]} · {p.usage}
-          </p>
-          {people
-            .filter((c) => c.role === 'Locataire')
-            .map((c) => (
-              <p key={c.id}>
-                {c.name} · {c.email} · {c.phone}
-              </p>
-            ))}
-        </div>
-      )}
-      {tab === 'history' && (
-        <div className="ws-card">
-          {events
-            .filter((e) => e.propertyId === p.id)
-            .map((e) => (
-              <p key={e.id}>
-                {e.date} · {e.title}
-              </p>
-            ))}
-        </div>
-      )}
+          ))
+        )}
+        <Link className="btn secondary" to={`/app/maintenance?propertyId=${property.id}`}>
+          {fr ? 'Nouvelle intervention' : 'New job'}
+        </Link>
+      </div>
     </>
   );
 }

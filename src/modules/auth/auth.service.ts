@@ -36,6 +36,9 @@ export const updateMeSchema = z.object({
   countryCode: z.string().length(2).optional(),
   billingCountryCode: z.string().length(2).optional(),
   billingRegion: z.string().max(8).optional().nullable(),
+  rentRemindersEnabled: z.boolean().optional(),
+  leaseExpiryRemindersEnabled: z.boolean().optional(),
+  leaseExpiryWarningDays: z.number().int().min(7).max(180).optional(),
 });
 
 function publicUser(user: UserRow) {
@@ -60,6 +63,9 @@ function publicUser(user: UserRow) {
     isAdmin: Boolean(user.is_admin),
     isActive: user.is_active,
     createdAt: user.created_at,
+    rentRemindersEnabled: user.rent_reminders_enabled !== false,
+    leaseExpiryRemindersEnabled: user.lease_expiry_reminders_enabled !== false,
+    leaseExpiryWarningDays: user.lease_expiry_warning_days ?? 60,
   };
 }
 
@@ -166,6 +172,9 @@ export async function updateMe(userId: string, input: z.infer<typeof updateMeSch
        billing_region = CASE WHEN $10::boolean THEN $11 ELSE billing_region END,
        pricing_market = COALESCE($12, pricing_market),
        preferred_currency = COALESCE($13, preferred_currency),
+       rent_reminders_enabled = COALESCE($14, rent_reminders_enabled),
+       lease_expiry_reminders_enabled = COALESCE($15, lease_expiry_reminders_enabled),
+       lease_expiry_warning_days = COALESCE($16, lease_expiry_warning_days),
        country_updated_at = CASE WHEN $9 IS NOT NULL THEN now() ELSE country_updated_at END,
        updated_at = now()
      WHERE id = $1
@@ -184,6 +193,9 @@ export async function updateMe(userId: string, input: z.infer<typeof updateMeSch
       region ?? null,
       market?.id ?? null,
       market?.displayCurrency ?? null,
+      input.rentRemindersEnabled ?? null,
+      input.leaseExpiryRemindersEnabled ?? null,
+      input.leaseExpiryWarningDays ?? null,
     ],
   );
   if (!user) throw new HttpError(404, 'User not found');

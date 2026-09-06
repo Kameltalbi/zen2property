@@ -67,12 +67,12 @@ export async function issueReceipt(userId: string, paymentId: string) {
     landlordAddress: user.address,
     tenantName,
     propertyAddress: property.address,
-    periodStart: payment.period_start,
-    periodEnd: payment.period_end,
+    periodStart: isoDate(payment.period_start),
+    periodEnd: isoDate(payment.period_end),
     rentAmount,
     chargesAmount,
     totalAmount: Number(payment.amount),
-    paymentDate: payment.paid_date,
+    paymentDate: isoDate(payment.paid_date),
   };
 
   const missing = missingReceiptFields(active.rules, fieldPayload);
@@ -142,8 +142,17 @@ export async function issueReceipt(userId: string, paymentId: string) {
   }
 }
 
-function isoDate(value: string): string {
-  return value.slice(0, 10);
+function isoDate(value: string | Date | null | undefined): string {
+  if (!value) return '';
+  if (value instanceof Date) {
+    const iso = value.toISOString();
+    if (iso.endsWith('T00:00:00.000Z')) return iso.slice(0, 10);
+    const y = value.getFullYear();
+    const m = String(value.getMonth() + 1).padStart(2, '0');
+    const d = String(value.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+  return String(value).slice(0, 10);
 }
 
 export const emailReceiptSchema = z.object({

@@ -88,7 +88,7 @@ export function CoachChat() {
       {
         id: 'rent',
         body: t.coach.rent,
-        cta: { to: '/app/finances', label: t.coach.openFinances },
+        cta: { to: '/app/rent', label: t.coach.openFinances },
       },
       {
         id: 'settings',

@@ -1,47 +1,89 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { api, type Property, type Tenant } from '../api';
 import { useI18n } from '../i18n';
-import { properties as seed } from '../workspace/demo';
-import { money, occupancyLabel, pct, typeLabel, usageLabel, yieldOf } from '../workspace/format';
-import type { Occupancy, PropertyType, Usage, WorkspaceProperty } from '../workspace/types';
-import { ConfirmDialog, EmptyState, PageHeader } from '../workspace/ui';
+import { money, occupancyLabel, propertyTypeLabel } from '../workspace/format';
+import { ConfirmDialog, EmptyState, ErrorState, LoadingState, PageHeader } from '../workspace/ui';
+
+const API_TYPES = ['APARTMENT', 'HOUSE', 'STUDIO', 'OTHER'] as const;
 
 export function PropertiesPage() {
   const { t, locale } = useI18n();
   const loc = locale;
   const [view, setView] = useState<'cards' | 'table'>('cards');
   const [q, setQ] = useState('');
-  const [type, setType] = useState<'' | PropertyType>('');
-  const [status, setStatus] = useState<'' | Occupancy>('');
+  const [type, setType] = useState('');
   const [city, setCity] = useState('');
-  const [usage, setUsage] = useState<'' | Usage>('');
   const [sort, setSort] = useState('name');
   const [page, setPage] = useState(1);
-  const [items, setItems] = useState<WorkspaceProperty[]>(seed);
-  const [pending, setPending] = useState<WorkspaceProperty | null>(null);
+  const [items, setItems] = useState<Property[] | null>(null);
+  const [tenants, setTenants] = useState<Tenant[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [pending, setPending] = useState<Property | null>(null);
+  const [deleteError, setDeleteError] = useState('');
+
+  async function load() {
+    try {
+      setError(null);
+      const [p, ten] = await Promise.all([
+        api<{ properties: Property[] }>('/properties'),
+        api<{ tenants: Tenant[] }>('/tenants'),
+      ]);
+      setItems(p.properties);
+      setTenants(ten.tenants);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unable to load properties');
+    }
+  }
+
+  useEffect(() => {
+    void load();
+  }, []);
+
+  const occupiedIds = useMemo(() => {
+    const ids = new Set<string>();
+    for (const tenant of tenants) {
+      if (!tenant.moveOutDate) ids.add(tenant.propertyId);
+    }
+    return ids;
+  }, [tenants]);
 
   const filtered = useMemo(() => {
-    let list = items.filter((p) => !p.archived);
+    if (!items) return [];
+    let list = items;
     if (q) {
       const n = q.toLowerCase();
-      list = list.filter((p) => `${p.name} ${p.address} ${p.city}`.toLowerCase().includes(n));
+      list = list.filter((p) => `${p.name} ${p.address} ${p.city ?? ''}`.toLowerCase().includes(n));
     }
     if (type) list = list.filter((p) => p.type === type);
-    if (status) list = list.filter((p) => p.occupancy === status);
     if (city) list = list.filter((p) => p.city === city);
-    if (usage) list = list.filter((p) => p.usage === usage);
     list = [...list].sort((a, b) => {
-      if (sort === 'value') return b.estimatedValue - a.estimatedValue;
-      if (sort === 'yield') return yieldOf(b.monthlyIncome, b.estimatedValue) - yieldOf(a.monthlyIncome, a.estimatedValue);
+      if (sort === 'rent') return (b.monthlyRent ?? 0) - (a.monthlyRent ?? 0);
+      if (sort === 'city') return (a.city ?? '').localeCompare(b.city ?? '');
       return a.name.localeCompare(b.name);
     });
     return list;
-  }, [items, q, type, status, city, usage, sort]);
+  }, [items, q, type, city, sort]);
 
   const pageSize = 6;
   const pages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const slice = filtered.slice((page - 1) * pageSize, page * pageSize);
-  const cities = [...new Set(items.map((p) => p.city))];
+  const cities = [...new Set((items ?? []).map((p) => p.city).filter((c): c is string => Boolean(c)))];
+
+  async function confirmDelete() {
+    if (!pending) return;
+    setDeleteError('');
+    try {
+      await api(`/properties/${pending.id}`, { method: 'DELETE' });
+      setPending(null);
+      await load();
+    } catch (err) {
+      setDeleteError(err instanceof Error ? err.message : 'Unable to delete property');
+    }
+  }
+
+  if (error) return <ErrorState message={error} onRetry={() => void load()} />;
+  if (!items) return <LoadingState label={t.pages.loading} />;
 
   if (!items.length) {
     return (
@@ -65,18 +107,21 @@ export function PropertiesPage() {
         }
       />
       <div className="ws-toolbar">
-        <input value={q} onChange={(e) => { setQ(e.target.value); setPage(1); }} placeholder={locale === 'fr' ? 'Rechercher' : 'Search'} />
-        <select value={type} onChange={(e) => setType(e.target.value as '' | PropertyType)}>
+        <input
+          value={q}
+          onChange={(e) => {
+            setQ(e.target.value);
+            setPage(1);
+          }}
+          placeholder={locale === 'fr' ? 'Rechercher' : 'Search'}
+        />
+        <select value={type} onChange={(e) => setType(e.target.value)}>
           <option value="">{locale === 'fr' ? 'Type' : 'Type'}</option>
-          <option value="apartment">{typeLabel.apartment[loc]}</option>
-          <option value="house">{typeLabel.house[loc]}</option>
-          <option value="studio">{typeLabel.studio[loc]}</option>
-        </select>
-        <select value={status} onChange={(e) => setStatus(e.target.value as '' | Occupancy)}>
-          <option value="">{locale === 'fr' ? 'Statut' : 'Status'}</option>
-          <option value="rented">{occupancyLabel.rented[loc]}</option>
-          <option value="vacant">{occupancyLabel.vacant[loc]}</option>
-          <option value="personal">{occupancyLabel.personal[loc]}</option>
+          {API_TYPES.map((value) => (
+            <option key={value} value={value}>
+              {propertyTypeLabel(value, loc)}
+            </option>
+          ))}
         </select>
         <select value={city} onChange={(e) => setCity(e.target.value)}>
           <option value="">{locale === 'fr' ? 'Ville' : 'City'}</option>
@@ -84,15 +129,10 @@ export function PropertiesPage() {
             <option key={c}>{c}</option>
           ))}
         </select>
-        <select value={usage} onChange={(e) => setUsage(e.target.value as '' | Usage)}>
-          <option value="">{locale === 'fr' ? 'Usage' : 'Use'}</option>
-          <option value="rental">{usageLabel.rental[loc]}</option>
-          <option value="personal">{usageLabel.personal[loc]}</option>
-        </select>
         <select value={sort} onChange={(e) => setSort(e.target.value)}>
           <option value="name">{locale === 'fr' ? 'Nom' : 'Name'}</option>
-          <option value="value">{locale === 'fr' ? 'Valeur' : 'Value'}</option>
-          <option value="yield">{locale === 'fr' ? 'Rentabilité' : 'Yield'}</option>
+          <option value="city">{locale === 'fr' ? 'Ville' : 'City'}</option>
+          <option value="rent">{locale === 'fr' ? 'Loyer' : 'Rent'}</option>
         </select>
         <div className="ws-segment">
           <button type="button" className={view === 'cards' ? 'on' : ''} onClick={() => setView('cards')}>
@@ -105,40 +145,48 @@ export function PropertiesPage() {
       </div>
       {view === 'cards' ? (
         <div className="grid-2">
-          {slice.map((p) => (
-            <article className="ws-property" key={p.id}>
-              <img src={p.photo} alt="" />
-              <div className="ws-property-body">
-                <div className="ws-actions">
-                  <span className={`ws-pill ${p.occupancy}`}>{occupancyLabel[p.occupancy][loc]}</span>
-                  {p.alert && <span className="ws-pill expiring">{p.alert}</span>}
+          {slice.map((p) => {
+            const occupied = occupiedIds.has(p.id);
+            return (
+              <article className="ws-property" key={p.id}>
+                <div className="ws-property-body">
+                  <div className="ws-actions">
+                    <span className={`ws-pill ${occupied ? 'rented' : 'vacant'}`}>
+                      {occupancyLabel[occupied ? 'rented' : 'vacant'][loc]}
+                    </span>
+                  </div>
+                  <h3>
+                    <Link to={`/app/properties/${p.id}`}>{p.name}</Link>
+                  </h3>
+                  <p className="muted">
+                    {p.address}
+                    {p.city ? ` · ${p.city}` : ''}
+                  </p>
+                  <p>
+                    {propertyTypeLabel(p.type, loc)}
+                    {p.surface != null ? ` · ${p.surface} m²` : ''}
+                  </p>
+                  {p.monthlyRent != null && (
+                    <p>
+                      {money(p.monthlyRent, p.currency, loc)}
+                      {p.monthlyCharges ? ` + ${money(p.monthlyCharges, p.currency, loc)}` : ''}
+                    </p>
+                  )}
+                  <div className="ws-actions">
+                    <Link className="btn secondary" to={`/app/properties/${p.id}`}>
+                      {locale === 'fr' ? 'Consulter' : 'Open'}
+                    </Link>
+                    <Link className="btn ghost" to={`/app/properties/${p.id}/edit`}>
+                      {locale === 'fr' ? 'Modifier' : 'Edit'}
+                    </Link>
+                    <button className="btn ghost" type="button" onClick={() => { setDeleteError(''); setPending(p); }}>
+                      {locale === 'fr' ? 'Supprimer' : 'Delete'}
+                    </button>
+                  </div>
                 </div>
-                <h3>
-                  <Link to={`/app/properties/${p.id}`}>{p.name}</Link>
-                </h3>
-                <p className="muted">{p.address}</p>
-                <p>
-                  {typeLabel[p.type][loc]} · {p.surface} m² · {money(p.estimatedValue)}
-                </p>
-                <p>
-                  {locale === 'fr' ? 'Revenus' : 'Income'} {money(p.monthlyIncome)} · {locale === 'fr' ? 'Dépenses' : 'Expenses'}{' '}
-                  {money(p.monthlyExpenses)} · {pct(yieldOf(p.monthlyIncome, p.estimatedValue))}
-                </p>
-                <p className="muted">{p.nextDueLabel}</p>
-                <div className="ws-actions">
-                  <Link className="btn secondary" to={`/app/properties/${p.id}`}>
-                    {locale === 'fr' ? 'Consulter' : 'Open'}
-                  </Link>
-                  <Link className="btn ghost" to={`/app/properties/${p.id}/edit`}>
-                    {locale === 'fr' ? 'Modifier' : 'Edit'}
-                  </Link>
-                  <button className="btn ghost" type="button" onClick={() => setPending(p)}>
-                    {locale === 'fr' ? 'Archiver' : 'Archive'}
-                  </button>
-                </div>
-              </div>
-            </article>
-          ))}
+              </article>
+            );
+          })}
         </div>
       ) : (
         <div className="card table-scroll" style={{ padding: 0 }}>
@@ -149,33 +197,36 @@ export function PropertiesPage() {
                 <th>{locale === 'fr' ? 'Type' : 'Type'}</th>
                 <th>{locale === 'fr' ? 'Statut' : 'Status'}</th>
                 <th>m²</th>
-                <th>{locale === 'fr' ? 'Valeur' : 'Value'}</th>
-                <th>{locale === 'fr' ? 'Rentabilité' : 'Yield'}</th>
+                <th>{locale === 'fr' ? 'Loyer' : 'Rent'}</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
-              {slice.map((p) => (
-                <tr key={p.id}>
-                  <td>
-                    <Link to={`/app/properties/${p.id}`}>{p.name}</Link>
-                    <div className="muted">{p.city}</div>
-                  </td>
-                  <td>{typeLabel[p.type][loc]}</td>
-                  <td>
-                    <span className={`ws-pill ${p.occupancy}`}>{occupancyLabel[p.occupancy][loc]}</span>
-                  </td>
-                  <td>{p.surface}</td>
-                  <td>{money(p.estimatedValue)}</td>
-                  <td>{pct(yieldOf(p.monthlyIncome, p.estimatedValue))}</td>
-                  <td className="row-actions">
-                    <Link to={`/app/properties/${p.id}/edit`}>{locale === 'fr' ? 'Modifier' : 'Edit'}</Link>
-                    <button className="btn ghost" type="button" onClick={() => setPending(p)}>
-                      {locale === 'fr' ? 'Supprimer' : 'Delete'}
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {slice.map((p) => {
+                const occupied = occupiedIds.has(p.id);
+                return (
+                  <tr key={p.id}>
+                    <td>
+                      <Link to={`/app/properties/${p.id}`}>{p.name}</Link>
+                      <div className="muted">{p.city ?? p.address}</div>
+                    </td>
+                    <td>{propertyTypeLabel(p.type, loc)}</td>
+                    <td>
+                      <span className={`ws-pill ${occupied ? 'rented' : 'vacant'}`}>
+                        {occupancyLabel[occupied ? 'rented' : 'vacant'][loc]}
+                      </span>
+                    </td>
+                    <td>{p.surface ?? '—'}</td>
+                    <td>{p.monthlyRent != null ? money(p.monthlyRent, p.currency, loc) : '—'}</td>
+                    <td className="row-actions">
+                      <Link to={`/app/properties/${p.id}/edit`}>{locale === 'fr' ? 'Modifier' : 'Edit'}</Link>
+                      <button className="btn ghost" type="button" onClick={() => { setDeleteError(''); setPending(p); }}>
+                        {locale === 'fr' ? 'Supprimer' : 'Delete'}
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -195,15 +246,18 @@ export function PropertiesPage() {
       </p>
       <ConfirmDialog
         open={Boolean(pending)}
-        title={locale === 'fr' ? 'Archiver ce bien ?' : 'Archive this property?'}
+        title={locale === 'fr' ? 'Supprimer ce bien ?' : 'Delete this property?'}
         body={pending ? pending.name : ''}
-        confirmLabel={locale === 'fr' ? 'Archiver' : 'Archive'}
-        onCancel={() => setPending(null)}
-        onConfirm={() => {
-          if (pending) setItems((list) => list.filter((p) => p.id !== pending.id));
+        confirmLabel={locale === 'fr' ? 'Supprimer' : 'Delete'}
+        onCancel={() => {
           setPending(null);
+          setDeleteError('');
+        }}
+        onConfirm={() => {
+          void confirmDelete();
         }}
       />
+      {deleteError && <p className="error">{deleteError}</p>}
     </>
   );
 }
