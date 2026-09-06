@@ -1,4 +1,5 @@
 import { homePt } from '../landing/homeCopy';
+import { landlordSeoPt } from '../landing/landlordSeoCopy';
 import type { Messages } from './en';
 
 export const pt: Messages = {
@@ -35,8 +36,11 @@ export const pt: Messages = {
     guides: 'Guias para senhorios',
     about: 'Sobre',
     contact: 'Contacto',
+    solutions: 'Soluções',
+    landlordSoftware: 'Software de gestão de arrendamentos para senhorios',
   },
   home: homePt,
+  landlordSeo: landlordSeoPt,
   hero: {
     kicker: 'Para senhorios',
     title: 'Simplifique a gestão dos seus imóveis arrendados',

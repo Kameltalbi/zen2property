@@ -1,4 +1,5 @@
 import { homeFr } from '../landing/homeCopy';
+import { landlordSeoFr } from '../landing/landlordSeoCopy';
 import type { Messages } from './en';
 
 export const fr: Messages = {
@@ -35,8 +36,11 @@ export const fr: Messages = {
     guides: 'Guides pour propriétaires',
     about: 'À propos',
     contact: 'Contact',
+    solutions: 'Solutions',
+    landlordSoftware: 'Logiciel de gestion locative pour propriétaires',
   },
   home: homeFr,
+  landlordSeo: landlordSeoFr,
   hero: {
     kicker: 'Pour propriétaires bailleurs',
     title: 'Simplifier la gestion de vos biens loués',

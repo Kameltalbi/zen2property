@@ -91,7 +91,8 @@ h3 { font-size: 1.15rem; }
 .public-shell .auth-split,
 .public-shell .auth-panel,
 .public-shell .narrow,
-.public-shell .legal-page {
+.public-shell .legal-page,
+.public-shell .seo-landing {
   padding-inline: 0;
   box-sizing: border-box;
 }
@@ -2110,6 +2111,89 @@ th { color: var(--muted); font-weight: 600; font-size: 0.8rem; text-transform: u
 
 .lp-page { padding-top: 36px; padding-bottom: 64px; }
 .lp-page-block { margin-top: 28px; }
+
+.seo-landing {
+  padding: 28px 0 48px;
+  width: 100%;
+}
+.seo-landing h1 {
+  font-size: clamp(1.85rem, 4.4vw, 3.1rem);
+  max-width: 18ch;
+}
+.seo-hero .lede,
+.seo-block .lede {
+  max-width: 62ch;
+}
+.seo-actions { margin-top: 22px; }
+.seo-note { margin-top: 12px; }
+.seo-block { margin-top: 48px; }
+.seo-block h2 { margin-bottom: 12px; }
+.seo-cards { margin-top: 22px; }
+.seo-cards .home-bento-icon { margin-bottom: 10px; }
+.seo-split-cards { margin-top: 18px; }
+.seo-metrics {
+  list-style: none;
+  margin: 18px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.seo-metrics li {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.seo-shot {
+  margin: 22px 0 0;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--white);
+  box-shadow: var(--shadow);
+}
+.seo-shot img { display: block; width: 100%; height: auto; }
+.seo-audience-line {
+  margin-top: 16px;
+  max-width: 48ch;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 650;
+  color: var(--primary-dark);
+}
+.seo-why-grid { margin-top: 18px; }
+.seo-faq { max-width: 760px; }
+.seo-faq-list { margin-top: 18px; display: grid; gap: 10px; }
+.seo-faq-item { padding: 16px 18px; }
+.seo-faq-item h3 {
+  font-family: var(--font);
+  font-size: 1.02rem;
+  margin-bottom: 8px;
+}
+.seo-faq-item p { margin: 0; }
+.seo-more-title { font-size: 1.05rem; }
+.seo-more-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  margin-top: 10px;
+}
+.seo-more-links a { color: var(--primary); text-decoration: underline; text-underline-offset: 3px; }
+.seo-crosslink { margin-top: 14px; max-width: 54ch; }
+.seo-crosslink a { color: var(--primary); }
+
+@media (max-width: 960px) {
+  .seo-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .seo-metrics,
+  .seo-why-grid { grid-template-columns: 1fr; }
+  .seo-actions .btn { width: 100%; justify-content: center; }
+  .lp-final-actions .btn { width: 100%; justify-content: center; }
+}
 
 @media (max-width: 960px) {
   .lp-trust-track { grid-template-columns: repeat(2, minmax(0, 1fr)); }

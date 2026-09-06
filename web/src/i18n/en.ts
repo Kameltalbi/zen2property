@@ -1,4 +1,5 @@
 import { homeEn } from '../landing/homeCopy';
+import { landlordSeoEn } from '../landing/landlordSeoCopy';
 
 export const en = {
   nav: {
@@ -34,8 +35,11 @@ export const en = {
     guides: 'Guides for landlords',
     about: 'About',
     contact: 'Contact',
+    solutions: 'Solutions',
+    landlordSoftware: 'Property Management Software for Landlords',
   },
   home: homeEn,
+  landlordSeo: landlordSeoEn,
   hero: {
     kicker: 'For landlords',
     title: 'Simplify managing your rented properties',

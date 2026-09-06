@@ -25,6 +25,9 @@ export function HelpPage() {
         <p className="muted">{t.pages.guidesBody}</p>
         <ul className="lp-bullets">
           <li>
+            <Link to="/property-management-software-for-landlords">{t.footer.landlordSoftware}</Link>
+          </li>
+          <li>
             <Link to="/features">{t.footer.features}</Link>
           </li>
           <li>

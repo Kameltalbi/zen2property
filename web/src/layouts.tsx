@@ -111,6 +111,7 @@ export function PublicLayout() {
           </Link>
           <nav className="footer-simple-links" aria-label="Rentelyo">
             <Link to="/features">{t.footer.features}</Link>
+            <Link to="/property-management-software-for-landlords">{t.footer.landlordSoftware}</Link>
             <Link to="/#how">{t.nav.how}</Link>
             <Link to="/pricing">{t.nav.pricing}</Link>
             <Link to="/help">{t.nav.help}</Link>

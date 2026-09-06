@@ -1,4 +1,5 @@
 import { homeDe } from '../landing/homeCopy';
+import { landlordSeoDe } from '../landing/landlordSeoCopy';
 import type { Messages } from './en';
 
 export const de: Messages = {
@@ -35,8 +36,11 @@ export const de: Messages = {
     guides: 'Leitfäden für Vermieter',
     about: 'Über uns',
     contact: 'Kontakt',
+    solutions: 'Lösungen',
+    landlordSoftware: 'Immobilienverwaltungssoftware für Vermieter',
   },
   home: homeDe,
+  landlordSeo: landlordSeoDe,
   hero: {
     kicker: 'Für Vermieter',
     title: 'Die Verwaltung Ihrer vermieteten Objekte vereinfachen',

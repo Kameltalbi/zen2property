@@ -1,4 +1,5 @@
 import { homeAr } from '../landing/homeCopy';
+import { landlordSeoAr } from '../landing/landlordSeoCopy';
 import type { Messages } from './en';
 
 export const ar: Messages = {
@@ -35,8 +36,11 @@ export const ar: Messages = {
     guides: 'أدلة للمُلّاك',
     about: 'حول',
     contact: 'اتصل بنا',
+    solutions: 'الحلول',
+    landlordSoftware: 'برنامج إدارة العقارات للمُلّاك',
   },
   home: homeAr,
+  landlordSeo: landlordSeoAr,
   hero: {
     kicker: 'للمُلّاك',
     title: 'بسّط إدارة عقاراتك المؤجرة',

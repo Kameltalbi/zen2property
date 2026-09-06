@@ -9,6 +9,9 @@ export function FeaturesPage() {
       <p className="kicker">{t.pages.product}</p>
       <h1>{h.features.title}</h1>
       <p className="lede">{h.organize.body}</p>
+      <p className="muted seo-crosslink">
+        <Link to="/property-management-software-for-landlords">{t.landlordSeo.crossLink}</Link>
+      </p>
       <div className="lp-card-grid three" style={{ marginTop: 28 }}>
         {h.features.items.map((item) => (
           <article className="lp-card" key={item.title}>
