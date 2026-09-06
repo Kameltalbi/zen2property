@@ -91,21 +91,21 @@ export function AppScreen({ screen }: { screen: ScreenId }) {
         <table className="lp-screen-table">
           <thead>
             <tr>
-              <th>{fr ? 'Locataire' : 'Tenant'}</th>
+              <th>{fr ? 'Période' : 'Period'}</th>
               <th>{fr ? 'Statut' : 'Status'}</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>C. Dupont</td>
+              <td>{fr ? 'Attendu · Terreaux' : 'Expected · Terreaux'}</td>
               <td>
-                <span className="lp-pill ok">{fr ? 'Payé' : 'Paid'}</span>
+                <span className="lp-pill warn">{fr ? 'En attente' : 'Pending'}</span>
               </td>
             </tr>
             <tr>
-              <td>J. Martin</td>
+              <td>C. Dupont</td>
               <td>
-                <span className="lp-pill warn">{fr ? 'Attendu' : 'Due'}</span>
+                <span className="lp-pill ok">{fr ? 'Payé' : 'Paid'}</span>
               </td>
             </tr>
             <tr>
@@ -114,8 +114,20 @@ export function AppScreen({ screen }: { screen: ScreenId }) {
                 <span className="lp-pill late">{fr ? 'Retard' : 'Late'}</span>
               </td>
             </tr>
+            <tr>
+              <td>J. Martin</td>
+              <td>
+                <span className="lp-pill warn">{fr ? 'Partiel' : 'Partial'}</span>
+              </td>
+            </tr>
           </tbody>
         </table>
+        <div className="lp-screen-rows">
+          <article>
+            <strong>{fr ? 'Quittance PDF R-2026-0001' : 'PDF receipt R-2026-0001'}</strong>
+            <span>PDF</span>
+          </article>
+        </div>
       </div>
     );
   }
