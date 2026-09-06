@@ -1,5 +1,7 @@
 import { homeAr } from '../landing/homeCopy';
 import { landlordSeoAr } from '../landing/landlordSeoCopy';
+import { simpleLandlordAr } from '../landing/simpleLandlordCopy';
+import { smallLandlordAr } from '../landing/smallLandlordCopy';
 import type { Messages } from './en';
 
 export const ar: Messages = {
@@ -38,9 +40,13 @@ export const ar: Messages = {
     contact: 'اتصل بنا',
     solutions: 'الحلول',
     landlordSoftware: 'برنامج إدارة العقارات للمُلّاك',
+    simpleLandlord: 'برنامج للمُلّاك',
+    smallLandlord: 'برنامج إدارة العقارات للمُلّاك الصغار',
   },
   home: homeAr,
   landlordSeo: landlordSeoAr,
+  simpleLandlord: simpleLandlordAr,
+  smallLandlord: smallLandlordAr,
   hero: {
     kicker: 'للمُلّاك',
     title: 'بسّط إدارة عقاراتك المؤجرة',

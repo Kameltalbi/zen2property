@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { jsonLdForPath, LANDLORD_SOFTWARE_PATH, seoForPath } from '@seo';
+import { isSeoLandingPath, jsonLdForPath, seoForPath } from '@seo';
 
 const OG_KEYS = ['og:title', 'og:description', 'og:url', 'og:type', 'og:site_name', 'og:locale'] as const;
 
@@ -57,7 +57,7 @@ export function DocumentHead() {
     upsertMeta('name', 'robots', seo.robots);
     upsertMeta('name', 'description', seo.description);
 
-    if (seo.canonical.endsWith(LANDLORD_SOFTWARE_PATH)) {
+    if (isSeoLandingPath(pathname)) {
       upsertMeta('property', 'og:title', seo.title, true);
       upsertMeta('property', 'og:description', seo.description, true);
       upsertMeta('property', 'og:url', seo.canonical, true);

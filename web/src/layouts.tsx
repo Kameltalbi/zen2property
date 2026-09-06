@@ -109,9 +109,14 @@ export function PublicLayout() {
           <Link className="brand" to="/" aria-label="Rentelyo">
             <BrandLogo />
           </Link>
+          <nav className="footer-solutions" aria-labelledby="footer-solutions">
+            <h2 id="footer-solutions">{t.footer.solutions}</h2>
+            <Link to="/property-management-software-for-landlords">{t.footer.landlordSoftware}</Link>
+            <Link to="/landlord-software">{t.footer.simpleLandlord}</Link>
+            <Link to="/property-management-software-for-small-landlords">{t.footer.smallLandlord}</Link>
+          </nav>
           <nav className="footer-simple-links" aria-label="Rentelyo">
             <Link to="/features">{t.footer.features}</Link>
-            <Link to="/property-management-software-for-landlords">{t.footer.landlordSoftware}</Link>
             <Link to="/#how">{t.nav.how}</Link>
             <Link to="/pricing">{t.nav.pricing}</Link>
             <Link to="/help">{t.nav.help}</Link>

@@ -4,7 +4,9 @@ import { AppScreen } from '../landing/AppScreen';
 import { BrowserFrame } from '../landing/BrowserFrame';
 import { HomeIcon, type IconName } from '../landing/HomeIcon';
 
-const workflowIcons: IconName[] = ['building', 'users', 'lease', 'coins', 'chart', 'wrench', 'file'];
+const essentialIcons: IconName[] = ['building', 'users', 'lease', 'coins', 'chart', 'wrench', 'file'];
+const chainIcons: IconName[] = ['building', 'users', 'lease', 'coins', 'coins', 'pdf'];
+const sideIcons: IconName[] = ['chart', 'wrench', 'file'];
 
 function HeroActions({
   primary,
@@ -25,14 +27,14 @@ function HeroActions({
   );
 }
 
-export function LandlordSoftwarePage() {
+export function SmallLandlordSoftwarePage() {
   const { t } = useI18n();
-  const p = t.landlordSeo;
+  const p = t.smallLandlord;
 
   return (
     <article className="seo-landing">
       <section className="seo-band seo-hero-band" aria-labelledby="seo-h1">
-        <div className="seo-wrap seo-split seo-hero">
+        <div className="seo-wrap seo-split is-hero">
           <div className="seo-split-copy">
             <p className="kicker">{p.hero.kicker}</p>
             <h1 id="seo-h1">{p.hero.h1}</h1>
@@ -55,51 +57,86 @@ export function LandlordSoftwarePage() {
         </div>
       </section>
 
-      <section className="seo-band is-surface seo-strip-band" aria-label={p.workflow.h2}>
-        <div className="seo-wrap">
-          <ul className="seo-strip">
-            {p.workflow.cards.map((card, i) => (
-              <li key={card.title}>
-                <span className="seo-strip-icon" aria-hidden>
-                  <HomeIcon name={workflowIcons[i] ?? 'building'} />
-                </span>
-                <span>{card.title}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
       <section className="seo-band is-paper" aria-labelledby="seo-problem">
-        <div className="seo-wrap seo-split">
-          <div className="seo-split-copy">
+        <div className="seo-wrap">
+          <div className="seo-section-intro is-center">
             <h2 id="seo-problem">{p.problem.h2}</h2>
             <p className="lede">{p.problem.body}</p>
-            <h3 className="seo-inline-h">{p.workflow.h2}</h3>
-            <p className="lede">{p.workflow.lede}</p>
           </div>
-          <ul className="seo-scope">
-            {p.workflow.cards.map((card, i) => (
-              <li key={card.title}>
-                <span className="seo-strip-icon" aria-hidden>
-                  <HomeIcon name={workflowIcons[i] ?? 'building'} />
-                </span>
-                <div>
-                  <strong>{card.title}</strong>
-                  <p>{card.body}</p>
-                </div>
-              </li>
+          <ul className="seo-need-pills">
+            {p.problem.needs.map((item) => (
+              <li key={item}>{item}</li>
             ))}
           </ul>
         </div>
       </section>
 
-      <section className="seo-band is-surface" aria-labelledby="seo-rent">
+      <section className="seo-band is-surface" aria-labelledby="seo-essentials">
+        <div className="seo-wrap">
+          <div className="seo-section-intro">
+            <h2 id="seo-essentials">{p.essentials.h2}</h2>
+            <p className="lede">{p.essentials.lede}</p>
+          </div>
+          <div className="seo-essentials">
+            {p.essentials.cards.map((card, i) => (
+              <article key={card.title}>
+                <span className="seo-essentials-icon" aria-hidden>
+                  <HomeIcon name={essentialIcons[i] ?? 'building'} />
+                </span>
+                <h3>{card.title}</h3>
+                <p>{card.body}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="seo-band is-tint" aria-labelledby="seo-chain">
+        <div className="seo-wrap">
+          <div className="seo-section-intro">
+            <h2 id="seo-chain">{p.chain.h2}</h2>
+            <p className="lede">{p.chain.lede}</p>
+          </div>
+          <div className="seo-chain">
+            <ol className="seo-chain-main">
+              {p.chain.steps.map((step, i) => (
+                <li key={step.title}>
+                  {i !== 0 ? <span className="seo-chain-arrow" aria-hidden /> : null}
+                  <div className="seo-chain-card">
+                    <span className="seo-flow-icon" aria-hidden>
+                      <HomeIcon name={chainIcons[i] ?? 'building'} />
+                    </span>
+                    <div>
+                      <p className="seo-flow-label">{step.title}</p>
+                      <p>{step.body}</p>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ol>
+            <aside className="seo-chain-side">
+              <p className="seo-chain-side-title">{p.chain.sideTitle}</p>
+              {p.chain.side.map((item, i) => (
+                <article key={item.title}>
+                  <span className="seo-essentials-icon" aria-hidden>
+                    <HomeIcon name={sideIcons[i] ?? 'file'} />
+                  </span>
+                  <div>
+                    <h3>{item.title}</h3>
+                    <p>{item.body}</p>
+                  </div>
+                </article>
+              ))}
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section className="seo-band is-paper" aria-labelledby="seo-rent">
         <div className="seo-wrap seo-split">
           <div className="seo-split-copy">
             <h2 id="seo-rent">{p.rent.h2}</h2>
             <p className="lede">{p.rent.body}</p>
-            <p className="lede">{p.workflow.cards[3]?.body}</p>
             <ul className="lp-bullets">
               {p.rent.points.map((item) => (
                 <li key={item}>{item}</li>
@@ -114,12 +151,11 @@ export function LandlordSoftwarePage() {
         </div>
       </section>
 
-      <section className="seo-band is-paper" aria-labelledby="seo-leases">
+      <section className="seo-band is-surface" aria-labelledby="seo-leases">
         <div className="seo-wrap seo-split is-reverse">
           <div className="seo-split-copy">
             <h2 id="seo-leases">{p.leases.h2}</h2>
             <p className="lede">{p.leases.body}</p>
-            <p className="lede">{p.workflow.cards[2]?.body}</p>
             <ul className="lp-bullets">
               {p.leases.points.map((item) => (
                 <li key={item}>{item}</li>
@@ -150,7 +186,11 @@ export function LandlordSoftwarePage() {
             <article className="seo-cost-card">
               <h3>{p.costs.expensesTitle}</h3>
               <p>{p.costs.expensesBody}</p>
-              <p>{p.workflow.cards[4]?.body}</p>
+              <ul className="lp-bullets">
+                {p.costs.expensesPoints.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
               <BrowserFrame title="app.rentelyo.com" className="seo-product-frame">
                 <AppScreen screen="finances" />
               </BrowserFrame>
@@ -158,7 +198,11 @@ export function LandlordSoftwarePage() {
             <article className="seo-cost-card">
               <h3>{p.costs.maintenanceTitle}</h3>
               <p>{p.costs.maintenanceBody}</p>
-              <p>{p.workflow.cards[5]?.body}</p>
+              <ul className="lp-bullets">
+                {p.costs.maintenancePoints.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
               <BrowserFrame title="app.rentelyo.com" className="seo-product-frame">
                 <AppScreen screen="maintenance" />
               </BrowserFrame>
@@ -167,12 +211,16 @@ export function LandlordSoftwarePage() {
         </div>
       </section>
 
-      <section className="seo-band is-surface" aria-labelledby="seo-docs">
+      <section className="seo-band is-paper" aria-labelledby="seo-docs">
         <div className="seo-wrap seo-split">
           <div className="seo-split-copy">
             <h2 id="seo-docs">{p.documents.h2}</h2>
             <p className="lede">{p.documents.body}</p>
-            <p className="lede">{p.workflow.cards[6]?.body}</p>
+            <ul className="lp-bullets">
+              {p.documents.points.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
           </div>
           <div className="seo-split-visual">
             <BrowserFrame title="app.rentelyo.com" className="seo-product-frame">
@@ -182,21 +230,21 @@ export function LandlordSoftwarePage() {
         </div>
       </section>
 
-      <section className="seo-band is-paper" aria-labelledby="seo-reporting">
+      <section className="seo-band is-surface" aria-labelledby="seo-dash">
         <div className="seo-wrap">
           <div className="seo-section-intro is-center">
-            <h2 id="seo-reporting">{p.reporting.h2}</h2>
-            <p className="lede">{p.reporting.body}</p>
+            <h2 id="seo-dash">{p.dashboard.h2}</h2>
+            <p className="lede">{p.dashboard.body}</p>
           </div>
           <ul className="seo-metrics">
-            {p.reporting.metrics.map((item) => (
+            {p.dashboard.metrics.map((item) => (
               <li key={item}>{item}</li>
             ))}
           </ul>
           <BrowserFrame title="app.rentelyo.com" flush className="seo-product-frame seo-dash-frame">
             <img
               src="/capture-dashboard.jpg"
-              alt={t.home.organize.imageAlt}
+              alt={p.dashboard.h2}
               width={1600}
               height={980}
               loading="lazy"
@@ -206,16 +254,45 @@ export function LandlordSoftwarePage() {
         </div>
       </section>
 
-      <section className="seo-band is-tint" aria-labelledby="seo-audience">
-        <div className="seo-wrap seo-audience">
-          <h2 id="seo-audience">{p.audience.h2}</h2>
-          <p className="seo-audience-line">{p.audience.line}</p>
-          <p className="lede">{p.audience.body}</p>
-          <p className="lede seo-crosslink">
-            {p.relatedSimpleLead}{' '}
-            <Link to="/landlord-software">{p.relatedSimpleAnchor}</Link>
-            {p.relatedSimpleTail}
-          </p>
+      <section className="seo-band is-paper" aria-labelledby="seo-fit">
+        <div className="seo-wrap">
+          <div className="seo-section-intro is-center">
+            <h2 id="seo-fit">{p.fit.h2}</h2>
+            <p className="lede">{p.fit.body}</p>
+          </div>
+          <div className="seo-fit">
+            <article className="seo-fit-col is-left">
+              <h3>{p.fit.leftTitle}</h3>
+              <ul>
+                {p.fit.left.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </article>
+            <article className="seo-fit-col is-right">
+              <h3>{p.fit.rightTitle}</h3>
+              <ul>
+                {p.fit.right.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section className="seo-band is-tint" aria-labelledby="seo-grow">
+        <div className="seo-wrap">
+          <div className="seo-grow">
+            <div>
+              <h2 id="seo-grow">{p.grow.h2}</h2>
+              <p className="lede">{p.grow.body}</p>
+              <p className="seo-grow-plan">{p.grow.plan}</p>
+            </div>
+            <Link className="btn clay" to="/pricing">
+              {p.grow.cta}
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -257,9 +334,12 @@ export function LandlordSoftwarePage() {
             {p.moreLabel}
           </h2>
           <p className="lede seo-crosslink">
-            {p.relatedSmallLead}{' '}
-            <Link to="/property-management-software-for-small-landlords">{p.relatedSmallAnchor}</Link>
-            {p.relatedSmallTail}
+            {p.relatedPmsLead}{' '}
+            <Link to="/property-management-software-for-landlords">{p.relatedPmsAnchor}</Link>
+            {p.relatedPmsTail}{' '}
+            {p.relatedSimpleLead}{' '}
+            <Link to="/landlord-software">{p.relatedSimpleAnchor}</Link>
+            {p.relatedSimpleTail}
           </p>
           <nav className="seo-more-links" aria-label={p.moreLabel}>
             <Link to="/features">{t.footer.features}</Link>

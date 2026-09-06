@@ -1,5 +1,7 @@
 import { homeEs } from '../landing/homeCopy';
 import { landlordSeoEs } from '../landing/landlordSeoCopy';
+import { simpleLandlordEs } from '../landing/simpleLandlordCopy';
+import { smallLandlordEs } from '../landing/smallLandlordCopy';
 import type { Messages } from './en';
 
 export const es: Messages = {
@@ -38,9 +40,13 @@ export const es: Messages = {
     contact: 'Contacto',
     solutions: 'Soluciones',
     landlordSoftware: 'Software de gestión de alquileres para propietarios',
+    simpleLandlord: 'Software para propietarios',
+    smallLandlord: 'Software de gestión de alquileres para pequeños propietarios',
   },
   home: homeEs,
   landlordSeo: landlordSeoEs,
+  simpleLandlord: simpleLandlordEs,
+  smallLandlord: smallLandlordEs,
   hero: {
     kicker: 'Para propietarios',
     title: 'Simplifica la gestión de tus inmuebles alquilados',

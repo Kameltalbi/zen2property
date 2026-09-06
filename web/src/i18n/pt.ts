@@ -1,5 +1,7 @@
 import { homePt } from '../landing/homeCopy';
 import { landlordSeoPt } from '../landing/landlordSeoCopy';
+import { simpleLandlordPt } from '../landing/simpleLandlordCopy';
+import { smallLandlordPt } from '../landing/smallLandlordCopy';
 import type { Messages } from './en';
 
 export const pt: Messages = {
@@ -38,9 +40,13 @@ export const pt: Messages = {
     contact: 'Contacto',
     solutions: 'Soluções',
     landlordSoftware: 'Software de gestão de arrendamentos para senhorios',
+    simpleLandlord: 'Software para senhorios',
+    smallLandlord: 'Software de gestão de arrendamentos para pequenos senhorios',
   },
   home: homePt,
   landlordSeo: landlordSeoPt,
+  simpleLandlord: simpleLandlordPt,
+  smallLandlord: smallLandlordPt,
   hero: {
     kicker: 'Para senhorios',
     title: 'Simplifique a gestão dos seus imóveis arrendados',

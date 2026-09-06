@@ -1,5 +1,7 @@
 import { homeEn } from '../landing/homeCopy';
 import { landlordSeoEn } from '../landing/landlordSeoCopy';
+import { simpleLandlordEn } from '../landing/simpleLandlordCopy';
+import { smallLandlordEn } from '../landing/smallLandlordCopy';
 
 export const en = {
   nav: {
@@ -37,9 +39,13 @@ export const en = {
     contact: 'Contact',
     solutions: 'Solutions',
     landlordSoftware: 'Property Management Software for Landlords',
+    simpleLandlord: 'Landlord Software',
+    smallLandlord: 'Property Management Software for Small Landlords',
   },
   home: homeEn,
   landlordSeo: landlordSeoEn,
+  simpleLandlord: simpleLandlordEn,
+  smallLandlord: smallLandlordEn,
   hero: {
     kicker: 'For landlords',
     title: 'Simplify managing your rented properties',

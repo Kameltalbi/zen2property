@@ -1,5 +1,7 @@
 import { homeFr } from '../landing/homeCopy';
 import { landlordSeoFr } from '../landing/landlordSeoCopy';
+import { simpleLandlordFr } from '../landing/simpleLandlordCopy';
+import { smallLandlordFr } from '../landing/smallLandlordCopy';
 import type { Messages } from './en';
 
 export const fr: Messages = {
@@ -38,9 +40,13 @@ export const fr: Messages = {
     contact: 'Contact',
     solutions: 'Solutions',
     landlordSoftware: 'Logiciel de gestion locative pour propriétaires',
+    simpleLandlord: 'Logiciel pour propriétaires',
+    smallLandlord: 'Logiciel de gestion locative pour petits propriétaires',
   },
   home: homeFr,
   landlordSeo: landlordSeoFr,
+  simpleLandlord: simpleLandlordFr,
+  smallLandlord: smallLandlordFr,
   hero: {
     kicker: 'Pour propriétaires bailleurs',
     title: 'Simplifier la gestion de vos biens loués',

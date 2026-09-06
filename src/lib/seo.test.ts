@@ -10,6 +10,12 @@ import {
   LANDLORD_SOFTWARE_DESCRIPTION,
   LANDLORD_SOFTWARE_FAQ,
   LANDLORD_SOFTWARE_PATH,
+  SIMPLE_LANDLORD_DESCRIPTION,
+  SIMPLE_LANDLORD_FAQ,
+  SIMPLE_LANDLORD_PATH,
+  SMALL_LANDLORD_DESCRIPTION,
+  SMALL_LANDLORD_FAQ,
+  SMALL_LANDLORD_PATH,
   robotsTxt,
   seoForPath,
   sitemapXml,
@@ -35,6 +41,32 @@ assert.equal(landlord.title, 'Property Management Software for Landlords | Rente
 assert.equal(landlord.description, LANDLORD_SOFTWARE_DESCRIPTION);
 assert.equal(isKnownDocumentPath(LANDLORD_SOFTWARE_PATH), true);
 assert.equal(seoForPath('/').description, 'Vos locations, simplement. Biens, locataires, loyers et documents dans un seul espace.');
+
+const simpleLandlord = seoForPath(SIMPLE_LANDLORD_PATH);
+assert.equal(simpleLandlord.canonical, 'https://rentelyo.com/landlord-software');
+assert.equal(simpleLandlord.robots, 'index, follow');
+assert.equal(simpleLandlord.indexable, true);
+assert.equal(simpleLandlord.title, 'Landlord Software for Rental Property Management | Rentelyo');
+assert.equal(simpleLandlord.description, SIMPLE_LANDLORD_DESCRIPTION);
+assert.equal(isKnownDocumentPath(SIMPLE_LANDLORD_PATH), true);
+assert.notEqual(simpleLandlord.title, landlord.title);
+assert.notEqual(simpleLandlord.description, landlord.description);
+assert.notEqual(SIMPLE_LANDLORD_FAQ[0]?.q, LANDLORD_SOFTWARE_FAQ[0]?.q);
+assert.notEqual(SIMPLE_LANDLORD_FAQ.map((item) => item.q).join('|'), LANDLORD_SOFTWARE_FAQ.map((item) => item.q).join('|'));
+
+const smallLandlord = seoForPath(SMALL_LANDLORD_PATH);
+assert.equal(smallLandlord.canonical, 'https://rentelyo.com/property-management-software-for-small-landlords');
+assert.equal(smallLandlord.robots, 'index, follow');
+assert.equal(smallLandlord.indexable, true);
+assert.equal(smallLandlord.title, 'Property Management Software for Small Landlords | Rentelyo');
+assert.equal(smallLandlord.description, SMALL_LANDLORD_DESCRIPTION);
+assert.equal(isKnownDocumentPath(SMALL_LANDLORD_PATH), true);
+assert.notEqual(smallLandlord.title, landlord.title);
+assert.notEqual(smallLandlord.title, simpleLandlord.title);
+assert.notEqual(smallLandlord.description, landlord.description);
+assert.notEqual(smallLandlord.description, simpleLandlord.description);
+assert.notEqual(SMALL_LANDLORD_FAQ[0]?.q, LANDLORD_SOFTWARE_FAQ[0]?.q);
+assert.notEqual(SMALL_LANDLORD_FAQ[0]?.q, SIMPLE_LANDLORD_FAQ[0]?.q);
 
 assert.equal(seoForPath('/login').robots, 'noindex, nofollow');
 assert.equal(seoForPath('/signup').indexable, false);
@@ -128,6 +160,78 @@ assert.match(landingBlob, /does not process tenant rent payments/);
 assert.match(landingBlob, /not a property listing or real estate marketplace/);
 assert.doesNotMatch(landingBlob, /AggregateRating/);
 assert.doesNotMatch(landingBlob, /"@type":"Review"/);
+
+const simpleHtml = applySeoToHtml(html, SIMPLE_LANDLORD_PATH);
+assert.match(simpleHtml, /<title>Landlord Software for Rental Property Management \| Rentelyo<\/title>/);
+assert.match(simpleHtml, /<link rel="canonical" href="https:\/\/rentelyo.com\/landlord-software" \/>/);
+assert.match(simpleHtml, /<meta name="robots" content="index, follow" \/>/);
+assert.match(
+  simpleHtml,
+  /<meta name="description" content="Simple landlord software to manage properties, tenants, leases, rent, expenses, maintenance and documents in one organized workspace." \/>/,
+);
+assert.match(simpleHtml, /<meta property="og:title" content="Landlord Software for Rental Property Management \| Rentelyo" \/>/);
+assert.match(simpleHtml, /<meta property="og:url" content="https:\/\/rentelyo.com\/landlord-software" \/>/);
+assert.doesNotMatch(simpleHtml, /property-management-software-for-landlords/);
+assert.doesNotMatch(landingHtml, /https:\/\/rentelyo\.com\/landlord-software/);
+
+const simpleJsonLd = jsonLdForPath(SIMPLE_LANDLORD_PATH);
+assert.ok(simpleJsonLd && typeof simpleJsonLd === 'object');
+const simpleGraph = (simpleJsonLd as { '@graph': Array<Record<string, unknown>> })['@graph'];
+assert.equal(simpleGraph[0]?.['@type'], 'SoftwareApplication');
+assert.equal(simpleGraph[0]?.url, 'https://rentelyo.com/landlord-software');
+assert.equal(simpleGraph[1]?.['@type'], 'FAQPage');
+assert.equal((simpleGraph[1]?.mainEntity as unknown[]).length, SIMPLE_LANDLORD_FAQ.length);
+const simpleBlob = JSON.stringify(simpleJsonLd);
+assert.match(simpleBlob, /What is landlord software\?/);
+assert.match(simpleBlob, /Can I use Rentelyo instead of a spreadsheet\?/);
+assert.match(simpleBlob, /currently tracks rent payments but does not process tenant rent payments/);
+assert.match(simpleBlob, /not a listing website, marketplace or tenant-acquisition service/);
+assert.doesNotMatch(simpleBlob, /What is property management software for landlords\?/);
+assert.doesNotMatch(simpleBlob, /AggregateRating/);
+assert.doesNotMatch(simpleBlob, /"@type":"Review"/);
 assert.doesNotMatch(robots, /property-management-software-for-landlords/);
+assert.doesNotMatch(robots, /landlord-software/);
+assert.doesNotMatch(robots, /property-management-software-for-small-landlords/);
+
+const smallHtml = applySeoToHtml(html, SMALL_LANDLORD_PATH);
+assert.match(smallHtml, /<title>Property Management Software for Small Landlords \| Rentelyo<\/title>/);
+assert.match(
+  smallHtml,
+  /<link rel="canonical" href="https:\/\/rentelyo.com\/property-management-software-for-small-landlords" \/>/,
+);
+assert.match(smallHtml, /<meta name="robots" content="index, follow" \/>/);
+assert.match(
+  smallHtml,
+  /<meta name="description" content="Simple property management software for small landlords. Manage rentals, tenants, leases, rent, expenses, maintenance and documents with Rentelyo." \/>/,
+);
+assert.match(smallHtml, /<meta property="og:title" content="Property Management Software for Small Landlords \| Rentelyo" \/>/);
+assert.match(
+  smallHtml,
+  /<meta property="og:url" content="https:\/\/rentelyo.com\/property-management-software-for-small-landlords" \/>/,
+);
+assert.doesNotMatch(smallHtml, /https:\/\/rentelyo\.com\/landlord-software/);
+assert.doesNotMatch(
+  smallHtml,
+  /https:\/\/rentelyo\.com\/property-management-software-for-landlords/,
+);
+assert.doesNotMatch(landingHtml, /property-management-software-for-small-landlords/);
+assert.doesNotMatch(simpleHtml, /property-management-software-for-small-landlords/);
+
+const smallJsonLd = jsonLdForPath(SMALL_LANDLORD_PATH);
+assert.ok(smallJsonLd && typeof smallJsonLd === 'object');
+const smallGraph = (smallJsonLd as { '@graph': Array<Record<string, unknown>> })['@graph'];
+assert.equal(smallGraph[0]?.['@type'], 'SoftwareApplication');
+assert.equal(smallGraph[0]?.url, 'https://rentelyo.com/property-management-software-for-small-landlords');
+assert.equal(smallGraph[1]?.['@type'], 'FAQPage');
+assert.equal((smallGraph[1]?.mainEntity as unknown[]).length, SMALL_LANDLORD_FAQ.length);
+const smallBlob = JSON.stringify(smallJsonLd);
+assert.match(smallBlob, /What is property management software for small landlords\?/);
+assert.match(smallBlob, /Do I need property management software if I only own a few rentals\?/);
+assert.match(smallBlob, /helps landlords track and record rent payments. It does not process tenant rent payments online/);
+assert.match(smallBlob, /not a listing website, marketplace or tenant-acquisition service/);
+assert.doesNotMatch(smallBlob, /What is landlord software\?/);
+assert.doesNotMatch(smallBlob, /What is property management software for landlords\?/);
+assert.doesNotMatch(smallBlob, /AggregateRating/);
+assert.doesNotMatch(smallBlob, /"@type":"Review"/);
 
 console.log('seo tests ok');

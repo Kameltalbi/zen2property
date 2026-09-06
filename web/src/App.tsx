@@ -26,6 +26,8 @@ import { PrivacyPage } from './pages/PrivacyPage';
 import { TermsPage } from './pages/TermsPage';
 import { FeaturesPage } from './pages/FeaturesPage';
 import { LandlordSoftwarePage } from './pages/LandlordSoftwarePage';
+import { SimpleLandlordSoftwarePage } from './pages/SimpleLandlordSoftwarePage';
+import { SmallLandlordSoftwarePage } from './pages/SmallLandlordSoftwarePage';
 import { CheckoutPage, CheckoutSuccessPage } from './pages/CheckoutPage';
 import { SecurityPage } from './pages/SecurityPage';
 import { HelpPage } from './pages/HelpPage';
@@ -49,6 +51,8 @@ export function App() {
           <Route path="/checkout/success" element={<CheckoutSuccessPage />} />
           <Route path="/features" element={<FeaturesPage />} />
           <Route path="/property-management-software-for-landlords" element={<LandlordSoftwarePage />} />
+          <Route path="/landlord-software" element={<SimpleLandlordSoftwarePage />} />
+          <Route path="/property-management-software-for-small-landlords" element={<SmallLandlordSoftwarePage />} />
           <Route path="/security" element={<SecurityPage />} />
           <Route path="/help" element={<HelpPage />} />
           <Route path="/about" element={<AboutPage />} />

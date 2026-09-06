@@ -1,5 +1,7 @@
 import { homeDe } from '../landing/homeCopy';
 import { landlordSeoDe } from '../landing/landlordSeoCopy';
+import { simpleLandlordDe } from '../landing/simpleLandlordCopy';
+import { smallLandlordDe } from '../landing/smallLandlordCopy';
 import type { Messages } from './en';
 
 export const de: Messages = {
@@ -38,9 +40,13 @@ export const de: Messages = {
     contact: 'Kontakt',
     solutions: 'Lösungen',
     landlordSoftware: 'Immobilienverwaltungssoftware für Vermieter',
+    simpleLandlord: 'Vermieter-Software',
+    smallLandlord: 'Immobilienverwaltung für kleine Vermieter',
   },
   home: homeDe,
   landlordSeo: landlordSeoDe,
+  simpleLandlord: simpleLandlordDe,
+  smallLandlord: smallLandlordDe,
   hero: {
     kicker: 'Für Vermieter',
     title: 'Die Verwaltung Ihrer vermieteten Objekte vereinfachen',
