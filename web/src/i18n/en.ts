@@ -41,6 +41,23 @@ export const en = {
     landlordSoftware: 'Property Management Software for Landlords',
     simpleLandlord: 'Landlord Software',
     smallLandlord: 'Property Management Software for Small Landlords',
+    cookieSettings: 'Cookie settings',
+  },
+  consent: {
+    kicker: 'Privacy choices',
+    title: 'Your privacy choices',
+    body: 'We use essential browser storage to keep Rentelyo working. With your permission, we also use Google Analytics to understand visits and improve the product.',
+    acceptAll: 'Accept all',
+    reject: 'Reject non-essential',
+    manage: 'Manage preferences',
+    preferencesTitle: 'Manage cookie preferences',
+    preferencesBody: 'You can change or withdraw your analytics consent at any time.',
+    essentialTitle: 'Essential',
+    essentialBody: 'Required for sign-in, security and language preferences. These cannot be switched off.',
+    essentialAlwaysOn: 'Essential storage is always on',
+    analyticsTitle: 'Analytics',
+    analyticsBody: 'Allows Google Analytics to measure visits and product usage. GA4 stays off unless you enable this.',
+    save: 'Save preferences',
   },
   home: homeEn,
   landlordSeo: landlordSeoEn,
@@ -203,7 +220,7 @@ export const en = {
     privacy1:
       'Rentelyo stores the account you create (name, email, password hash) and the property, tenant, and payment data you enter. Receipt PDFs are generated on the server and kept for your workspace.',
     privacy2:
-      'Legal-country rules are product configuration, not personal data. We do not sell owner or tenant records. Stripe, when connected, processes card details off our servers.',
+      'Legal-country rules are product configuration, not personal data. We do not sell owner or tenant records. Stripe, when connected, processes card details off our servers. Google Analytics receives usage data only after you consent to analytics.',
     privacyNote: 'This page will be expanded before public launch to match the live processors and hosting region.',
     termsTitle: 'Terms',
     terms1:
@@ -386,7 +403,8 @@ export const en = {
     contactLede: 'A question about your account or portfolio? Write to us.',
     cookies1:
       'Rentelyo uses browser local storage for the session (auth token) and language preference. These are required for the service to work.',
-    cookies2: 'No third-party advertising cookies are deployed by the application itself.',
+    cookies2:
+      'Google Analytics is used to measure visits and product usage. It may set analytics cookies and receive device, browser and interaction data. Rentelyo does not deploy third-party advertising cookies.',
     securityMeans: 'What this means',
     securityBody:
       'Sign-in uses hashed passwords (bcrypt) and JWT sessions. Each account’s data is isolated on the server. In production, traffic uses HTTPS. We do not sell landlord or tenant records.',

@@ -42,6 +42,23 @@ export const fr: Messages = {
     landlordSoftware: 'Logiciel de gestion locative pour propriétaires',
     simpleLandlord: 'Logiciel pour propriétaires',
     smallLandlord: 'Logiciel de gestion locative pour petits propriétaires',
+    cookieSettings: 'Paramètres des cookies',
+  },
+  consent: {
+    kicker: 'Choix de confidentialité',
+    title: 'Vos choix de confidentialité',
+    body: 'Nous utilisons un stockage essentiel pour faire fonctionner Rentelyo. Avec votre accord, Google Analytics nous aide aussi à comprendre les visites et à améliorer le produit.',
+    acceptAll: 'Tout accepter',
+    reject: 'Refuser le non essentiel',
+    manage: 'Gérer les préférences',
+    preferencesTitle: 'Gérer les préférences de cookies',
+    preferencesBody: 'Vous pouvez modifier ou retirer votre consentement aux mesures d’audience à tout moment.',
+    essentialTitle: 'Essentiel',
+    essentialBody: 'Nécessaire à la connexion, à la sécurité et au choix de langue. Ces éléments ne peuvent pas être désactivés.',
+    essentialAlwaysOn: 'Le stockage essentiel est toujours actif',
+    analyticsTitle: 'Mesure d’audience',
+    analyticsBody: 'Autorise Google Analytics à mesurer les visites et l’utilisation du produit. GA4 reste désactivé sans votre accord.',
+    save: 'Enregistrer les préférences',
   },
   home: homeFr,
   landlordSeo: landlordSeoFr,
@@ -204,7 +221,7 @@ export const fr: Messages = {
     privacy1:
       'Rentelyo conserve le compte que vous créez (nom, e-mail, hash du mot de passe) et les données de biens, locataires et paiements que vous saisissez. Les PDF de quittance sont générés côté serveur et restent dans votre espace.',
     privacy2:
-      'Les règles par pays sont de la configuration produit, pas des données personnelles. Nous ne vendons pas les fiches propriétaires ou locataires. Stripe, une fois branché, traite les cartes hors de nos serveurs.',
+      'Les règles par pays sont de la configuration produit, pas des données personnelles. Nous ne vendons pas les fiches propriétaires ou locataires. Stripe, une fois branché, traite les cartes hors de nos serveurs. Google Analytics reçoit des données d’utilisation uniquement après votre consentement.',
     privacyNote: 'Cette page sera complétée avant le lancement public (hébergeur et sous-traitants).',
     termsTitle: 'Conditions',
     terms1:
@@ -387,7 +404,8 @@ export const fr: Messages = {
     contactLede: 'Une question sur votre compte ou votre portefeuille ? Écrivez-nous.',
     cookies1:
       'Rentelyo utilise le stockage local du navigateur pour la session (jeton d’authentification) et la préférence de langue. Ces éléments sont nécessaires au fonctionnement du service.',
-    cookies2: 'Aucun cookie publicitaire tiers n’est déployé par l’application elle-même.',
+    cookies2:
+      'Google Analytics est utilisé pour mesurer les visites et l’utilisation du produit. Il peut déposer des cookies de mesure et recevoir des données sur l’appareil, le navigateur et les interactions. Rentelyo ne déploie pas de cookies publicitaires tiers.',
     securityMeans: 'Ce que cela signifie',
     securityBody:
       'La connexion utilise un mot de passe chiffré (bcrypt) et des sessions JWT. Les données de chaque compte sont isolées côté serveur. En production, les échanges passent en HTTPS. Nous ne vendons pas vos fiches propriétaires ou locataires.',

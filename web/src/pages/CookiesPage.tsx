@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useI18n } from '../i18n';
+import { openConsentPreferences } from '../analyticsConsent';
 
 export function CookiesPage() {
   const { t } = useI18n();
@@ -10,6 +11,9 @@ export function CookiesPage() {
       <p className="muted">{t.pages.cookies1}</p>
       <p className="muted">{t.pages.cookies2}</p>
       <p style={{ marginTop: 20 }}>
+        <button className="btn secondary" type="button" onClick={openConsentPreferences}>
+          {t.footer.cookieSettings}
+        </button>{' '}
         <Link to="/privacy">{t.footer.privacy}</Link>
       </p>
     </article>

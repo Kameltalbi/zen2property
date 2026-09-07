@@ -42,6 +42,23 @@ export const de: Messages = {
     landlordSoftware: 'Immobilienverwaltungssoftware für Vermieter',
     simpleLandlord: 'Vermieter-Software',
     smallLandlord: 'Immobilienverwaltung für kleine Vermieter',
+    cookieSettings: 'Cookie-Einstellungen',
+  },
+  consent: {
+    kicker: 'Datenschutzauswahl',
+    title: 'Ihre Datenschutzauswahl',
+    body: 'Wir nutzen notwendigen Browserspeicher, damit Rentelyo funktioniert. Mit Ihrer Einwilligung hilft uns Google Analytics außerdem, Besuche zu verstehen und das Produkt zu verbessern.',
+    acceptAll: 'Alle akzeptieren',
+    reject: 'Nicht notwendige ablehnen',
+    manage: 'Einstellungen verwalten',
+    preferencesTitle: 'Cookie-Einstellungen verwalten',
+    preferencesBody: 'Sie können Ihre Einwilligung für Analysen jederzeit ändern oder widerrufen.',
+    essentialTitle: 'Notwendig',
+    essentialBody: 'Für Anmeldung, Sicherheit und Spracheinstellung erforderlich. Dies kann nicht deaktiviert werden.',
+    essentialAlwaysOn: 'Notwendiger Speicher ist immer aktiv',
+    analyticsTitle: 'Analyse',
+    analyticsBody: 'Erlaubt Google Analytics, Besuche und Produktnutzung zu messen. GA4 bleibt ohne Ihre Einwilligung ausgeschaltet.',
+    save: 'Einstellungen speichern',
   },
   home: homeDe,
   landlordSeo: landlordSeoDe,
@@ -204,7 +221,7 @@ export const de: Messages = {
     privacy1:
       'Rentelyo speichert das von Ihnen erstellte Konto (Name, E-Mail, Passwort-Hash) sowie die von Ihnen eingegebenen Objekt-, Mieter- und Zahlungsdaten. Quittungs-PDFs werden auf dem Server erzeugt und in Ihrem Arbeitsbereich aufbewahrt.',
     privacy2:
-      'Länderregeln sind Produktkonfiguration, keine personenbezogenen Daten. Wir verkaufen keine Vermieter- oder Mieterdaten. Stripe verarbeitet Kartendaten — sofern verbunden — außerhalb unserer Server.',
+      'Länderregeln sind Produktkonfiguration, keine personenbezogenen Daten. Wir verkaufen keine Vermieter- oder Mieterdaten. Stripe verarbeitet Kartendaten — sofern verbunden — außerhalb unserer Server. Google Analytics erhält Nutzungsdaten erst nach Ihrer Einwilligung.',
     privacyNote: 'Diese Seite wird vor dem öffentlichen Start um die tatsächlichen Auftragsverarbeiter und die Hosting-Region ergänzt.',
     termsTitle: 'Nutzungsbedingungen',
     terms1:
@@ -387,7 +404,8 @@ export const de: Messages = {
     contactLede: 'Eine Frage zu Ihrem Konto oder Portfolio? Schreiben Sie uns.',
     cookies1:
       'Rentelyo nutzt den lokalen Speicher des Browsers für die Sitzung (Auth-Token) und die Spracheinstellung. Diese sind für den Dienst erforderlich.',
-    cookies2: 'Die Anwendung selbst setzt keine Werbe-Cookies Dritter ein.',
+    cookies2:
+      'Google Analytics wird zur Messung von Besuchen und Produktnutzung eingesetzt. Dabei können Analyse-Cookies gesetzt und Geräte-, Browser- und Interaktionsdaten empfangen werden. Rentelyo setzt keine Werbe-Cookies Dritter ein.',
     securityMeans: 'Was das bedeutet',
     securityBody:
       'Die Anmeldung verwendet gehashte Passwörter (bcrypt) und JWT-Sitzungen. Die Daten jedes Kontos sind auf dem Server isoliert. Im Produktivbetrieb läuft der Verkehr über HTTPS. Wir verkaufen keine Vermieter- oder Mieterdaten.',

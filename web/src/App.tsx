@@ -37,6 +37,7 @@ import { CookiesPage } from './pages/CookiesPage';
 import { SuperadminPage } from './pages/SuperadminPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { DocumentHead } from './DocumentHead';
+import { ConsentBanner } from './ConsentBanner';
 
 export function App() {
   return (
@@ -90,6 +91,7 @@ export function App() {
           <Route path="*" element={<Navigate to="/app" replace />} />
         </Route>
       </Routes>
+      <ConsentBanner />
     </>
   );
 }

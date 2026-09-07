@@ -42,6 +42,23 @@ export const pt: Messages = {
     landlordSoftware: 'Software de gestão de arrendamentos para senhorios',
     simpleLandlord: 'Software para senhorios',
     smallLandlord: 'Software de gestão de arrendamentos para pequenos senhorios',
+    cookieSettings: 'Definições de cookies',
+  },
+  consent: {
+    kicker: 'Escolhas de privacidade',
+    title: 'As suas escolhas de privacidade',
+    body: 'Usamos armazenamento essencial para a Rentelyo funcionar. Com a sua autorização, o Google Analytics também nos ajuda a compreender visitas e melhorar o produto.',
+    acceptAll: 'Aceitar tudo',
+    reject: 'Recusar não essenciais',
+    manage: 'Gerir preferências',
+    preferencesTitle: 'Gerir preferências de cookies',
+    preferencesBody: 'Pode alterar ou retirar o consentimento para análise a qualquer momento.',
+    essentialTitle: 'Essencial',
+    essentialBody: 'Necessário para iniciar sessão, segurança e idioma. Não pode ser desativado.',
+    essentialAlwaysOn: 'O armazenamento essencial está sempre ativo',
+    analyticsTitle: 'Análise',
+    analyticsBody: 'Permite ao Google Analytics medir visitas e utilização do produto. O GA4 fica desligado sem a sua autorização.',
+    save: 'Guardar preferências',
   },
   home: homePt,
   landlordSeo: landlordSeoPt,
@@ -204,7 +221,7 @@ export const pt: Messages = {
     privacy1:
       'A Rentelyo guarda a conta que cria (nome, e-mail, hash da palavra-passe) e os dados de imóveis, inquilinos e pagamentos que introduz. Os PDF de recibos são gerados no servidor e mantidos no seu espaço.',
     privacy2:
-      'As regras por país são configuração do produto, não dados pessoais. Não vendemos fichas de senhorios nem de inquilinos. O Stripe, quando ligado, processa os dados do cartão fora dos nossos servidores.',
+      'As regras por país são configuração do produto, não dados pessoais. Não vendemos fichas de senhorios nem de inquilinos. O Stripe, quando ligado, processa os dados do cartão fora dos nossos servidores. O Google Analytics só recebe dados de utilização após o seu consentimento.',
     privacyNote: 'Esta página será alargada antes do lançamento público para refletir os processadores reais e a região de alojamento.',
     termsTitle: 'Condições',
     terms1:
@@ -387,7 +404,8 @@ export const pt: Messages = {
     contactLede: 'Uma pergunta sobre a sua conta ou carteira? Escreva-nos.',
     cookies1:
       'A Rentelyo usa o armazenamento local do navegador para a sessão (token de autenticação) e a preferência de idioma. São necessários para o serviço funcionar.',
-    cookies2: 'A própria aplicação não implementa cookies publicitários de terceiros.',
+    cookies2:
+      'O Google Analytics é usado para medir visitas e utilização do produto. Pode definir cookies analíticos e receber dados do dispositivo, navegador e interações. A Rentelyo não utiliza cookies publicitários de terceiros.',
     securityMeans: 'O que isto significa',
     securityBody:
       'O início de sessão usa palavras-passe com hash (bcrypt) e sessões JWT. Os dados de cada conta estão isolados no servidor. Em produção, o tráfego usa HTTPS. Não vendemos fichas de senhorios nem de inquilinos.',

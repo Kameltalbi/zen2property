@@ -5,6 +5,7 @@ import { homePath } from './api';
 import { useAuth } from './auth';
 import { LOCALES, LOCALE_META, useI18n, type Locale } from './i18n';
 import { CoachChat } from './onboarding/CoachChat';
+import { openConsentPreferences } from './analyticsConsent';
 
 function LangToggle() {
   const { locale, setLocale, t } = useI18n();
@@ -123,6 +124,9 @@ export function PublicLayout() {
             <Link to="/contact">{t.footer.contact}</Link>
             <Link to="/privacy">{t.footer.privacy}</Link>
             <Link to="/terms">{t.footer.terms}</Link>
+            <button className="footer-link-button" type="button" onClick={openConsentPreferences}>
+              {t.footer.cookieSettings}
+            </button>
           </nav>
           <LangToggle />
         </div>
